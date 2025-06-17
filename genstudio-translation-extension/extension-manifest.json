@@ -1,6 +1,6 @@
 {
-  "name": "GS-IO-Runtime-App",
-  "id": "gs-io-runtime-app",
-  "description": "GS IO Runtime App",
+  "name": "Genstudio Translation Extension",
+  "id": "genstudio-translation-extension",
+  "description": "Genstudio Translation Extension",
   "version": "0.0.1"
 }

@@ -1,2 +1,0 @@
-hooks:
-  post-app-deploy: ./hooks/post-deploy.js

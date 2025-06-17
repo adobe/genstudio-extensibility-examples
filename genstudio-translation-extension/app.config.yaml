@@ -1,12 +1,11 @@
 extensions:
   dx_genstudio/translation/1:
-    $include: src/ext.config.yaml
     runtimeManifest:
       packages:
         translation:
           license: Apache-2.0
           actions:
-            getSupportedLocales:
+            locales:
               function: src/actions/getSupportedLocales.js
               web: 'yes'
               runtime: nodejs:22

@@ -16,21 +16,13 @@
 const { Core } = require('@adobe/aio-sdk')
 const { errorResponse, stringParameters, checkMissingRequestInputs } = require('./utils')
 
+/** @type {import('@adobe/genstudio-extensibility-sdk').Locale[]} */
 const SUPPORTED_LOCALES = [
-  { code: "zh-CN", label: "Chinese (Simplified)" },
-  { code: "zh-TW", label: "Chinese (Traditional)" },
-  { code: "en-AU", label: "English (Australian)" },
-  { code: "en-GB", label: "English (UK)" },
   { code: "fr-FR", label: "French" },
   { code: "de-DE", label: "German" },
   { code: "it-IT", label: "Italian" },
-  { code: "ja-JP", label: "Japanese" },
-  { code: "ko-KR", label: "Korean" },
-  { code: "pt-BR", label: "Portuguese (Brazil)" },
-  { code: "pt-PT", label: "Portuguese (Portugal)" },
-  // { code: "es-419", label: "Spanish (LATAM)" },
   { code: "es-ES", label: "Spanish (Spain)" },
-  { code: "th-TH", label: "Thai" }
+  { code: "en-XX", label: "New language (Spain)" },
 ];
 
 // main function that will be executed by Adobe I/O Runtime
