@@ -22,7 +22,6 @@ const SUPPORTED_LOCALES = [
   { code: "de-DE", label: "German" },
   { code: "it-IT", label: "Italian" },
   { code: "es-ES", label: "Spanish (Spain)" },
-  { code: "en-XX", label: "New language (Spain)" },
 ];
 
 // main function that will be executed by Adobe I/O Runtime
