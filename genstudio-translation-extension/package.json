@@ -4,7 +4,7 @@
   "private": true,
   "description": "GS Create Translation Extension",
   "engines": {
-    "node": ">=22"
+    "node": ">=20"
   },
   "dependencies": {
     "@adobe/aio-sdk": "^6",

@@ -18,30 +18,24 @@ const { errorResponse, stringParameters, checkMissingRequestInputs } = require('
 
 /** @type {import('@adobe/genstudio-extensibility-sdk').Locale[]} */
 const SUPPORTED_LOCALES = [
-  { code: "fr-FR", label: "French" },
-  { code: "de-DE", label: "German" },
-  { code: "it-IT", label: "Italian" },
-  { code: "es-ES", label: "Spanish (Spain)" },
-];
+  { code: 'fr-FR', label: 'French' },
+  { code: 'de-DE', label: 'German' },
+  { code: 'it-IT', label: 'Italian' },
+  { code: 'es-ES', label: 'Spanish (Spain)' },
+]
 
-// main function that will be executed by Adobe I/O Runtime
 async function main (params) {
-  // create a Logger
   const logger = Core.Logger('main', { level: params.LOG_LEVEL || 'info' })
 
   try {
-    // 'info' is the default level if not set
     logger.info('Calling the main action')
 
-    // log parameters, only if params.LOG_LEVEL === 'debug'
     logger.debug(stringParameters(params))
 
-    // check for missing request input parameters and headers
     const requiredParams = [/* add required params */]
     const requiredHeaders = ['Authorization']
     const errorMessage = checkMissingRequestInputs(params, requiredParams, requiredHeaders)
     if (errorMessage) {
-      // return and log client errors
       return errorResponse(400, errorMessage, logger)
     }
 
@@ -53,13 +47,10 @@ async function main (params) {
       }
     }
 
-    // log the response status code
     logger.info(`${response.statusCode}: successful request`)
-    return response;
+    return response
   } catch (error) {
-    // log any server errors
     logger.error(error)
-    // return with 500
     return {
       error: {
         statusCode: 500,

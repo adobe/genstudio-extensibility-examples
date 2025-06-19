@@ -14,3 +14,12 @@ extensions:
               annotations:
                 require-adobe-auth: true
                 final: true
+            translate:
+              function: src/actions/getTranslation.js
+              web: 'yes'
+              runtime: nodejs:22
+              inputs:
+                LOG_LEVEL: debug
+              annotations:
+                require-adobe-auth: true
+                final: true
