@@ -14,7 +14,7 @@
  */
 
 const { Core } = require('@adobe/aio-sdk')
-const { errorResponse, stringParameters, checkMissingRequestInputs } = require('./utils')
+const { errorResponse, stringParameters } = require('./utils')
 
 /**
  * @typedef {import('@adobe/genstudio-extensibility-sdk').TranslationResponse} TranslationResponse
@@ -37,7 +37,7 @@ const getTranslation = (sourceLocale, targetLocales, items) => {
       id: item.id,
       messages: item.messages.map(message => ({
         id: message.id,
-        value: `Translated ${message.id} from ${sourceLocale} to ${targetLocale}`
+        value: `Translated "${message.value}" from ${sourceLocale} to ${targetLocale}`
       }))
     }))
   }
@@ -58,15 +58,27 @@ async function main (params) {
 
     logger.debug(stringParameters(params))
 
-    const requiredParams = ['sourceLocale', 'targetLocales', 'items']
-    const requiredHeaders = ['Authorization']
-    const errorMessage = checkMissingRequestInputs(params, requiredParams, requiredHeaders)
-    if (errorMessage) {
-      return errorResponse(400, errorMessage, logger)
-    }
+    let sourceLocale, targetLocales, items
     
-    // Parse and validate input parameters
-    const { sourceLocale, targetLocales, items } = params
+    if (params.__ow_body) {
+      try {
+        const body = JSON.parse(params.__ow_body)
+        sourceLocale = body.sourceLocale
+        targetLocales = body.targetLocales
+        items = body.items
+      } catch (parseError) {
+        logger.error('Failed to parse JSON body:', parseError)
+        return errorResponse(400, 'Invalid JSON in request body', logger)
+      }
+    } else {
+      sourceLocale = params.sourceLocale
+      targetLocales = params.targetLocales
+      items = params.items
+    }
+
+    if (!sourceLocale) {
+      return errorResponse(400, 'sourceLocale is required', logger)
+    }
     
     if (!Array.isArray(targetLocales) || targetLocales.length === 0) {
       return errorResponse(400, 'targetLocales must be a non-empty array', logger)
