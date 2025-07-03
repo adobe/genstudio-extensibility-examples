@@ -11,5 +11,5 @@ jobs:
     uses: ./.github/workflows/aio-app-template.yml
     with:
       app: genstudio-external-dam-app
-      environment: '["Genstudio Engineering 01 - genstudio-external-dam-app - workspace Stage", "GenStudio GA PAT04 - genstudio-external-dam-app - workspace Stage"]'
+      environment: '["Genstudio Engineering 01 - genstudio-external-dam-app - workspace Stage", "GenStudio GA PAT04 - genstudio-external-dam-app - workspace Stage", "GenStudio Internal - E2E Tests - genstudio-external-dam-app - workspace Stage", "GenStudio Internal - E2E Tests - genstudio-external-dam-app - workspace Production"]'
     secrets: inherit
