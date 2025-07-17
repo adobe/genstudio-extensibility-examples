@@ -34,9 +34,17 @@ export default function AssetViewer(): JSX.Element {
   const [filterResetTrigger, setFilterResetTrigger] = useState(0);
   const [auth, setAuth] = useState<any>(null);
   const hasInitialLoad = useRef(false);
-  
-  const { assets, availableFileTypes, isLoading, fetchAssets, searchAssets, filterAssets, resetToBaseAssets, error } =
-    useAssetActions(auth);
+
+  const {
+    assets,
+    availableFileTypes,
+    isLoading,
+    fetchAssets,
+    searchAssets,
+    filterAssets,
+    resetToBaseAssets,
+    error,
+  } = useAssetActions(auth);
 
   const [guestConnection, setGuestConnection] = useState<any>(null);
 
@@ -86,19 +94,19 @@ export default function AssetViewer(): JSX.Element {
     if (!hasInitialLoad.current) {
       return;
     }
-    
+
     // Search assets when search term changes
     if (searchTerm.trim()) {
       const delaySearch = setTimeout(() => {
         searchAssets(searchTerm);
         setCurrentFilter([]);
-        setFilterResetTrigger(prev => prev + 1);
+        setFilterResetTrigger((prev) => prev + 1);
       }, 500);
       return () => clearTimeout(delaySearch);
     } else if (searchTerm === "") {
       resetToBaseAssets();
       setCurrentFilter([]);
-      setFilterResetTrigger(prev => prev + 1);
+      setFilterResetTrigger((prev) => prev + 1);
     }
   }, [searchTerm]);
 
@@ -134,7 +142,7 @@ export default function AssetViewer(): JSX.Element {
         newSelectedAssets
       );
     } catch (error) {
-      console.warn("===x Error sending selected assets to host:", error);
+      console.warn("Error sending selected assets to host:", error);
     }
   };
 
@@ -165,30 +173,26 @@ export default function AssetViewer(): JSX.Element {
   };
 
   useEffect(() => {
-    const getExternalAssets = async () => {
-      const { selectedExternalAssets } =
+    const getAssets = async () => {
+      const { selectedAssets } =
         await ExtensionRegistrationService.selectContentExtensionSync(
           guestConnection
         );
 
-      if (selectedExternalAssets && selectedExternalAssets.assets) {
-        const externalAssets = selectedExternalAssets.assets.map((asset: any) =>
+      if (selectedAssets) {
+        const assets = selectedAssets.map((asset: any) =>
           convertToGenStudioAsset(asset)
         );
         setSelectedAssets((prevAssets) => {
           const localAssets = prevAssets.filter(
             (asset) =>
-              !externalAssets.some(
-                (extAsset: Asset) => extAsset.id === asset.id
-              )
+              !assets.some((extAsset: Asset) => extAsset.id === asset.id)
           );
-          return [...localAssets, ...externalAssets];
+          return [...localAssets, ...assets];
         });
       }
     };
-    if (guestConnection) {
-      getExternalAssets();
-    }
+    if (guestConnection) getAssets();
   }, [guestConnection]);
 
   const renderAsset = (asset: DamAsset) => {
@@ -249,7 +253,7 @@ export default function AssetViewer(): JSX.Element {
             alignItems="center"
             gap="size-200"
           >
-            <AssetTypeFilter 
+            <AssetTypeFilter
               availableFileTypes={availableFileTypes}
               onFilterChange={handleFilterChange}
               resetTrigger={filterResetTrigger}
@@ -257,8 +261,8 @@ export default function AssetViewer(): JSX.Element {
           </Flex>
         </View>
 
-        <View 
-          flex={1} 
+        <View
+          flex={1}
           UNSAFE_style={{ backgroundColor: "var(--spectrum-gray-100)" }}
           padding="size-300"
           overflow="auto"
