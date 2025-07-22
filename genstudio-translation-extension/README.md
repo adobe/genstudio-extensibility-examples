@@ -1,9 +1,16 @@
 # GenStudio IO Runtime App
 
-This is an App Builder application that creates an extension point in GenStudio to add context via claims and validate experiences with claims.
-It also calls a custom action to get the claims.
+This is a sample extension for the Translation extension point in Adobe GenStudio for Performance Marketing. It uses Azure OpenAI models to provide translations for experiences within GenStudio.
 
-Welcome to my Adobe I/O Application!
+Translation is a backend-only extension, which consists of only I/O actions (no UI components).
+
+Developers MUST NOT update the app.config.yaml configuration file. The given structure and naming convention is key to using this extension point.
+
+### Required actions
+1. Get locales - Fetch the list of locales the extension supports for translation
+2. Translate - Invokes the custom translation engine
+
+For response structure that the extension sends back to GenStudio, it is necessary to use the types defined in [@adobe/genstudio-extensibility-sdk.](https://github.com/adobe/genstudio-extensibility-sdk/tree/main/src/types/translation)
 
 ## Setup
 
