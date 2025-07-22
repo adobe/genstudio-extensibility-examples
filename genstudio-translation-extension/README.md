@@ -1,4 +1,4 @@
-# GenStudio IO Runtime App
+# GenStudio Translation Extension App
 
 This is a sample extension for the Translation extension point in Adobe GenStudio for Performance Marketing. It uses Azure OpenAI models to provide translations for experiences within GenStudio.
 
