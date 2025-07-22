@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@adobe/aio-sdk": "^6",
-    "@adobe/genstudio-extensibility-sdk": "^2.1.0"
+    "@adobe/genstudio-extensibility-sdk": "^2.1.0",
+    "openai": "^5.9.0"
   }
 }
