@@ -1,20 +1,17 @@
 /*
-* <license header>
-*/
-
-/**
- * This is a sample action showcasing how to access an external API
+ * Copyright 2025 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
  *
- * Note:
- * You might want to disable authentication and authorization checks against Adobe Identity Management System for a generic action. In that case:
- *   - Remove the require-adobe-auth annotation for this action in the manifest.yml of your application
- *   - Remove the Authorization header from the array passed in checkMissingRequestInputs
- *   - The two steps above imply that every client knowing the URL to this deployed action will be able to invoke it without any authentication and authorization checks against Adobe Identity Management System
- *   - Make sure to validate these changes against your security requirements before deploying the action
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 
 const { Core } = require('@adobe/aio-sdk')
-const { errorResponse, stringParameters } = require('./utils')
+const { stringParameters, errorResponse } = require('./utils')
 const { AzureOpenAI } = require('openai');
 
 /**
@@ -65,6 +62,23 @@ const OPENAI_TRANSLATION_RESPONSE_SCHEMA = {
     required: ['targetLocale', 'items'],
     additionalProperties: false,
   },
+};
+
+/**
+ * Validates required environment variables
+ * @param {Object} params - Request parameters
+ * @param {Object} logger - Logger instance
+ * @returns {Object|null} Error response if validation fails, null if valid
+ */
+const validateEnvironment = (params, logger) => {
+  const requiredVars = ['AZURE_OPENAI_API_KEY', 'AZURE_OPENAI_ENDPOINT', 'AZURE_OPENAI_API_VERSION', 'AZURE_OPENAI_DEPLOYMENT_NAME'];
+  const missing = requiredVars.filter(varName => !params[varName]);
+  
+  if (missing.length > 0) {
+    logger.error('Missing required environment variables:', missing);
+    return errorResponse(500, `Missing required environment variables: ${missing.join(', ')}`, logger);
+  }
+  return null;
 };
 
 /**
@@ -129,6 +143,7 @@ const createAzureOpenAIClient = (params) => {
     apiKey: params.AZURE_OPENAI_API_KEY,
     endpoint: params.AZURE_OPENAI_ENDPOINT,
     apiVersion: params.AZURE_OPENAI_API_VERSION,
+    timeout: 30000, // 30 second timeout
   });
 };
 
@@ -137,11 +152,11 @@ const createAzureOpenAIClient = (params) => {
  * @param {AzureOpenAI} client - Azure OpenAI client
  * @param {Object} params - Request parameters
  * @param {string} sourceLocale - Source locale
- * @param {Array} targetLocales - Target locales
+ * @param {string} targetLocale - Target locale
  * @param {Array} items - Items to translate
  * @returns {Object} Azure OpenAI response
  */
-const callTranslationAPI = async (client, params, sourceLocale, targetLocales, items) => {
+const callTranslationAPI = async (client, params, sourceLocale, targetLocale, items) => {
   return await client.chat.completions.create({
     model: params.AZURE_OPENAI_DEPLOYMENT_NAME,
     temperature: 0.0,
@@ -151,38 +166,35 @@ const callTranslationAPI = async (client, params, sourceLocale, targetLocales, i
     response_format: { type: 'json_schema', json_schema: OPENAI_TRANSLATION_RESPONSE_SCHEMA },
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: JSON.stringify({ sourceLocale, targetLocales, items }) },
+      { role: 'user', content: JSON.stringify({ sourceLocale, targetLocale, items }) },
     ],
   });
 };
 
 /**
- * Processes the translation response and builds results
+ * Processes the translation response for a single target locale
  * @param {Object} parsedResponse - Parsed API response
- * @param {Array} targetLocales - Target locales
+ * @param {string} targetLocale - Target locale
  * @param {Object} logger - Logger instance
  * @returns {Object} Results object or error response
  */
-const processTranslationResponse = (parsedResponse, targetLocales, logger) => {
+const processTranslationResponse = (parsedResponse, targetLocale, logger) => {
   if (!parsedResponse.targetLocale || !parsedResponse.items) {
     logger.error('Invalid response format from Azure OpenAI API:', parsedResponse);
     return { error: errorResponse(500, 'Invalid response format from translation service', logger) };
   }
 
-  const results = {};
   const translatedItems = parsedResponse.items;
   
-  for (const targetLocale of targetLocales) {
-    results[targetLocale] = translatedItems.map(item => ({
+  return {
+    items: translatedItems.map(item => ({
       id: item.id,
       messages: item.messages.map(message => ({
         id: message.id,
         value: message.value
       }))
-    }));
-  }
-
-  return { results };
+    }))
+  };
 };
 
 /**
@@ -198,21 +210,44 @@ const getTranslation = async (params, sourceLocale, targetLocales, items) => {
   
   try {
     const client = createAzureOpenAIClient(params);
-    const response = await callTranslationAPI(client, params, sourceLocale, targetLocales, items);
+    const results = {};
     
-    const rawResponse = response.choices[0].message?.content || '[]';
-    const parsedResponse = JSON.parse(rawResponse);
-    
-    logger.debug('response', parsedResponse);
-    
-    const processResult = processTranslationResponse(parsedResponse, targetLocales, logger);
-    if (processResult.error) {
-      return processResult.error;
+    // Translate for each target locale separately
+    for (const targetLocale of targetLocales) {
+      try {
+        const response = await callTranslationAPI(client, params, sourceLocale, targetLocale, items);
+      
+      const rawResponse = response.choices[0]?.message?.content;
+      if (!rawResponse) {
+        logger.error(`Empty response from Azure OpenAI API for locale ${targetLocale}`);
+        return errorResponse(500, 'Empty response from translation service', logger);
+      }
+      
+      let parsedResponse;
+      try {
+        parsedResponse = JSON.parse(rawResponse);
+      } catch (parseError) {
+        logger.error(`Failed to parse response for locale ${targetLocale}:`, parseError);
+        return errorResponse(500, 'Invalid JSON response from translation service', logger);
+      }
+      
+      logger.debug(`response for ${targetLocale}:`, parsedResponse);
+      
+      const processResult = processTranslationResponse(parsedResponse, targetLocale, logger);
+      if (processResult.error) {
+        return processResult.error;
+      }
+      
+      results[targetLocale] = processResult.items;
+      } catch (error) {
+        logger.error(`Failed to translate for locale ${targetLocale}:`, error);
+        return errorResponse(500, `Translation failed for locale ${targetLocale}: ${error.message}`, logger);
+      }
     }
     
     return {
       status: 200,
-      results: processResult.results
+      results
     };
   } catch (error) {
     logger.error('Failed to process translation request:', error);
@@ -227,45 +262,49 @@ const getTranslation = async (params, sourceLocale, targetLocales, items) => {
  */
 async function main(params) {
   const logger = Core.Logger('main', { level: params.LOG_LEVEL || 'info' });
+  logger.info('Calling the get translation action');
+  logger.debug(stringParameters(params));
 
   try {
-    logger.info('Calling the main action');
-    logger.debug(stringParameters(params));
+    // Validate environment variables first
+    const envError = validateEnvironment(params, logger);
+    if (envError) {
+      return {
+        statusCode: envError.error.statusCode,
+        body: envError.error.body
+      };
+    }
 
-    // Extract parameters
     const paramResult = extractParameters(params, logger);
     if (paramResult.error) {
-      return paramResult.error;
+      return {
+        statusCode: paramResult.error.status,
+        body: paramResult.error
+      };
     }
     
     const { sourceLocale, targetLocales, items } = paramResult;
 
-    // Validate parameters
     const validationError = validateParameters(sourceLocale, targetLocales, items, logger);
     if (validationError) {
-      return validationError;
+      return {
+        statusCode: validationError.status,
+        body: validationError
+      };
     }
 
-    // Get translation
     const translationResponse = await getTranslation(params, sourceLocale, targetLocales, items);
     
     const response = {
-      statusCode: 200,
-      body: {
-        translation: translationResponse
-      }
+      statusCode: translationResponse.status === 200 ? 200 : translationResponse.status,
+      body: translationResponse
     };
 
     logger.info(`${response.statusCode}: successful request`);
     return response;
   } catch (error) {
     logger.error('Unexpected error:', error);
-    return {
-      error: {
-        statusCode: 500,
-        body: { error: 'Internal server error' }
-      }
-    };
+    return errorResponse(500, 'Internal server error', logger);
   }
 }
 
