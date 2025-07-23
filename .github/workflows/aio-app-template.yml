@@ -50,6 +50,15 @@ on:
         required: false
       GS_AWS_SECRET_ACCESS_KEY:
         required: false
+      # Genstudio Translation Extension only
+      AZURE_OPENAI_API_KEY:
+        required: false
+      AZURE_OPENAI_ENDPOINT:
+        required: false
+      AZURE_OPENAI_API_VERSION:
+        required: false
+      AZURE_OPENAI_DEPLOYMENT_NAME:
+        required: false
 jobs:
   deploy:
     name: Deploy

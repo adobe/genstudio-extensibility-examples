@@ -1,0 +1,29 @@
+extensions:
+  dx_genstudio/translation/1:
+    runtimeManifest:
+      packages:
+        translation:
+          license: Apache-2.0
+          actions:
+            locales:
+              function: src/actions/getSupportedLocales.js
+              web: 'yes'
+              runtime: nodejs:22
+              inputs:
+                LOG_LEVEL: debug
+              annotations:
+                require-adobe-auth: true
+                final: true
+            translate:
+              function: src/actions/getTranslation.js
+              web: 'yes'
+              runtime: nodejs:22
+              inputs:
+                LOG_LEVEL: debug
+                AZURE_OPENAI_API_KEY: $AZURE_OPENAI_API_KEY
+                AZURE_OPENAI_ENDPOINT: $AZURE_OPENAI_ENDPOINT
+                AZURE_OPENAI_API_VERSION: $AZURE_OPENAI_API_VERSION
+                AZURE_OPENAI_DEPLOYMENT_NAME: $AZURE_OPENAI_DEPLOYMENT_NAME
+              annotations:
+                require-adobe-auth: true
+                final: true

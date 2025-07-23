@@ -1,0 +1,17 @@
+name: Translation Main
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "genstudio-translation-extension/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/aio-app-template.yml
+    with:
+      app: genstudio-translation-extension
+      environment: '["Genstudio Engineering 01 - genstudio-translation-extension - workspace Production", "GenStudio GA PAT04 - genstudio-translation-extension - workspace Production", "GenStudio Internal - E2E Tests - genstudio-translation-extension - workspace Production"]'
+    secrets: inherit
