@@ -1,4 +1,4 @@
-name: External DAM Main
+name: Translation Main
 
 on:
   push:
