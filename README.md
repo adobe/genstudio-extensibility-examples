@@ -21,13 +21,17 @@ Here is the list of examples:
 
 - [GenStudio MLR Claims App](./genstudio-mlr-claims-app/)
   - This is an example of a MLR Claims App that loads claims from a claims library and provides both dialogs:
-    - A dialog that opens in Prompt Drawer to add claims to the Generation Context
-    - A dialog that opens in the right panel of a GS Experience draft to validate claims in the experience
-  - This example was used in the 2025 Adobe Summit Session: A Developer's Guide: Extending Adobe GenStudio for Performance Marketing
+    - A dialog that opens in Prompt Drawer to add claims to the Generation Context.
+    - A dialog that opens in the right panel of a GS Experience draft to validate claims in the experience.
+  - This example was used in the 2025 Adobe Summit Session: A Developer's Guide: Extending Adobe GenStudio for Performance Marketing.
+
+- [GenStudio Validation App](./genstudio-create-validation/)
+  - This is an example of an App for validating claims in a GS Experience draft.
+  - It includes 1 dialog that opens in the right panel of a GS Experience draft to validate claims in the experience.
 
 - [GenStudio External DAM App](./genstudio-external-dam-app/)
   - This is an example of an integration with a 3rd party content storage using AWS S3.
-  - The reference app provides a component that can be loaded within the Asset Selector Dialog in GenStudio for PeM
+  - The reference app provides a component that can be loaded within the Asset Selector Dialog in GenStudio for PeM.
 
 - [GenStudio Translation Extension](./genstudio-translation-extension/)
   - This is an example of a backend extension that provides translation capabilities within GenStudio using Azure OpenAI.
