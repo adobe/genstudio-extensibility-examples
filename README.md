@@ -24,15 +24,15 @@ Here is the list of examples:
     - A dialog that opens in Prompt Drawer to add claims to the Generation Context
     - A dialog that opens in the right panel of a GS Experience draft to validate claims in the experience
   - This example was used in the 2025 Adobe Summit Session: A Developer's Guide: Extending Adobe GenStudio for Performance Marketing
-- [GenStudio Create Validation App](./genstudio-create-validation/)
-  - This is an example of an App for validating claims in a GS Experience draft
-  - It includes 1 dialog that opens in the right panel of a GS Experience draft to validate claims in the experience
-- [GenStudio Create Context Add On](./genstudio-create-context-addon/)
-  - This is an example of a Context Add On that adds a new context to the Generation Context
-  - It includes 1 dialog that opens in Prompt Drawer to add claims to the Generation Context
-- [GenStudio IO Runtime App](./genstudio-io-runtime-app/)
-  - This is an example of an App for using the IO Runtime Action
-  - It includes the same code in MLR Claims App but uses the IO Runtime API to fetch claims from an external source
+
+- [GenStudio External DAM App](./genstudio-external-dam-app/)
+  - This is an example of an integration with a 3rd party content storage using AWS S3.
+  - The reference app provides a component that can be loaded within the Asset Selector Dialog in GenStudio for PeM
+
+- [GenStudio Translation Extension](./genstudio-translation-extension/)
+  - This is an example of a backend extension that provides translation capabilities within GenStudio using Azure OpenAI.
+  - Customers can build their translation extension that connects to whichever translation service they use.
+
 
 ## Usage
 
