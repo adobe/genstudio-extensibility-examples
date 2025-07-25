@@ -1,5 +1,6 @@
 extensions:
   dx_genstudio/translation/1:
+    $include: ext.config.yaml
     runtimeManifest:
       packages:
         translation:
@@ -7,16 +8,16 @@ extensions:
           actions:
             locales:
               function: src/actions/getSupportedLocales.js
-              web: 'yes'
+              web: "yes"
               runtime: nodejs:22
               inputs:
                 LOG_LEVEL: debug
               annotations:
                 require-adobe-auth: true
-                final: true
+                final: false
             translate:
               function: src/actions/getTranslation.js
-              web: 'yes'
+              web: "yes"
               runtime: nodejs:22
               inputs:
                 LOG_LEVEL: debug
@@ -26,4 +27,4 @@ extensions:
                 AZURE_OPENAI_DEPLOYMENT_NAME: $AZURE_OPENAI_DEPLOYMENT_NAME
               annotations:
                 require-adobe-auth: true
-                final: true
+                final: false

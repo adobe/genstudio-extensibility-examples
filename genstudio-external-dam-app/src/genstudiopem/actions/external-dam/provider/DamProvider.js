@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 const { checkMissingRequestInputs, ValidationError } = require("../../utils");
 
 /**
- * @typedef {Object} Asset - Asset object from @adobe/genstudio-uix-sdk
+ * @typedef {Object} Asset - Asset object from @adobe/genstudio-extensibility-sdk
  */
 
 /**

@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react';
 import { attach } from "@adobe/uix-guest";
 import { extensionId } from "../Constants";
 import { View, Provider, defaultTheme, Button, ComboBox, Item, Heading, Text, Flex, Divider } from '@adobe/react-spectrum';
-import { Experience, ExperienceService } from '@adobe/genstudio-uix-sdk';
+import { Experience, ExperienceService } from '@adobe/genstudio-extensibility-sdk';
 import Spinner from './Spinner';
 
 export default function RightPanel(): JSX.Element {
