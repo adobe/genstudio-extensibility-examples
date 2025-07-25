@@ -22,7 +22,7 @@ import {
 import AssetCard from "./AssetCard";
 import AssetTypeFilter from "./AssetTypeFilter";
 import { useAssetActions } from "../hooks/useAssetActions";
-import { extensionId } from "../Constants";
+import { extensionId, extensionLabel, ICON_DATA_URI } from "../Constants";
 import { Asset, ExtensionRegistrationService } from "@adobe/genstudio-extensibility-sdk";
 import { attach } from "@adobe/uix-guest";
 import { DamAsset } from "../types";
@@ -63,8 +63,10 @@ export default function AssetViewer(): JSX.Element {
       id: asset.id,
       name: asset.name,
       signedUrl: asset.url,
-      source: "S3",
+      source: extensionLabel,
       sourceUrl: asset.url,
+      extensionId: extensionId,
+      iconUrl: ICON_DATA_URI,
     };
   };
 
