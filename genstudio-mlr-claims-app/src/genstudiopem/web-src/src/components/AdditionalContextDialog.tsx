@@ -16,7 +16,7 @@ import {
   Claim,
   ExtensionRegistrationService,
   GenerationContextService,
-} from "@adobe/genstudio-uix-sdk";
+} from "@adobe/genstudio-extensibility-sdk";
 import {
   Button,
   ButtonGroup,

@@ -23,7 +23,7 @@ import AssetCard from "./AssetCard";
 import AssetTypeFilter from "./AssetTypeFilter";
 import { useAssetActions } from "../hooks/useAssetActions";
 import { extensionId } from "../Constants";
-import { Asset, ExtensionRegistrationService } from "@adobe/genstudio-uix-sdk";
+import { Asset, ExtensionRegistrationService } from "@adobe/genstudio-extensibility-sdk";
 import { attach } from "@adobe/uix-guest";
 import { DamAsset } from "../types";
 

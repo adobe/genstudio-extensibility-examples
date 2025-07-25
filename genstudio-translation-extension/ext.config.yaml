@@ -1,0 +1,4 @@
+operations:
+  view:
+    - type: web
+      impl: index.html

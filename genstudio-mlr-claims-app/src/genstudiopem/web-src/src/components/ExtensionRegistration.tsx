@@ -17,7 +17,7 @@ import {
   AppMetaData,
   Experience,
   ExtensionRegistrationService,
-} from "@adobe/genstudio-uix-sdk";
+} from "@adobe/genstudio-extensibility-sdk";
 import React from "react";
 import { setSelectedExperienceId } from "../utils/experienceBridge";
 

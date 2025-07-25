@@ -17,7 +17,7 @@ governing permissions and limitations under the License.
 // check if claim present matches or does not match
 // return the result
 
-import { Experience } from "@adobe/genstudio-uix-sdk";
+import { Experience } from "@adobe/genstudio-extensibility-sdk";
 import {
   CLAIM_VIOLATION_PREFIX,
   TEST_CLAIMS,
