@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Experience, ExperienceService } from "@adobe/genstudio-uix-sdk";
+import { Experience, ExperienceService } from "@adobe/genstudio-extensibility-sdk";
 import {
   Button,
   Divider,

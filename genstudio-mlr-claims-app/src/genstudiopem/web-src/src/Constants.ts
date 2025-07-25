@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { Claim } from "@adobe/genstudio-uix-sdk";
+import { Claim } from "@adobe/genstudio-extensibility-sdk";
 export const extensionId: string = "genstudio-summit-mlr-app";
 export const extensionLabel: string = "MLR for Celestix";
 export const ICON_DATA_URI: string =

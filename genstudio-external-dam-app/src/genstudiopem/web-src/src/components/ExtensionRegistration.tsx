@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import { Text } from "@adobe/react-spectrum";
 import { register } from "@adobe/uix-guest";
 import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
-import { AppMetadata, Toggle, App } from "@adobe/genstudio-uix-sdk";
+import { AppMetadata, Toggle, App } from "@adobe/genstudio-extensibility-sdk";
 import React, { Key } from "react";
 
 const getAppMetadata = (id: Key): AppMetadata => ({
