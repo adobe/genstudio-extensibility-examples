@@ -56,10 +56,9 @@ const ExtensionRegistration = (): React.JSX.Element => {
               {
                 metadata: getAppMetadata(id),
                 onClick: async () => {
-                  await ExtensionRegistrationService.openCreateAddOnBar(
-                    guestConnection,
-                    id
-                  );
+                  // @ts-ignore
+                  // TODO: add to sdk
+                  await guestConnection.host.api.validationExtension.open(id);
                 },
               },
             ];
