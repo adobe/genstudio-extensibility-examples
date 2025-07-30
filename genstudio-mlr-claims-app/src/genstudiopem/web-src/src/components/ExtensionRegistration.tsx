@@ -14,7 +14,7 @@ import { Text } from "@adobe/react-spectrum";
 import { register } from "@adobe/uix-guest";
 import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
 import {
-  AppMetaData,
+  AppMetadata,
   Experience,
   ExtensionRegistrationService,
 } from "@adobe/genstudio-extensibility-sdk";
@@ -22,7 +22,7 @@ import React from "react";
 import { setSelectedExperienceId } from "../utils/experienceBridge";
 
 interface ToggleItem {
-  appMetaData: AppMetaData;
+  appMetaData: AppMetadata;
   onClick: () => Promise<void>;
 }
 
@@ -38,7 +38,7 @@ interface DialogItem {
   extensionId: string;
 }
 
-const getAppMetadata = (appExtensionId: string): AppMetaData => ({
+const getAppMetadata = (appExtensionId: string): AppMetadata => ({
   id: extensionId,
   label: extensionLabel,
   iconDataUri: ICON_DATA_URI,
