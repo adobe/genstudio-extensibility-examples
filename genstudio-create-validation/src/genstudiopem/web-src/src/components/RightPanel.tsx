@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react';
 import { attach } from "@adobe/uix-guest";
 import { extensionId } from "../Constants";
 import { View, Provider, defaultTheme, Button, ComboBox, Item, Heading, Text, Flex, Divider } from '@adobe/react-spectrum';
-import { Experience, ExperienceService } from '@adobe/genstudio-extensibility-sdk';
+import { Experience, ValidationService } from '@adobe/genstudio-extensibility-sdk';
 import Spinner from './Spinner';
 
 export default function RightPanel(): JSX.Element {
@@ -36,7 +36,7 @@ export default function RightPanel(): JSX.Element {
     setIsLoading(true);
     
     try {
-      const remoteExperiences = await ExperienceService.getExperiences(guestConnection);
+      const remoteExperiences = await ValidationService.getExperiences(guestConnection);
       // Add a minimum loading time of 0.5 seconds
       await new Promise(resolve => setTimeout(resolve, 500));
       setExperiences(remoteExperiences);
