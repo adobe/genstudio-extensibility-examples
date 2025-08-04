@@ -43,6 +43,12 @@ const getAppMetadata = (id: Key): AppMetadata => ({
     },
   ],
   extensionId: "deprecated",
+  options: {
+    validation: {
+      singleExperienceViewMode: true,
+      autoOpenApp: true,
+    }
+  }
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {

@@ -80,6 +80,7 @@ export default function RightPanel(): JSX.Element {
   }, [experiences]);
 
   const handleRunClaimsCheck = async () => {
+    console.log("handleRunClaimsCheck", selectedExperienceIndex);
     if (selectedExperienceIndex === null) return;
     // setState is async so we need the result from getExperience directly
     const newExperiences = await syncExperiences();
@@ -103,6 +104,7 @@ export default function RightPanel(): JSX.Element {
         guestConnection
       );
       if (remoteExperiences && remoteExperiences.length > 0) {
+        console.log("remoteExperiences", remoteExperiences);
         setExperiences(remoteExperiences);
         return remoteExperiences;
       }
@@ -113,6 +115,7 @@ export default function RightPanel(): JSX.Element {
   };
 
   const runClaimsCheck = async (experiences: Experience[]): Promise<void> => {
+    console.log("runClaimsCheck", experiences);
     setIsLoading(true);
     try {
       // run all claim libraries

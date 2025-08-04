@@ -14,9 +14,11 @@ import { Text } from "@adobe/react-spectrum";
 import { register } from "@adobe/uix-guest";
 import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
 import {
+  App,
   AppMetadata,
   Experience,
   ExtensionRegistrationService,
+  Toggle,
 } from "@adobe/genstudio-extensibility-sdk";
 import React from "react";
 import { setSelectedExperienceId } from "../utils/experienceBridge";
@@ -39,7 +41,7 @@ interface DialogItem {
 }
 
 const getAppMetadata = (appExtensionId: string): AppMetadata => ({
-  id: extensionId,
+  id: appExtensionId,
   label: extensionLabel,
   iconDataUri: ICON_DATA_URI,
   supportedChannels: [
@@ -48,7 +50,12 @@ const getAppMetadata = (appExtensionId: string): AppMetadata => ({
       name: "Email",
     },
   ],
-  extensionId: appExtensionId,
+  extensionId: "deprecated",
+  options: {
+    validation: {
+      singleExperienceViewMode: true,
+    }
+  }
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
@@ -56,28 +63,24 @@ const ExtensionRegistration = (): React.JSX.Element => {
     const guestConnection = await register({
       id: extensionId,
       methods: {
-        createAddOnBar: {
-          addToggle: async (appExtensionId: string): Promise<ToggleItem[]> => {
+        validationExtension: {
+          getToggles: async (id: string): Promise<Toggle[]> => {
             return [
               {
-                appMetaData: getAppMetadata(appExtensionId),
+                metadata: getAppMetadata(id),
                 onClick: async () => {
-                  await ExtensionRegistrationService.openCreateAddOnBar(
-                    guestConnection,
-                    appExtensionId
-                  );
+                  // @ts-ignore
+                  // TODO: add to sdk
+                  await guestConnection.host.api.validationExtension.open(id);
                 },
               },
             ];
           },
-        },
-        createRightPanel: {
-          addPanel(appExtensionId: string): PanelItem[] {
+          getApps(id: string): App[] {
             return [
               {
-                id: `${appExtensionId}`,
                 url: "#/right-panel",
-                extensionId: appExtensionId,
+                metadata: getAppMetadata(id),
               },
             ];
           },
