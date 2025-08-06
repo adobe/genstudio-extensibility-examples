@@ -13,24 +13,10 @@ governing permissions and limitations under the License.
 import { Text } from "@adobe/react-spectrum";
 import { register } from "@adobe/uix-guest";
 import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
-import {
-  AppMetadata,
-  ExtensionRegistrationService,
-} from "@adobe/genstudio-extensibility-sdk";
+import { AppMetadata } from "@adobe/genstudio-extensibility-sdk";
 import React from "react";
 import { App, Toggle } from "@adobe/genstudio-extensibility-sdk";
 import { Key } from "react";
-
-// interface ToggleItem {
-//   appMetaData: App;
-//   onClick: () => Promise<void>;
-// }
-
-// interface PanelItem {
-//   id: string;
-//   url: string;
-//   extensionId: string;
-// }
 
 const getAppMetadata = (id: Key): AppMetadata => ({
   id: id.toString(),
@@ -45,10 +31,9 @@ const getAppMetadata = (id: Key): AppMetadata => ({
   extensionId: "deprecated",
   options: {
     validation: {
-      singleExperienceViewMode: true,
-      autoOpenApp: true,
-    }
-  }
+      // autoOpenApp: true,
+    },
+  },
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {

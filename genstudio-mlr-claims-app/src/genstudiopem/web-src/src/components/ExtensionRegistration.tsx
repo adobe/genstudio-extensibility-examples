@@ -16,11 +16,10 @@ import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
 import {
   App,
   AppMetadata,
-  Experience,
   ExtensionRegistrationService,
   Toggle,
 } from "@adobe/genstudio-extensibility-sdk";
-import React from "react";
+import React, { Key } from "react";
 import { setSelectedExperienceId } from "../utils/experienceBridge";
 
 interface ToggleItem {
@@ -40,8 +39,8 @@ interface DialogItem {
   extensionId: string;
 }
 
-const getAppMetadata = (appExtensionId: string): AppMetadata => ({
-  id: appExtensionId,
+const getAppMetadata = (id: Key): AppMetadata => ({
+  id: id.toString(),
   label: extensionLabel,
   iconDataUri: ICON_DATA_URI,
   supportedChannels: [
@@ -54,8 +53,9 @@ const getAppMetadata = (appExtensionId: string): AppMetadata => ({
   options: {
     validation: {
       singleExperienceViewMode: true,
-    }
-  }
+      // autoOpenApp: true,
+    },
+  },
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
