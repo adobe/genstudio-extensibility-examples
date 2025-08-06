@@ -22,17 +22,6 @@ import {
 import React, { Key } from "react";
 import { setSelectedExperienceId } from "../utils/experienceBridge";
 
-interface ToggleItem {
-  appMetaData: AppMetadata;
-  onClick: () => Promise<void>;
-}
-
-interface PanelItem {
-  id: string;
-  url: string;
-  extensionId: string;
-}
-
 interface DialogItem {
   id: string;
   url: string;
@@ -53,7 +42,7 @@ const getAppMetadata = (id: Key): AppMetadata => ({
   options: {
     validation: {
       singleExperienceViewMode: true,
-      // autoOpenApp: true,
+      autoOpenApp: true,
     },
   },
 });
@@ -79,8 +68,8 @@ const ExtensionRegistration = (): React.JSX.Element => {
           getApps(id: string): App[] {
             return [
               {
-                url: "#/right-panel",
                 metadata: getAppMetadata(id),
+                url: "#/right-panel",
               },
             ];
           },
@@ -90,30 +79,24 @@ const ExtensionRegistration = (): React.JSX.Element => {
             setSelectedExperienceId(experienceId);
           },
         },
-        createContextAddOns: {
-          addContextAddOn: async (
-            appExtensionId: string
-          ): Promise<ToggleItem[]> => {
+        promptExtension: {
+          getToggles: async (id: string): Promise<Toggle[]> => {
             return [
               {
-                appMetaData: getAppMetadata(appExtensionId),
+                metadata: getAppMetadata(id),
                 onClick: async () => {
-                  await ExtensionRegistrationService.openAddContextAddOnBar(
-                    guestConnection,
-                    appExtensionId
-                  );
+                  // @ts-ignore
+                  // TODO: add to sdk
+                  await guestConnection.host.api.promptExtension.open(id);
                 },
               },
             ];
           },
-        },
-        createCanvasDialog: {
-          addDialog(appExtensionId: string): DialogItem[] {
+          getApps(id: string): App[] {
             return [
               {
-                id: `${appExtensionId}`,
+                metadata: getAppMetadata(id),
                 url: "#/additional-context-dialog",
-                extensionId: appExtensionId,
               },
             ];
           },
