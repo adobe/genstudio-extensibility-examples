@@ -14,23 +14,13 @@ import { Text } from "@adobe/react-spectrum";
 import { register } from "@adobe/uix-guest";
 import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
 import {
-  AppMetaData,
-  Experience,
+  App,
+  AppMetadata,
   ExtensionRegistrationService,
+  Toggle,
 } from "@adobe/genstudio-extensibility-sdk";
-import React from "react";
+import React, { Key } from "react";
 import { setSelectedExperienceId } from "../utils/experienceBridge";
-
-interface ToggleItem {
-  appMetaData: AppMetaData;
-  onClick: () => Promise<void>;
-}
-
-interface PanelItem {
-  id: string;
-  url: string;
-  extensionId: string;
-}
 
 interface DialogItem {
   id: string;
@@ -38,8 +28,8 @@ interface DialogItem {
   extensionId: string;
 }
 
-const getAppMetadata = (appExtensionId: string): AppMetaData => ({
-  id: extensionId,
+const getAppMetadata = (id: Key): AppMetadata => ({
+  id: id.toString(),
   label: extensionLabel,
   iconDataUri: ICON_DATA_URI,
   supportedChannels: [
@@ -48,7 +38,13 @@ const getAppMetadata = (appExtensionId: string): AppMetaData => ({
       name: "Email",
     },
   ],
-  extensionId: appExtensionId,
+  extensionId: "deprecated",
+  options: {
+    validation: {
+      singleExperienceViewMode: true,
+      autoOpenApp: true,
+    },
+  },
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
@@ -56,28 +52,24 @@ const ExtensionRegistration = (): React.JSX.Element => {
     const guestConnection = await register({
       id: extensionId,
       methods: {
-        createAddOnBar: {
-          addToggle: async (appExtensionId: string): Promise<ToggleItem[]> => {
+        validationExtension: {
+          getToggles: async (id: string): Promise<Toggle[]> => {
             return [
               {
-                appMetaData: getAppMetadata(appExtensionId),
+                metadata: getAppMetadata(id),
                 onClick: async () => {
-                  await ExtensionRegistrationService.openCreateAddOnBar(
-                    guestConnection,
-                    appExtensionId
-                  );
+                  // @ts-ignore
+                  // TODO: add to sdk
+                  await guestConnection.host.api.validationExtension.open(id);
                 },
               },
             ];
           },
-        },
-        createRightPanel: {
-          addPanel(appExtensionId: string): PanelItem[] {
+          getApps(id: string): App[] {
             return [
               {
-                id: `${appExtensionId}`,
+                metadata: getAppMetadata(id),
                 url: "#/right-panel",
-                extensionId: appExtensionId,
               },
             ];
           },
@@ -87,30 +79,24 @@ const ExtensionRegistration = (): React.JSX.Element => {
             setSelectedExperienceId(experienceId);
           },
         },
-        createContextAddOns: {
-          addContextAddOn: async (
-            appExtensionId: string
-          ): Promise<ToggleItem[]> => {
+        promptExtension: {
+          getToggles: async (id: string): Promise<Toggle[]> => {
             return [
               {
-                appMetaData: getAppMetadata(appExtensionId),
+                metadata: getAppMetadata(id),
                 onClick: async () => {
-                  await ExtensionRegistrationService.openAddContextAddOnBar(
-                    guestConnection,
-                    appExtensionId
-                  );
+                  // @ts-ignore
+                  // TODO: add to sdk
+                  await guestConnection.host.api.promptExtension.open(id);
                 },
               },
             ];
           },
-        },
-        createCanvasDialog: {
-          addDialog(appExtensionId: string): DialogItem[] {
+          getApps(id: string): App[] {
             return [
               {
-                id: `${appExtensionId}`,
+                metadata: getAppMetadata(id),
                 url: "#/additional-context-dialog",
-                extensionId: appExtensionId,
               },
             ];
           },

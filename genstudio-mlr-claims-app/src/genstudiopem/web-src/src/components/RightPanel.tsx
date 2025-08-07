@@ -10,7 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Experience, ExperienceService } from "@adobe/genstudio-extensibility-sdk";
+import {
+  Experience,
+  ValidationService,
+} from "@adobe/genstudio-extensibility-sdk";
 import {
   Button,
   Divider,
@@ -80,6 +83,7 @@ export default function RightPanel(): JSX.Element {
   }, [experiences]);
 
   const handleRunClaimsCheck = async () => {
+    console.log("handleRunClaimsCheck", selectedExperienceIndex);
     if (selectedExperienceIndex === null) return;
     // setState is async so we need the result from getExperience directly
     const newExperiences = await syncExperiences();
@@ -99,10 +103,11 @@ export default function RightPanel(): JSX.Element {
     setIsSyncing(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const remoteExperiences = await ExperienceService.getExperiences(
+      const remoteExperiences = await ValidationService.getExperiences(
         guestConnection
       );
       if (remoteExperiences && remoteExperiences.length > 0) {
+        console.log("remoteExperiences", remoteExperiences);
         setExperiences(remoteExperiences);
         return remoteExperiences;
       }
@@ -113,6 +118,7 @@ export default function RightPanel(): JSX.Element {
   };
 
   const runClaimsCheck = async (experiences: Experience[]): Promise<void> => {
+    console.log("runClaimsCheck", experiences);
     setIsLoading(true);
     try {
       // run all claim libraries
@@ -216,6 +222,17 @@ export default function RightPanel(): JSX.Element {
                          host app will render a experience selector at the top of the right panel
           {renderExperiencePicker()} */}
           {renderRunClaimsCheckButton()}
+          <Button
+            variant="primary"
+            onPress={async () => {
+              const context = await ValidationService.getGenerationContext(
+                guestConnection
+              );
+              console.log("===x getGenerationContext", context);
+            }}
+          >
+            Get Experiences
+          </Button>
         </Flex>
       </Flex>
       {(isLoading || claimsResults) && <Divider size="S" />}
