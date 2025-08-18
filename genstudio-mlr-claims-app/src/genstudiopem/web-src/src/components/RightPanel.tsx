@@ -222,17 +222,6 @@ export default function RightPanel(): JSX.Element {
                          host app will render a experience selector at the top of the right panel
           {renderExperiencePicker()} */}
           {renderRunClaimsCheckButton()}
-          <Button
-            variant="primary"
-            onPress={async () => {
-              const context = await ValidationService.getGenerationContext(
-                guestConnection
-              );
-              console.log("===x getGenerationContext", context);
-            }}
-          >
-            Get Experiences
-          </Button>
         </Flex>
       </Flex>
       {(isLoading || claimsResults) && <Divider size="S" />}
