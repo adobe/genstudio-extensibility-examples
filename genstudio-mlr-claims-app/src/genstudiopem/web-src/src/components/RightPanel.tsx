@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import {
   Experience,
-  ValidationService,
+  ValidationExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
 import {
   Button,
@@ -103,7 +103,7 @@ export default function RightPanel(): JSX.Element {
     setIsSyncing(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const remoteExperiences = await ValidationService.getExperiences(
+      const remoteExperiences = await ValidationExtensionService.getExperiences(
         guestConnection
       );
       if (remoteExperiences && remoteExperiences.length > 0) {

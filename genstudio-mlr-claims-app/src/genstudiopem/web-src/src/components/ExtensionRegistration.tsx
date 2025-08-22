@@ -16,7 +16,8 @@ import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
 import {
   App,
   AppMetadata,
-  ExtensionRegistrationService,
+  PromptExtensionService,
+  ValidationExtensionService,
   Toggle,
 } from "@adobe/genstudio-extensibility-sdk";
 import React, { Key } from "react";
@@ -60,7 +61,8 @@ const ExtensionRegistration = (): React.JSX.Element => {
                 onClick: async () => {
                   // @ts-ignore
                   // TODO: add to sdk
-                  await guestConnection.host.api.validationExtension.open(id);
+                  ValidationExtensionService.open(guestConnection, id);
+                  //await guestConnection.host.api.validationExtension.open(id);
                 },
               },
             ];
@@ -87,7 +89,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
                 onClick: async () => {
                   // @ts-ignore
                   // TODO: add to sdk
-                  await guestConnection.host.api.promptExtension.open(id);
+                  PromptExtensionService.open(guestConnection, id);
                 },
               },
             ];

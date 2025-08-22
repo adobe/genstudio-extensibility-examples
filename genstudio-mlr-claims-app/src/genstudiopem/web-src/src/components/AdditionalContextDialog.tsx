@@ -14,6 +14,7 @@ import {
   AdditionalContext,
   AdditionalContextTypes,
   Claim,
+  PromptExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
 import {
   Button,
@@ -52,8 +53,7 @@ export default function AdditionalContextDialog(): JSX.Element {
     );
   };
 
-  // TODO: add to sdk
-  const handleCancel = () => guestConnection.host.api.promptExtension.close();
+  const handleCancel = () => PromptExtensionService.close(guestConnection);
 
   const handleClaimSelect = async () => {
     const claimsContext: AdditionalContext<Claim> = {
@@ -61,8 +61,9 @@ export default function AdditionalContextDialog(): JSX.Element {
       additionalContextType: AdditionalContextTypes.Claims,
       additionalContextValues: selectedClaims,
     };
-    // TODO: add to sdk
-    await guestConnection.host.api.promptExtension.updateAdditionalContext(
+    
+    PromptExtensionService.updateAdditionalContext(
+      guestConnection,
       claimsContext
     );
   };
