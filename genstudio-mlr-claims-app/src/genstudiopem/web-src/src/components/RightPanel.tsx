@@ -107,7 +107,6 @@ export default function RightPanel(): JSX.Element {
         guestConnection
       );
       if (remoteExperiences && remoteExperiences.length > 0) {
-        console.log("remoteExperiences", remoteExperiences);
         setExperiences(remoteExperiences);
         return remoteExperiences;
       }

@@ -59,10 +59,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
               {
                 metadata: getAppMetadata(id),
                 onClick: async () => {
-                  // @ts-ignore
-                  // TODO: add to sdk
-                  ValidationExtensionService.open(guestConnection, id);
-                  //await guestConnection.host.api.validationExtension.open(id);
+                  ValidationExtensionService.open(guestConnection as any, id);
                 },
               },
             ];
@@ -87,9 +84,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
               {
                 metadata: getAppMetadata(id),
                 onClick: async () => {
-                  // @ts-ignore
-                  // TODO: add to sdk
-                  PromptExtensionService.open(guestConnection, id);
+                  PromptExtensionService.open(guestConnection as any, id);
                 },
               },
             ];
