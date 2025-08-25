@@ -44,6 +44,7 @@ const getAppMetadata = (id: Key): AppMetadata => ({
     validation: {
       singleExperienceViewMode: true,
       autoOpenApp: true,
+      autoRefreshApp: true,
     },
   },
 });
@@ -59,7 +60,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
               {
                 metadata: getAppMetadata(id),
                 onClick: async () => {
-                  ValidationExtensionService.open(guestConnection as any, id);
+                  ValidationExtensionService.open(guestConnection, id);
                 },
               },
             ];
