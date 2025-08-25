@@ -27,7 +27,7 @@ import {
 } from "@adobe/react-spectrum";
 import {
   Experience,
-  ValidationService,
+  ValidationExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
 import Spinner from "./Spinner";
 
@@ -55,7 +55,7 @@ export default function RightPanel(): JSX.Element {
     console.log("===x create-validation getExperience");
 
     try {
-      const remoteExperiences = await ValidationService.getExperiences(
+      const remoteExperiences = await ValidationExtensionService.getExperiences(
         guestConnection
       );
       // Add a minimum loading time of 0.5 seconds
