@@ -32,7 +32,6 @@ import {
 import Spinner from "./Spinner";
 
 export default function RightPanel(): JSX.Element {
-  console.log("===x create-validation right panel start");
   const [guestConnection, setGuestConnection] = useState<any>(null);
   const [experiences, setExperiences] = useState<Experience[] | null>(null);
   const [selectedExperienceIndex, setSelectedExperienceIndex] = useState<
@@ -52,7 +51,6 @@ export default function RightPanel(): JSX.Element {
   const getExperience = async (): Promise<void> => {
     if (!guestConnection) return;
     setIsLoading(true);
-    console.log("===x create-validation getExperience");
 
     try {
       const remoteExperiences = await ValidationExtensionService.getExperiences(
