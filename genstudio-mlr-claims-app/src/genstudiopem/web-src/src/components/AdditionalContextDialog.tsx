@@ -25,7 +25,6 @@ import {
   View,
 } from "@adobe/react-spectrum";
 import React, { useEffect, useState } from "react";
-
 import { extensionId, TEST_CLAIMS } from "../Constants";
 import { useGuestConnection, useSelectedClaimLibrary } from "../hooks";
 import { ClaimsLibraryPicker } from "./ClaimsLibraryPicker";
@@ -53,7 +52,7 @@ export default function AdditionalContextDialog(): JSX.Element {
     );
   };
 
-  const handleCancel = () => PromptExtensionService.close(guestConnection);
+  const handleCancel = () => guestConnection.host.api.promptExtension.close();
 
   const handleClaimSelect = async () => {
     const claimsContext: AdditionalContext<Claim> = {
@@ -61,7 +60,6 @@ export default function AdditionalContextDialog(): JSX.Element {
       additionalContextType: AdditionalContextTypes.Claims,
       additionalContextValues: selectedClaims,
     };
-    
     PromptExtensionService.updateAdditionalContext(
       guestConnection,
       claimsContext

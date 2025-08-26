@@ -23,12 +23,6 @@ import {
 import React, { Key } from "react";
 import { setSelectedExperienceId } from "../utils/experienceBridge";
 
-interface DialogItem {
-  id: string;
-  url: string;
-  extensionId: string;
-}
-
 const getAppMetadata = (id: Key): AppMetadata => ({
   id: id.toString(),
   label: extensionLabel,
