@@ -10,18 +10,35 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { attach } from "@adobe/uix-guest";
 import { extensionId } from "../Constants";
-import { View, Provider, defaultTheme, Button, ComboBox, Item, Heading, Text, Flex, Divider } from '@adobe/react-spectrum';
-import { Experience, ExperienceService } from '@adobe/genstudio-extensibility-sdk';
-import Spinner from './Spinner';
+import {
+  View,
+  Provider,
+  defaultTheme,
+  Button,
+  ComboBox,
+  Item,
+  Heading,
+  Text,
+  Flex,
+  Divider,
+} from "@adobe/react-spectrum";
+import {
+  Experience,
+  ValidationExtensionService,
+} from "@adobe/genstudio-extensibility-sdk";
+import Spinner from "./Spinner";
 
 export default function RightPanel(): JSX.Element {
   const [guestConnection, setGuestConnection] = useState<any>(null);
   const [experiences, setExperiences] = useState<Experience[] | null>(null);
-  const [selectedExperienceIndex, setSelectedExperienceIndex] = useState<number | null>(null);
-  const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
+  const [selectedExperienceIndex, setSelectedExperienceIndex] = useState<
+    number | null
+  >(null);
+  const [selectedExperience, setSelectedExperience] =
+    useState<Experience | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -34,11 +51,13 @@ export default function RightPanel(): JSX.Element {
   const getExperience = async (): Promise<void> => {
     if (!guestConnection) return;
     setIsLoading(true);
-    
+
     try {
-      const remoteExperiences = await ExperienceService.getExperiences(guestConnection);
+      const remoteExperiences = await ValidationExtensionService.getExperiences(
+        guestConnection
+      );
       // Add a minimum loading time of 0.5 seconds
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       setExperiences(remoteExperiences);
       setIsLoading(false);
     } catch (error) {
@@ -56,7 +75,9 @@ export default function RightPanel(): JSX.Element {
         <Heading level={4}>Fields</Heading>
         {Object.entries(experience.experienceFields).map(([key, field]) => (
           <Flex direction="column" gap="size-50" key={key}>
-            <Text><strong>{field.fieldName}</strong></Text>
+            <Text>
+              <strong>{field.fieldName}</strong>
+            </Text>
             <Text>{field.fieldValue}</Text>
           </Flex>
         ))}
@@ -74,14 +95,18 @@ export default function RightPanel(): JSX.Element {
             {experiences && experiences.length > 0 ? (
               <Flex direction="column" gap="size-200">
                 <View paddingX="size-200" paddingTop="size-200">
-                  <Flex direction="row" justifyContent="space-between" alignItems="center" marginBottom="size-100">
+                  <Flex
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    marginBottom="size-100"
+                  >
                     <Heading level={3}>Experiences</Heading>
-                    <Button 
+                    <Button
                       variant="secondary"
                       onPress={getExperience}
-                      UNSAFE_style={{ minWidth: 'auto' }}
+                      UNSAFE_style={{ minWidth: "auto" }}
                     >
-                      
                       Sync
                     </Button>
                   </Flex>
@@ -89,12 +114,14 @@ export default function RightPanel(): JSX.Element {
                 </View>
                 <View paddingX="size-200">
                   <Heading level={3}>Claims Libraries</Heading>
-                  <ComboBox 
-                    label="Select Experience to Run Claims Check" 
+                  <ComboBox
+                    label="Select Experience to Run Claims Check"
                     align="start"
-                    onSelectionChange={(key: React.Key | null) => { 
+                    onSelectionChange={(key: React.Key | null) => {
                       if (key !== null) {
-                        const index = experiences.findIndex(exp => exp.id === key);
+                        const index = experiences.findIndex(
+                          (exp) => exp.id === key
+                        );
                         if (index !== -1) {
                           setSelectedExperienceIndex(index);
                         }
@@ -102,14 +129,16 @@ export default function RightPanel(): JSX.Element {
                     }}
                   >
                     {experiences.map((experience, index) => (
-                      <Item key={experience.id}>{`Experience ${index + 1}`}</Item>
+                      <Item key={experience.id}>{`Experience ${
+                        index + 1
+                      }`}</Item>
                     ))}
                   </ComboBox>
                 </View>
 
                 {selectedExperienceIndex !== null && (
                   <View paddingX="size-200" paddingTop="size-100">
-                    <Button 
+                    <Button
                       variant="primary"
                       width="100%"
                       onPress={() => {
@@ -123,11 +152,7 @@ export default function RightPanel(): JSX.Element {
                 )}
 
                 {selectedExperience && (
-                  <View 
-                    paddingX="size-200" 
-                    paddingTop="size-200"
-                    flex="1"
-                  >
+                  <View paddingX="size-200" paddingTop="size-200" flex="1">
                     <Divider size="S" marginBottom="size-200" />
                     <Flex direction="column" width="100%">
                       {renderExperienceDetails(selectedExperience)}
@@ -137,11 +162,7 @@ export default function RightPanel(): JSX.Element {
               </Flex>
             ) : (
               <View padding="size-200">
-                <Button 
-                  variant="primary"
-                  width="100%"
-                  onPress={getExperience}
-                >
+                <Button variant="primary" width="100%" onPress={getExperience}>
                   Get Experiences
                 </Button>
               </View>

@@ -10,20 +10,20 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Experience, ExperienceService } from "@adobe/genstudio-extensibility-sdk";
+import {
+  Experience,
+  ValidationExtensionService,
+} from "@adobe/genstudio-extensibility-sdk";
 import {
   Button,
   Divider,
   Flex,
   Heading,
-  Item,
-  Picker,
   ProgressCircle,
   Text,
   View,
 } from "@adobe/react-spectrum";
-import React, { useEffect, useState, type Key } from "react";
-
+import React, { useEffect, useState } from "react";
 import { extensionId, TEST_CLAIMS } from "../Constants";
 import { useGuestConnection } from "../hooks";
 import { ClaimResults } from "../types";
@@ -31,7 +31,6 @@ import { validateClaims } from "../utils/claimsValidation";
 import ClaimsChecker from "./ClaimsChecker";
 import {
   getSelectedExperienceId,
-  setSelectedExperienceId,
   SELECTED_EXPERIENCE_ID_STORAGE_KEY,
 } from "../utils/experienceBridge";
 
@@ -40,15 +39,11 @@ export default function RightPanel(): JSX.Element {
   const [selectedExperienceIndex, setSelectedExperienceIndex] = useState<
     number | null
   >(null);
-  const [currentExperience, setCurrentExperience] = useState<Experience | null>(
-    null
-  );
   const [claimsResults, setClaimsResults] = useState<ClaimResults[] | null>(
     null
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPolling, setIsPolling] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
 
   const guestConnection = useGuestConnection(extensionId);
 
@@ -95,11 +90,8 @@ export default function RightPanel(): JSX.Element {
 
   const syncExperiences = async (): Promise<Experience[] | null> => {
     if (!guestConnection) return null;
-
-    setIsSyncing(true);
-    try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const remoteExperiences = await ExperienceService.getExperiences(
+      const remoteExperiences = await ValidationExtensionService.getExperiences(
         guestConnection
       );
       if (remoteExperiences && remoteExperiences.length > 0) {
@@ -107,9 +99,6 @@ export default function RightPanel(): JSX.Element {
         return remoteExperiences;
       }
       return null;
-    } finally {
-      setIsSyncing(false);
-    }
   };
 
   const runClaimsCheck = async (experiences: Experience[]): Promise<void> => {
@@ -147,32 +136,6 @@ export default function RightPanel(): JSX.Element {
     }
     setIsPolling(false);
   };
-
-  // (Optional) If handleSelectedExperienceChange is provided in ExtensionRegistration
-  //            host app will render a experience selector at the top of the right panel
-  //            Note that this does not control the create canvas and so selection is not sync back to the host app
-  // const handleExperienceSelection = (key: Key | null) => {
-  //   if (!key) return;
-  //   setSelectedExperienceId(key as string);
-  //   // This is called because storage event is not designed to fired on same tab
-  //   setSelectedExperienceIndex(getExperienceIndex(key as string));
-  // };
-  // const renderExperiencePicker = () => {
-  //   if (!experiences) return null;
-  //   return (
-  //     <Picker
-  //       label="Select experience"
-  //       align="start"
-  //       isDisabled={isSyncing}
-  //       selectedKey={experiences[selectedExperienceIndex ?? 0].id}
-  //       onSelectionChange={handleExperienceSelection}
-  //     >
-  //       {experiences.map((experience, index) => (
-  //         <Item key={experience.id}>{`Experience ${index + 1}`}</Item>
-  //       ))}
-  //     </Picker>
-  //   );
-  // };
 
   const renderRunClaimsCheckButton = () => {
     if (selectedExperienceIndex === null) return null;

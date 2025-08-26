@@ -14,8 +14,7 @@ import {
   AdditionalContext,
   AdditionalContextTypes,
   Claim,
-  ExtensionRegistrationService,
-  GenerationContextService,
+  PromptExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
 import {
   Button,
@@ -26,7 +25,6 @@ import {
   View,
 } from "@adobe/react-spectrum";
 import React, { useEffect, useState } from "react";
-
 import { extensionId, TEST_CLAIMS } from "../Constants";
 import { useGuestConnection, useSelectedClaimLibrary } from "../hooks";
 import { ClaimsLibraryPicker } from "./ClaimsLibraryPicker";
@@ -54,8 +52,7 @@ export default function AdditionalContextDialog(): JSX.Element {
     );
   };
 
-  const handleCancel = () =>
-    ExtensionRegistrationService.closeAddContextAddOnBar(guestConnection);
+  const handleCancel = () => guestConnection.host.api.promptExtension.close();
 
   const handleClaimSelect = async () => {
     const claimsContext: AdditionalContext<Claim> = {
@@ -63,7 +60,7 @@ export default function AdditionalContextDialog(): JSX.Element {
       additionalContextType: AdditionalContextTypes.Claims,
       additionalContextValues: selectedClaims,
     };
-    await GenerationContextService.setAdditionalContext(
+    PromptExtensionService.updateAdditionalContext(
       guestConnection,
       claimsContext
     );

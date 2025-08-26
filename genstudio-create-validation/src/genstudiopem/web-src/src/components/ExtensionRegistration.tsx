@@ -13,29 +13,27 @@ governing permissions and limitations under the License.
 import { Text } from "@adobe/react-spectrum";
 import { register } from "@adobe/uix-guest";
 import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
-import { AppMetaData, ExtensionRegistrationService } from "@adobe/genstudio-extensibility-sdk"
-import React from 'react';
+import { AppMetadata } from "@adobe/genstudio-extensibility-sdk";
+import React from "react";
+import { App, Toggle } from "@adobe/genstudio-extensibility-sdk";
+import { Key } from "react";
 
-interface ToggleItem {
-  appMetaData: AppMetaData;
-  onClick: () => Promise<void>;
-}
-
-interface PanelItem {
-  id: string;
-  url: string;
-  extensionId: string;
-}
-
-const getAppMetadata = (appExtensionId: string): AppMetaData => ({
-  id: extensionId,
+const getAppMetadata = (id: Key): AppMetadata => ({
+  id: id.toString(),
   label: extensionLabel,
   iconDataUri: ICON_DATA_URI,
-  supportedChannels: [{
-    id: "email",
-    name: "Email",
-  }],
-  extensionId: appExtensionId
+  supportedChannels: [
+    {
+      id: "email",
+      name: "Email",
+    },
+  ],
+  extensionId: "deprecated",
+  options: {
+    validation: {
+      // autoOpenApp: true,
+    },
+  },
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
@@ -43,34 +41,40 @@ const ExtensionRegistration = (): React.JSX.Element => {
     const guestConnection = await register({
       id: extensionId,
       methods: {
-        createAddOnBar: {
-          addToggle: async (appExtensionId: string): Promise<ToggleItem[]> => {
+        validationExtension: {
+          getToggles: async (id: string): Promise<Toggle[]> => {
             return [
               {
-                appMetaData: getAppMetadata(appExtensionId),
+                metadata: getAppMetadata(id),
                 onClick: async () => {
-                  await ExtensionRegistrationService.openCreateAddOnBar(guestConnection, appExtensionId);
+                  // @ts-ignore
+                  // TODO: add to sdk
+                  await guestConnection.host.api.validationExtension.open(id);
                 },
-              }]
-          }
-        },
-        createRightPanel: {
-          addPanel(appExtensionId: string): PanelItem[] {
+              },
+            ];
+          },
+          getApps(id: string): App[] {
             return [
               {
-                id: `${appExtensionId}`,
-                url: '#/right-panel',
-                extensionId: appExtensionId
-              }];
-          }
+                url: "#/right-panel",
+                metadata: getAppMetadata(id),
+              },
+            ];
+          },
         },
-      }
+      },
     });
   };
-  
+
   init().catch(console.error);
 
-  return <Text>IFrame for integration with Host (GenStudio for Performance Marketing App)...</Text>;
+  return (
+    <Text>
+      IFrame for integration with Host (GenStudio for Performance Marketing
+      App)...
+    </Text>
+  );
 };
 
-export default ExtensionRegistration; 
+export default ExtensionRegistration;
