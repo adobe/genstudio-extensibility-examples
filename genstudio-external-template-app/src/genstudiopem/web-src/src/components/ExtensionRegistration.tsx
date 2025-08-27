@@ -17,7 +17,6 @@ import { AppMetadata, Toggle, App } from "@adobe/genstudio-extensibility-sdk";
 import React, { Key } from "react";
 
 const getAppMetadata = (id: Key): AppMetadata => ({
-  // id: id.toString().includes("localhost") ? extensionId : id.toString(),
   id: id.toString(),
   label: extensionLabel,
   iconDataUri: ICON_DATA_URI,
@@ -28,12 +27,6 @@ const getAppMetadata = (id: Key): AppMetadata => ({
     },
   ],
   extensionId: "deprecated",
-  // accounts: [
-  //   {
-  //     id: '12373425',
-  //     name: 'test account'
-  //   }
-  // ]
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
@@ -41,7 +34,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
     const guestConnection = await register({
       id: extensionId,
       methods: {
-        selectTemplateExtension: {
+        importTemplateExtension: {
           getToggles: async (id: string): Promise<Toggle[]> => [
             {
               metadata: getAppMetadata(id),
