@@ -16,9 +16,7 @@ Run the script with default settings:
 
 ```bash
 export GITHUB_TOKEN=your_github_token
-node scripts/create-gh-env --env "Env Name" --file "/path to console.json" --aio-env prod
-
-# ex. node scripts/create-gh-env --env "Genstudio Engineering - workspace Production" --file /github/adobe/genstudio-uix-examples/console.json --aio-env stage
+node scripts/create-gh-env --env "Env Name" --file "/path to console.json"
 ```
 
 To get the console.json file: (or manually download from developer console)
@@ -42,15 +40,14 @@ When working with an AIO stage instance, ensure you add the environment variable
 
 The script supports the following command line arguments:
 
-| Argument          | Description                    | Default                     |
-| ----------------- | ------------------------------ | --------------------------- |
-| `--env <name>`    | GitHub environment name        | "Test Environment"          |
-| `--file <path>`   | Path to the secrets JSON file  | "./console.json"            |
-| `--token <token>` | GitHub token                   | `GITHUB_TOKEN` env variable |
-| `--owner <owner>` | Repository owner               | "adobe"                     |
-| `--repo <repo>`   | Repository name                | "genstudio-uix-examples"    |
-| `--aio-env <val>` | AIO CLI env, one of stage/prod | "prod"                      |
-| `--help`          | Show help message              | -                           |
+| Argument          | Description                   | Default                     |
+| ----------------- | ----------------------------- | --------------------------- |
+| `--env <name>`    | GitHub environment name       | "Test Environment"          |
+| `--file <path>`   | Path to the secrets JSON file | "./console.json"            |
+| `--token <token>` | GitHub token                  | `GITHUB_TOKEN` env variable |
+| `--owner <owner>` | Repository owner              | "adobe"                     |
+| `--repo <repo>`   | Repository name               | "genstudio-uix-examples"    |
+| `--help`          | Show help message             | -                           |
 
 ## Secret Mapping
 

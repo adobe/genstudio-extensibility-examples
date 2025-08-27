@@ -20,7 +20,6 @@ const DEFAULT_CONFIG = {
   environment_name: "Test Environment",
   secret_file: "./console.json",
   github_token: process.env.GITHUB_TOKEN,
-  aio_env: "prod",
 };
 
 // Parse command line arguments
@@ -39,13 +38,6 @@ function parseArgs() {
       config.owner = args[++i];
     } else if (args[i] === "--repo" && i + 1 < args.length) {
       config.repo = args[++i];
-    } else if (args[i] === "--aio-env" && i + 1 < args.length) {
-      const provided = String(args[++i]).toLowerCase();
-      if (provided !== "stage" && provided !== "prod") {
-        console.error('Error: --aio-env must be either "stage" or "prod".');
-        process.exit(1);
-      }
-      config.aio_env = provided;
     } else if (args[i] === "--help") {
       printHelp();
       process.exit(0);
@@ -73,7 +65,6 @@ Options:
   --token <token>    GitHub token (default: uses GITHUB_TOKEN env variable)
   --owner <owner>    Repository owner (default: "adobe")
   --repo <repo>      Repository name (default: "genstudio-uix-examples")
-  --aio-env <value>  AIO CLI environment: stage|prod (default: "prod")
   --help             Show this help message
   `);
 }
@@ -286,36 +277,6 @@ async function createSecret(octokit, params) {
 }
 
 /**
- * Create or update an environment variable in the GitHub environment
- * @param {Object} octokit - Octokit instance
- * @param {Object} params - Parameters for creating the variable
- * @returns {Promise<void>}
- */
-async function createEnvironmentVariable(octokit, params) {
-  const { owner, repo, environment_name, variableName, value } = params;
-
-  try {
-    await octokit.request(
-      "POST /repos/{owner}/{repo}/environments/{environment_name}/variables",
-      {
-        owner,
-        repo,
-        environment_name,
-        name: variableName,
-        value,
-        headers: { "X-GitHub-Api-Version": "2022-11-28" },
-      }
-    );
-
-    console.log(`Variable "${variableName}" set successfully.`);
-  } catch (error) {
-    throw new Error(
-      `Failed to create environment variable "${variableName}": ${error.message}`
-    );
-  }
-}
-
-/**
  * Main function that orchestrates the entire process
  */
 async function main() {
@@ -350,15 +311,6 @@ async function main() {
 
     // Get the public key for secret encryption
     const { key, keyId } = await getPublicKey(octokit, config);
-
-    // Create or update the AIO_CLI_ENV environment variable
-    await createEnvironmentVariable(octokit, {
-      owner: config.owner,
-      repo: config.repo,
-      environment_name: config.environment_name,
-      variableName: "AIO_CLI_ENV",
-      value: config.aio_env,
-    });
 
     // Create all secrets
     console.log(
