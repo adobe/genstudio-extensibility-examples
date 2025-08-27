@@ -37,8 +37,8 @@ const getAppMetadata = (id: Key): AppMetadata => ({
   options: {
     validation: {
       singleExperienceViewMode: true,
-      autoOpenApp: true,
-      autoRefreshApp: true,
+      // autoOpenApp: true,
+      // autoRefreshApp: true,
     },
   },
 });

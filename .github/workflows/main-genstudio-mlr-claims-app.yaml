@@ -13,5 +13,5 @@ jobs:
     uses: ./.github/workflows/aio-app-template.yml
     with:
       app: genstudio-mlr-claims-app
-      environment: '["Genstudio Engineering 01 - genstudio-mlr-claims-app - workspace Production", "GenStudio GA PAT04 - genstudio-mlr-claims-app - workspace Production"]'
+      environment: '["Genstudio Engineering 01 - genstudio-mlr-claims-app - workspace Production", "GenStudio GA PAT04 - genstudio-mlr-claims-app - workspace Production", "GenStudio Internal - E2E Tests - genstudio-mlr-claims-app - workspace Production"]'
     secrets: inherit
