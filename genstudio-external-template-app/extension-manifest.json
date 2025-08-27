@@ -1,0 +1,6 @@
+{
+  "name": "GenStudio External S3 DAM",
+  "id": "genstudio-external-s3-dam",
+  "description": "External S3 DAM",
+  "version": "0.0.1"
+}
