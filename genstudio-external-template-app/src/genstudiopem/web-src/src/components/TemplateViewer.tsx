@@ -20,21 +20,31 @@ import {
   Well,
 } from "@adobe/react-spectrum";
 import TemplateCard from "./TemplateCard";
-//import { useTemplateActions } from "../hooks/useTemplateActions";
+import { useAssetActions } from "../hooks/useAssetActions";
 import { DamAsset } from "../types";
 import { extensionId } from "../Constants";
 import { useGuestConnection } from "../hooks";
+
+interface Auth {
+    imsToken: string;
+    imsOrg: string;
+  }
+
 //import linkedThumbnail from "./email-template.webp";
 
 export default function TemplateViewer(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState("");
   const hasInitialLoad = useRef(false);
   const [isLoading] = useState(false);
+  const [auth, setAuth] = useState<any>(null);
   const guestConnection = useGuestConnection(extensionId);
 
   //const { templates, isLoading, fetchTemplates, error } = useTemplateActions(null);
   // at top
   const [templates, setTemplates] = useState<DamAsset[]>([]);
+  const {
+    fetchAssets,
+  } = useAssetActions(auth);
   const linkedThumbnail: string = new URL(
     "./email-template.webp",
     import.meta.url
@@ -44,34 +54,31 @@ export default function TemplateViewer(): JSX.Element {
     import.meta.url
   ).toString();
   // on mount
+
   useEffect(() => {
-    setTemplates([
-      {
-        id: "local-1",
-        name: "email-template-w_linked-image.html",
-        fileType: "HTML",
-        thumbnailUrl: linkedThumbnail,
-        url: "",
-        metadata: {},
-        dateCreated: new Date().toISOString(),
-        dateModified: new Date().toISOString(),
-      },
-      {
-        id: "local-2",
-        name: "email-template-w_linked-image-pod.html",
-        fileType: "HTML",
-        thumbnailUrl: linkedThumbnail2,
-        url: "",
-        metadata: {},
-        dateCreated: new Date().toISOString(),
-        dateModified: new Date().toISOString(),
-      },
-    ]);
+    fetchAssets();
+  }, [fetchAssets]);
+
+  useEffect(() => {
+    // 1) Show local placeholders immediately
+  setTemplates([
+    { id: "local-1", name: "email-template-w_linked-image.html", fileType: "HTML", thumbnailUrl: linkedThumbnail, url: "", metadata: {}, dateCreated: new Date().toISOString(), dateModified: new Date().toISOString() },
+    { id: "local-2", name: "email-template-w_linked-image-pod.html", fileType: "HTML", thumbnailUrl: linkedThumbnail2, url: "", metadata: {}, dateCreated: new Date().toISOString(), dateModified: new Date().toISOString() },
+  ]);
   }, []);
 
   //   useEffect(() => {
   //     fetchTemplates();
   //   }, [fetchTemplates]);
+  useEffect(() => {
+    debugger
+    const sharedAuth = guestConnection?.sharedContext.get("auth");
+    console.log("sharedAuth", sharedAuth);
+
+    if (sharedAuth) {
+      setAuth(sharedAuth);
+    }
+  }, [guestConnection]);
 
   useEffect(() => {
     if (templates.length > 0 && !hasInitialLoad.current) {
@@ -86,7 +93,7 @@ export default function TemplateViewer(): JSX.Element {
       );
 
   const renderTemplate = (template: DamAsset) => (
-    <TemplateCard key={template.id} template={template} />
+    <TemplateCard key={template.id} template={template} isSelected={false} onSelect={() => {}}/>
   );
 
   const renderAssetContent = () => {
@@ -128,7 +135,7 @@ export default function TemplateViewer(): JSX.Element {
             alignItems="center"
             gap="size-200"
           >
-            <SearchField
+           HIII <SearchField
               value={searchTerm}
               onChange={setSearchTerm}
               placeholder="Search templates"
