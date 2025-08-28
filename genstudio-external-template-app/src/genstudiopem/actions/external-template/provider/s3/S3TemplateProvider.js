@@ -17,9 +17,9 @@ const {
   HeadObjectCommand,
   GetObjectCommand,
 } = require("@aws-sdk/client-s3");
-const DamProvider = require("../DamProvider");
+const TemplateProvider = require("../TemplateProvider");
 
-class S3DamProvider extends DamProvider {
+class S3TemplateProvider extends TemplateProvider {
   constructor(params, logger) {
     super(params, logger);
     this.client = new S3Client({
@@ -46,10 +46,11 @@ class S3DamProvider extends DamProvider {
   }
 
   async searchAssets(params) {
+    debugger;
     this.logger.info("Searching assets in S3");
     const listObjectsCmd = new ListObjectsV2Command({
       Bucket: this.bucketName,
-      Prefix: 'assets/',
+      Prefix: 'templates/html',
       MaxKeys: parseInt(params.limit) || 100,
     });
     const listResult = await this.client.send(listObjectsCmd);

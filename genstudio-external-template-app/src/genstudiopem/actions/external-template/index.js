@@ -12,24 +12,25 @@ governing permissions and limitations under the License.
 
 const { Core } = require("@adobe/aio-sdk");
 const { errorResponse, ValidationError } = require("../utils");
-const S3DamProvider = require("./provider/s3/S3DamProvider");
+const S3TemplateProvider = require("./provider/s3/S3TemplateProvider");
 
 exports.main = async (params) => {
   const logger = Core.Logger("main", { level: params.LOG_LEVEL || "info" });
   const actionType = params.actionType || "search";
-  const damProvider = new S3DamProvider(params, logger);
-
+  const templateProvider = new S3TemplateProvider(params, logger);
+  
   try {
+    debugger;
     switch (actionType) {
-      case "search":
-        return await damProvider.searchAssets(params);
+      // case "search":
+      //   return await damProvider.searchAssets(params);
       case "getTemplates":
         // Alias to search for now; implement template-specific filtering in provider if needed
-        return await damProvider.getTemplateAssetUrl(params);
-      case "getUrl":
-        return await damProvider.getAssetUrl(params);
-      case "getMetadata":
-        return await damProvider.getAssetMetadata(params);
+        return await templateProvider.searchAssets(params);
+      // case "getUrl":
+      //   return await damProvider.getAssetUrl(params);
+      // case "getMetadata":
+      //   return await damProvider.getAssetMetadata(params);
       default:
         return errorResponse(
           400,

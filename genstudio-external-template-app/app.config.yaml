@@ -7,7 +7,7 @@ extensions:
           license: Apache-2.0
           actions:
             get-templates:
-              function: src/genstudiopem/actions/external-dam/index.js
+              function: src/genstudiopem/actions/external-template/index.js
               web: "yes"
               runtime: nodejs:22
               inputs:
