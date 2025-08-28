@@ -16,19 +16,12 @@ import { useState, useEffect } from "react";
 export const useGuestConnection = (extensionId: string) => {
   const [guestConnection, setGuestConnection] = useState<any>(null);
 
-  // TODO somehow it does not work here
-  // useEffect(() => {
-  //   (async () => {
-  //     console.log("===x attaching to extension", extensionId);
-  //     const connection = await attach({ id: extensionId });
-  //     console.log("===x connection", connection);
-  //     setGuestConnection(connection);
-  //   })();
-  // }, [extensionId]);
-
-  // useEffect(() => {
-  //   console.log("===x useGuestConnection guestConnection", guestConnection);
-  // }, [guestConnection]);
+  useEffect(() => {
+    (async () => {
+      const connection = await attach({ id: extensionId });
+      setGuestConnection(connection);
+    })();
+  }, []);
 
   return guestConnection;
 };

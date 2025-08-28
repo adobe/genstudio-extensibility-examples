@@ -61,14 +61,6 @@ const ExtensionRegistration = (): React.JSX.Element => {
           IFrame for integration with Host (GenStudio for Performance Marketing
           App)...Helloooo
         </Text>
-        <Button
-          variant="primary"
-          onPress={() => {
-            window.location.hash = "#/select-template-dialog";
-          }}
-        >
-          View Mock Assets
-        </Button>
       </Flex>
     </View>
   );

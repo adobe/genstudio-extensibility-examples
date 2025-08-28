@@ -11,34 +11,67 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect, useRef, useState } from "react";
-import { Flex, View, Grid, SearchField, ProgressCircle, Well } from "@adobe/react-spectrum";
+import {
+  Flex,
+  View,
+  Grid,
+  SearchField,
+  ProgressCircle,
+  Well,
+} from "@adobe/react-spectrum";
 import TemplateCard from "./TemplateCard";
 //import { useTemplateActions } from "../hooks/useTemplateActions";
 import { DamAsset } from "../types";
+import { extensionId } from "../Constants";
+import { useGuestConnection } from "../hooks";
 //import linkedThumbnail from "./email-template.webp";
-
 
 export default function TemplateViewer(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState("");
   const hasInitialLoad = useRef(false);
   const [isLoading] = useState(false);
+  const guestConnection = useGuestConnection(extensionId);
 
   //const { templates, isLoading, fetchTemplates, error } = useTemplateActions(null);
   // at top
-const [templates, setTemplates] = useState<DamAsset[]>([]);
-const linkedThumbnail: string = new URL('./email-template.webp', import.meta.url).toString();
-const linkedThumbnail2: string = new URL('./email_template_two_pod.webp', import.meta.url).toString();
-// on mount
-useEffect(() => {
+  const [templates, setTemplates] = useState<DamAsset[]>([]);
+  const linkedThumbnail: string = new URL(
+    "./email-template.webp",
+    import.meta.url
+  ).toString();
+  const linkedThumbnail2: string = new URL(
+    "./email_template_two_pod.webp",
+    import.meta.url
+  ).toString();
+  // on mount
+  useEffect(() => {
     setTemplates([
-        { id: "local-1", name: "email-template-w_linked-image.html", fileType: "HTML", thumbnailUrl: linkedThumbnail, url: "", metadata: {}, dateCreated: new Date().toISOString(), dateModified: new Date().toISOString() },
-        { id: "local-2", name: "email-template-w_linked-image-pod.html", fileType: "HTML", thumbnailUrl: linkedThumbnail2, url: "", metadata: {}, dateCreated: new Date().toISOString(), dateModified: new Date().toISOString() },
-      ]);
-}, []);
+      {
+        id: "local-1",
+        name: "email-template-w_linked-image.html",
+        fileType: "HTML",
+        thumbnailUrl: linkedThumbnail,
+        url: "",
+        metadata: {},
+        dateCreated: new Date().toISOString(),
+        dateModified: new Date().toISOString(),
+      },
+      {
+        id: "local-2",
+        name: "email-template-w_linked-image-pod.html",
+        fileType: "HTML",
+        thumbnailUrl: linkedThumbnail2,
+        url: "",
+        metadata: {},
+        dateCreated: new Date().toISOString(),
+        dateModified: new Date().toISOString(),
+      },
+    ]);
+  }, []);
 
-//   useEffect(() => {
-//     fetchTemplates();
-//   }, [fetchTemplates]);
+  //   useEffect(() => {
+  //     fetchTemplates();
+  //   }, [fetchTemplates]);
 
   useEffect(() => {
     if (templates.length > 0 && !hasInitialLoad.current) {
@@ -47,12 +80,14 @@ useEffect(() => {
   }, [templates.length]);
 
   const filtered = !searchTerm.trim()
-  ? templates
-  : templates.filter(t =>
-      (t.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    ? templates
+    : templates.filter((t) =>
+        (t.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
-  const renderTemplate = (template: DamAsset) => <TemplateCard key={template.id} template={template} />;
+  const renderTemplate = (template: DamAsset) => (
+    <TemplateCard key={template.id} template={template} />
+  );
 
   const renderAssetContent = () => {
     if (isLoading) {
@@ -68,7 +103,13 @@ useEffect(() => {
     }
 
     return (
-      <Grid columns="repeat(auto-fill, 230px)" autoRows="auto" justifyContent="center" gap="size-300" width="100%">
+      <Grid
+        columns="repeat(auto-fill, 230px)"
+        autoRows="auto"
+        justifyContent="center"
+        gap="size-300"
+        width="100%"
+      >
         {filtered.map((template: DamAsset) => renderTemplate(template))}
       </Grid>
     );
@@ -77,8 +118,16 @@ useEffect(() => {
   return (
     <View height="100%" width="100%">
       <Flex direction="column" height="100%">
-        <View UNSAFE_style={{ backgroundColor: "var(--spectrum-gray-100)" }} padding="size-300">
-          <Flex direction="row" justifyContent="center" alignItems="center" gap="size-200">
+        <View
+          UNSAFE_style={{ backgroundColor: "var(--spectrum-gray-100)" }}
+          padding="size-300"
+        >
+          <Flex
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            gap="size-200"
+          >
             <SearchField
               value={searchTerm}
               onChange={setSearchTerm}
@@ -88,12 +137,15 @@ useEffect(() => {
             />
           </Flex>
         </View>
-        <View flex={1} UNSAFE_style={{ backgroundColor: "var(--spectrum-gray-100)" }} padding="size-300" overflow="auto">
+        <View
+          flex={1}
+          UNSAFE_style={{ backgroundColor: "var(--spectrum-gray-100)" }}
+          padding="size-300"
+          overflow="auto"
+        >
           {renderAssetContent()}
         </View>
       </Flex>
     </View>
   );
 }
-
-
