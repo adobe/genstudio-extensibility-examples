@@ -22,7 +22,12 @@ const ErrorFallback = () => <Heading level={1}>Something went wrong!</Heading>;
 const App = (): React.JSX.Element => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <Provider theme={defaultTheme} colorScheme="light">
+      <Provider
+        theme={defaultTheme}
+        colorScheme="light"
+        height="100%"
+        width="100%"
+      >
         <Router>
           <Routes>
             <Route path="/" element={<ExtensionRegistration />} />
