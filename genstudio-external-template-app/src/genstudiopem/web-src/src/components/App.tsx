@@ -15,7 +15,6 @@ import { Provider, defaultTheme, Heading } from "@adobe/react-spectrum";
 import { ErrorBoundary } from "react-error-boundary";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ExtensionRegistration from "./ExtensionRegistration";
-//import AssetViewer from "./AssetViewer";
 import TemplateViewer from "./TemplateViewer";
 
 const ErrorFallback = () => <Heading level={1}>Something went wrong!</Heading>;

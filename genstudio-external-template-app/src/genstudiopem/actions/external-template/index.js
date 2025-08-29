@@ -20,17 +20,10 @@ exports.main = async (params) => {
   const templateProvider = new S3TemplateProvider(params, logger);
   
   try {
-    debugger;
+    //TODO: Add other actions like selections or search here
     switch (actionType) {
-      // case "search":
-      //   return await damProvider.searchAssets(params);
       case "getTemplates":
-        // Alias to search for now; implement template-specific filtering in provider if needed
         return await templateProvider.searchAssets(params);
-      // case "getUrl":
-      //   return await damProvider.getAssetUrl(params);
-      // case "getMetadata":
-      //   return await damProvider.getAssetMetadata(params);
       default:
         return errorResponse(
           400,

@@ -20,7 +20,7 @@ import {
   Well,
 } from "@adobe/react-spectrum";
 import TemplateCard from "./TemplateCard";
-import { useAssetActions } from "../hooks/useAssetActions";
+import { useTemplateActions } from "../hooks/useTemplateActions";
 import { DamAsset } from "../types";
 import { extensionId } from "../Constants";
 import { useGuestConnection } from "../hooks";
@@ -30,50 +30,23 @@ interface Auth {
     imsOrg: string;
   }
 
-//import linkedThumbnail from "./email-template.webp";
-
 export default function TemplateViewer(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState("");
   const hasInitialLoad = useRef(false);
   const [isLoading] = useState(false);
-  const [auth, setAuth] = useState<any>(null);
+  const [auth, setAuth] = useState<Auth | null>(null);
   const guestConnection = useGuestConnection(extensionId);
-
-  //const { templates, isLoading, fetchTemplates, error } = useTemplateActions(null);
-  // at top
-  const [templates, setTemplates] = useState<DamAsset[]>([]);
+  const [selectedTemplateIds, setSelectedTemplateIds] = useState<Set<string>>(new Set());
   const {
     assets,
-    fetchAssets,
-  } = useAssetActions(auth);
-//   const linkedThumbnail: string = new URL(
-//     "./email-template.webp",
-//     import.meta.url
-//   ).toString();
-//   const linkedThumbnail2: string = new URL(
-//     "./email_template_two_pod.webp",
-//     import.meta.url
-//   ).toString();
-  // on mount
+    fetchTemplates,
+  } = useTemplateActions(auth as unknown as any);
 
   useEffect(() => {
-    fetchAssets();
-  }, [fetchAssets]);
+    fetchTemplates();
+  }, [fetchTemplates]);
 
-  
-//   useEffect(() => {
-//     // 1) Show local placeholders immediately
-//   setTemplates([
-//     { id: "local-1", name: "email-template-w_linked-image.html", fileType: "HTML", thumbnailUrl: linkedThumbnail, url: "", metadata: {}, dateCreated: new Date().toISOString(), dateModified: new Date().toISOString() },
-//     { id: "local-2", name: "email-template-w_linked-image-pod.html", fileType: "HTML", thumbnailUrl: linkedThumbnail2, url: "", metadata: {}, dateCreated: new Date().toISOString(), dateModified: new Date().toISOString() },
-//   ]);
-//   }, []);
-
-  //   useEffect(() => {
-  //     fetchTemplates();
-  //   }, [fetchTemplates]);
   useEffect(() => {
-    debugger
     const sharedAuth = guestConnection?.sharedContext.get("auth");
     console.log("sharedAuth", sharedAuth);
 
@@ -83,24 +56,29 @@ export default function TemplateViewer(): JSX.Element {
   }, [guestConnection]);
 
   useEffect(() => {
-    if (templates.length > 0 && !hasInitialLoad.current) {
+    if (assets.length > 0 && !hasInitialLoad.current) {
       hasInitialLoad.current = true;
     }
-  }, [templates.length]);
-
-//   const filtered = !searchTerm.trim()
-//     ? templates
-//     : templates.filter((t) =>
-//         (t.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())
-//       );
+  }, [assets.length]);
     
       const filtered = !searchTerm ? assets
       : assets.filter(t => (t.name ?? "").toLowerCase().includes(searchTerm.toLowerCase()));
-  const renderTemplate = (template: DamAsset) => (
-    <TemplateCard key={template.id} template={template} isSelected={false} onSelect={() => {}}/>
-  );
 
-  const renderAssetContent = () => {
+  const handleSelect = (asset: DamAsset) => {
+    const keyId = (asset as any).templateId || asset.id;
+    // single selection: only keep the clicked key selected
+    setSelectedTemplateIds(() => new Set([keyId]));
+  };
+
+  const renderTemplate = (template: DamAsset) => {
+    const keyId = (template as any).templateId || template.id;
+    const isSelected = selectedTemplateIds.has(keyId);
+    return (
+      <TemplateCard key={keyId} template={template} isSelected={isSelected} onSelect={handleSelect}/>
+    );
+  };
+
+  const renderTemplateContent = () => {
     if (isLoading) {
       return (
         <Flex alignItems="center" justifyContent="center" height="100%">
@@ -139,7 +117,7 @@ export default function TemplateViewer(): JSX.Element {
             alignItems="center"
             gap="size-200"
           >
-           HIII <SearchField
+           <SearchField
               value={searchTerm}
               onChange={setSearchTerm}
               placeholder="Search templates"
@@ -154,7 +132,7 @@ export default function TemplateViewer(): JSX.Element {
           padding="size-300"
           overflow="auto"
         >
-          {renderAssetContent()}
+          {renderTemplateContent()}
         </View>
       </Flex>
     </View>
