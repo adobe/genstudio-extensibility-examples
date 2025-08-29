@@ -40,7 +40,7 @@ extensions:
               runtime: nodejs:22
               inputs:
                 LOG_LEVEL: debug
-                actionType: getMetadata
+                actionType: getUrl
                 S3_BUCKET_NAME: $GS_S3_BUCKET_NAME
                 AWS_REGION: $GS_AWS_REGION
                 AWS_ACCESS_KEY_ID: $GS_AWS_ACCESS_KEY_ID
