@@ -54,7 +54,10 @@ export const useAssetActions = (auth: Auth) => {
     setError(null);
   
   try {
-    debugger;
+    if(!auth){
+      return;
+      // throw new Error("Authentication not found");
+    }
     console.log("Loaded Fetch Assets.....");
     const url = actions[SEARCH_ASSETS_ACTION];
     const response = await actionWebInvoke(
@@ -64,12 +67,6 @@ export const useAssetActions = (auth: Auth) => {
       params
     );
     
-    // const response = await actionWebInvoke(
-    //   url,
-    //   imsToken,
-    //   imsOrg,
-    //   params
-    // );
     if (response && typeof response === "object" && "assets" in response) {
       const validatedAssets = (response.assets as any[]).map(asset => ({
         id: asset.id || '',

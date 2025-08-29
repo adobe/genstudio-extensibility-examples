@@ -43,29 +43,31 @@ export default function TemplateViewer(): JSX.Element {
   // at top
   const [templates, setTemplates] = useState<DamAsset[]>([]);
   const {
+    assets,
     fetchAssets,
   } = useAssetActions(auth);
-  const linkedThumbnail: string = new URL(
-    "./email-template.webp",
-    import.meta.url
-  ).toString();
-  const linkedThumbnail2: string = new URL(
-    "./email_template_two_pod.webp",
-    import.meta.url
-  ).toString();
+//   const linkedThumbnail: string = new URL(
+//     "./email-template.webp",
+//     import.meta.url
+//   ).toString();
+//   const linkedThumbnail2: string = new URL(
+//     "./email_template_two_pod.webp",
+//     import.meta.url
+//   ).toString();
   // on mount
 
   useEffect(() => {
     fetchAssets();
   }, [fetchAssets]);
 
-  useEffect(() => {
-    // 1) Show local placeholders immediately
-  setTemplates([
-    { id: "local-1", name: "email-template-w_linked-image.html", fileType: "HTML", thumbnailUrl: linkedThumbnail, url: "", metadata: {}, dateCreated: new Date().toISOString(), dateModified: new Date().toISOString() },
-    { id: "local-2", name: "email-template-w_linked-image-pod.html", fileType: "HTML", thumbnailUrl: linkedThumbnail2, url: "", metadata: {}, dateCreated: new Date().toISOString(), dateModified: new Date().toISOString() },
-  ]);
-  }, []);
+  
+//   useEffect(() => {
+//     // 1) Show local placeholders immediately
+//   setTemplates([
+//     { id: "local-1", name: "email-template-w_linked-image.html", fileType: "HTML", thumbnailUrl: linkedThumbnail, url: "", metadata: {}, dateCreated: new Date().toISOString(), dateModified: new Date().toISOString() },
+//     { id: "local-2", name: "email-template-w_linked-image-pod.html", fileType: "HTML", thumbnailUrl: linkedThumbnail2, url: "", metadata: {}, dateCreated: new Date().toISOString(), dateModified: new Date().toISOString() },
+//   ]);
+//   }, []);
 
   //   useEffect(() => {
   //     fetchTemplates();
@@ -86,12 +88,14 @@ export default function TemplateViewer(): JSX.Element {
     }
   }, [templates.length]);
 
-  const filtered = !searchTerm.trim()
-    ? templates
-    : templates.filter((t) =>
-        (t.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())
-      );
-
+//   const filtered = !searchTerm.trim()
+//     ? templates
+//     : templates.filter((t) =>
+//         (t.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+//       );
+    
+      const filtered = !searchTerm ? assets
+      : assets.filter(t => (t.name ?? "").toLowerCase().includes(searchTerm.toLowerCase()));
   const renderTemplate = (template: DamAsset) => (
     <TemplateCard key={template.id} template={template} isSelected={false} onSelect={() => {}}/>
   );

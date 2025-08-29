@@ -136,4 +136,4 @@ class S3TemplateProvider extends TemplateProvider {
   }
 }
 
-module.exports = S3DamProvider;
+module.exports = S3TemplateProvider;
