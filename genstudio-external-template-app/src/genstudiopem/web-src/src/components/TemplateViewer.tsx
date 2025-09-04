@@ -14,16 +14,17 @@ import React, { useEffect, useState } from "react";
 import {
   Flex,
   View,
-  Grid,
   SearchField,
   ProgressCircle,
   Well,
+  Grid,
 } from "@adobe/react-spectrum";
 import TemplateCard from "./TemplateCard";
 import { useTemplateActions } from "../hooks/useTemplateActions";
 import { Template } from "@adobe/genstudio-extensibility-sdk";
 import { extensionId } from "../Constants";
 import { useGuestConnection } from "../hooks";
+import { CardView } from "@react-spectrum/s2";
 
 interface Auth {
     imsToken: string;
@@ -34,7 +35,7 @@ export default function TemplateViewer(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState("");
   const [auth, setAuth] = useState<Auth | null>(null);
   const guestConnection = useGuestConnection(extensionId);
-  const [selectedTemplateIds, setSelectedTemplateIds] = useState<Set<string>>(new Set());
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const {
     templates,
     fetchTemplates,
@@ -58,18 +59,14 @@ export default function TemplateViewer(): JSX.Element {
       const filteredTemplates = !searchTerm ? templates
       : templates.filter(t => (t.title ?? "").toLowerCase().includes(searchTerm.toLowerCase()));
 
-  const handleSelect = (template: Template) => {
-    const keyId = (template as any).templateId || template.id;
-    // single selection: only keep the clicked key selected
-    setSelectedTemplateIds(() => new Set([keyId]));
+  const handleSelect = (t: Template) => {
+    setSelectedTemplate(prev => (prev?.id === t.id ? null : t));
   };
 
   const renderTemplate = (template: Template) => {
-    const keyId = (template as any).templateId || template.id;
-    const isSelected = selectedTemplateIds.has(keyId);
-    return (
-      <TemplateCard key={keyId} template={template} isSelected={isSelected} onSelect={handleSelect}/>
-    );
+    const isSelected = selectedTemplate?.id === template.id;
+
+    return <TemplateCard key={template.id} template={template} isSelected={isSelected} onSelect={handleSelect} />
   };
 
   const renderTemplateContent = () => {
