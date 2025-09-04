@@ -1,7 +1,7 @@
 # GenStudio External Template App
 
-This is an App Builder App that creates a GS Add-On to add an external DAM for selecting assets for experience creation in GenStudio.
-The external DAM is just an S3 bucket.
+This is an App Builder App that creates a GS Add-On to add an external source for selecting templates for experience creation in GenStudio.
+The external source for this app is just an S3 bucket.
 
 To run this app, you need to have the following:
 - S3 bucket
