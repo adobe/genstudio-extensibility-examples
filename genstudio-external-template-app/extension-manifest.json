@@ -1,6 +1,6 @@
 {
-  "name": "GenStudio External S3 DAM",
-  "id": "genstudio-external-s3-dam",
-  "description": "External S3 DAM",
+  "name": "GenStudio External Template App",
+  "id": "genstudio-external-template-app",
+  "description": "External Template App",
   "version": "0.0.1"
 }

@@ -9,36 +9,14 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import { Template as TemplateType } from "@adobe/genstudio-extensibility-sdk";
 
-// // New types for DAM
-export type DamAsset = {
-  id: string;
-  name: string;
-  fileType: string;
-  thumbnailUrl: string;
-  url: string;
-  metadata: any;
-  dateCreated: string;
-  dateModified: string;
+export type Template = TemplateType & {
+  thumbnailUrl?: string
 };
-
-// export interface AssetMetadata {
-//   size: number;
-//   width?: number;
-//   height?: number;
-//   description?: string;
-//   keywords?: string[];
-//   [key: string]: any;
-// }
-
-export interface AssetSearchParams {
+export interface TemplateSearchParams {
   query?: string;
-  fileTypes?: string[];
-  tags?: string[];
-  dateRange?: {
-    from?: string;
-    to?: string;
-  };
+  fileType?: string;
   limit?: number;
   offset?: number;
 }

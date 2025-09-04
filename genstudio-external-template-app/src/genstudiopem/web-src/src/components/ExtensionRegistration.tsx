@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Text, Button, Flex, View } from "@adobe/react-spectrum";
+import { Text, Flex, View } from "@adobe/react-spectrum";
 import { register } from "@adobe/uix-guest";
 import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
 import { AppMetadata, Toggle, App } from "@adobe/genstudio-extensibility-sdk";
@@ -26,7 +26,7 @@ const getAppMetadata = (id: Key): AppMetadata => ({
       name: "Email",
     },
   ],
-  extensionId: "deprecated",
+  extensionId: "deprecated", // TODO: remove this once updated to SDK as optional
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
@@ -59,7 +59,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
       <Flex direction="column" gap="size-200">
         <Text>
           IFrame for integration with Host (GenStudio for Performance Marketing
-          App)...Helloooo
+          App)
         </Text>
       </Flex>
     </View>

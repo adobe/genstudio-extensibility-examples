@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Flex,
   View,
@@ -21,7 +21,7 @@ import {
 } from "@adobe/react-spectrum";
 import TemplateCard from "./TemplateCard";
 import { useTemplateActions } from "../hooks/useTemplateActions";
-import { DamAsset } from "../types";
+import { Template } from "@adobe/genstudio-extensibility-sdk";
 import { extensionId } from "../Constants";
 import { useGuestConnection } from "../hooks";
 
@@ -32,45 +32,39 @@ interface Auth {
 
 export default function TemplateViewer(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState("");
-  const hasInitialLoad = useRef(false);
-  const [isLoading] = useState(false);
   const [auth, setAuth] = useState<Auth | null>(null);
   const guestConnection = useGuestConnection(extensionId);
   const [selectedTemplateIds, setSelectedTemplateIds] = useState<Set<string>>(new Set());
   const {
-    assets,
+    templates,
     fetchTemplates,
-  } = useTemplateActions(auth as unknown as any);
+    isLoading
+  } = useTemplateActions(auth as Auth);
 
   useEffect(() => {
-    fetchTemplates();
-  }, [fetchTemplates]);
+    if (auth) {
+      fetchTemplates();
+    }
+  }, [auth]);
 
   useEffect(() => {
     const sharedAuth = guestConnection?.sharedContext.get("auth");
-    console.log("sharedAuth", sharedAuth);
 
     if (sharedAuth) {
       setAuth(sharedAuth);
     }
   }, [guestConnection]);
-
-  useEffect(() => {
-    if (assets.length > 0 && !hasInitialLoad.current) {
-      hasInitialLoad.current = true;
-    }
-  }, [assets.length]);
     
-      const filtered = !searchTerm ? assets
-      : assets.filter(t => (t.name ?? "").toLowerCase().includes(searchTerm.toLowerCase()));
+      const filteredTemplates = !searchTerm ? templates
+      : templates.filter(t => (t.title ?? "").toLowerCase().includes(searchTerm.toLowerCase()));
 
-  const handleSelect = (asset: DamAsset) => {
-    const keyId = (asset as any).templateId || asset.id;
+  const handleSelect = (template: Template) => {
+    const keyId = (template as any).templateId || template.id;
     // single selection: only keep the clicked key selected
     setSelectedTemplateIds(() => new Set([keyId]));
   };
 
-  const renderTemplate = (template: DamAsset) => {
+  const renderTemplate = (template: Template) => {
     const keyId = (template as any).templateId || template.id;
     const isSelected = selectedTemplateIds.has(keyId);
     return (
@@ -87,7 +81,7 @@ export default function TemplateViewer(): JSX.Element {
       );
     }
 
-    if (filtered.length === 0) {
+    if (filteredTemplates.length === 0) {
       return <Well>No templates found.</Well>;
     }
 
@@ -99,7 +93,7 @@ export default function TemplateViewer(): JSX.Element {
         gap="size-300"
         width="100%"
       >
-        {filtered.map((template: DamAsset) => renderTemplate(template))}
+        {filteredTemplates.map((template: Template) => renderTemplate(template))}
       </Grid>
     );
   };

@@ -40,24 +40,36 @@ class S3TemplateProvider extends TemplateProvider {
     return await getSignedUrl(this.client, getObjCmd, { expiresIn: 3600 });
   }
 
-  async getThumbnailUrl(key) {
-    const thumbnailKey = "thumbnails/" + key.replace('assets/', '').replace(/\.[^/.]+$/, ".jpg");
-    return await this.getS3PresignedUrl(thumbnailKey);
+  async getThumbnailsMap() {
+    const list = await this.client.send(new ListObjectsV2Command({
+      Bucket: this.bucketName,
+      Prefix: 'templates/thumbnails',
+      MaxKeys: 1000
+    }));
+    const out = {};
+    for (const obj of (list.Contents || [])) {
+      if (!obj.Key || obj.Key.endsWith('/')) continue;
+      const file = obj.Key.split('/').pop();
+      if (!file) continue;
+      const base = file.replace(/\.[^/.]+$/, '').toLowerCase();
+      out[base] = await this.getS3PresignedUrl(obj.Key);
+    }
+    return out;
   }
 
   async searchAssets(params) {
-    debugger;
     this.logger.info("Searching assets in S3");
-    const listObjectsCmd = new ListObjectsV2Command({
+    const listHTMLObjectsCmd = new ListObjectsV2Command({
       Bucket: this.bucketName,
       Prefix: 'templates/html',
       MaxKeys: parseInt(params.limit) || 100,
     });
-    const listResult = await this.client.send(listObjectsCmd);
-    this.logger.info(`Found ${listResult?.Contents?.length || 0} assets in S3`);
+    const listHTMLResult = await this.client.send(listHTMLObjectsCmd);
+    const thumbnailsByName = await this.getThumbnailsMap();
+    this.logger.info(`Found ${listHTMLResult?.Contents?.length || 0} HTML templates in S3`);
 
-    const assets = (await Promise.all(
-      listResult?.Contents?.map(async (item) => {
+    const templates = (await Promise.all(
+      listHTMLResult?.Contents?.map(async (item) => {
         if (item.Key.endsWith('/')) return null;
         const headObjCmd = new HeadObjectCommand({
           Bucket: this.bucketName,
@@ -66,34 +78,30 @@ class S3TemplateProvider extends TemplateProvider {
         try {
           const metadata = await this.client.send(headObjCmd);
           const originalUrl = await this.getS3PresignedUrl(item.Key);
-          const thumbnailUrl = await this.getThumbnailUrl(item.Key);
+          const base = (item.Key.split('/').pop() || '').replace(/\.[^/.]+$/, '').toLowerCase();
+          const thumbnailUrl = thumbnailsByName[base];
           return {
             id: item.Key,
-            name: item.Key.split("/").pop() || "Unknown",
-            fileType: item.Key.split(".").pop()?.toUpperCase() || "UNKNOWN",
-            size: item.Size,
-            thumbnailUrl: thumbnailUrl,
+            title: item.Key.split('/').pop() || 'Unknown',
+            thumbnailUrl,
             url: originalUrl,
-            dateCreated: item.LastModified?.toISOString() || new Date().toISOString(),
-            dateModified: item.LastModified?.toISOString() || new Date().toISOString(),
-            metadata: {
+            mapping: {
               contentType: metadata.ContentType,
               size: item.Size,
               ...metadata.Metadata,
             },
           };
         } catch (error) {
-          this.logger.error(`Error getting metadata for asset ${item.Key}: ${error}`);
+          this.logger.error(`Error getting metadata for template ${item.Key}: ${error}`);
           return null;
         }
       })
-    )).filter(asset => asset !== null);
+    )).filter(template => template !== null);
 
     return {
       statusCode: 200,
       body: { 
-        assets: assets,
-        availableFileTypes: [...new Set(assets.map(asset => asset.fileType).filter(type => type && type !== 'UNKNOWN'))].sort()
+        templates: templates
       },
     };
   }

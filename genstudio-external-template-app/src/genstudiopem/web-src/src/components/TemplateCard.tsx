@@ -11,13 +11,13 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState } from "react";
-import { View, Image, Text } from "@adobe/react-spectrum";
-import { DamAsset } from "../types";
+import { View, Image, Text, Heading, Content } from "@adobe/react-spectrum";
+import { Template } from "@adobe/genstudio-extensibility-sdk";
 
 interface TemplateCardProps {
-    template: DamAsset;
+    template: Template;
     isSelected: boolean;
-    onSelect: (asset: DamAsset) => void;
+    onSelect: (template: Template) => void;
 }
 
 export default function TemplateCard({ template, isSelected, onSelect }: TemplateCardProps): JSX.Element {
@@ -62,41 +62,12 @@ export default function TemplateCard({ template, isSelected, onSelect }: Templat
       >
         <Image
           src={template.thumbnailUrl}
-          alt={template.name}
+          alt={template.title}
           objectFit="contain"
           width="100%"
           height="100%"
           UNSAFE_style={{ backgroundColor: "#F2F4F5" }}
         />
-
-        <View
-          position="absolute"
-          right="size-100"
-          bottom="size-100"
-          padding="size-50"
-          borderRadius="small"
-          UNSAFE_style={{
-            backgroundColor: "rgba(0, 0, 0, 0.40)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          <Text
-            UNSAFE_style={{
-              color: "var(--spectrum-global-color-gray-50)",
-              textAlign: "center",
-              fontFamily: "var(--spectrum-global-font-family-base)",
-              fontSize: "var(--spectrum-global-dimension-font-size-75)",
-              fontStyle: "normal",
-              fontWeight: "400",
-              lineHeight: "130%",
-              textTransform: "uppercase"
-            }}
-          >
-            {template.fileType}
-          </Text>
-        </View>
 
         {(isHovered || isSelected) && (
           <div
@@ -193,7 +164,7 @@ export default function TemplateCard({ template, isSelected, onSelect }: Templat
             width: "100%"
           }}
         >
-          {template.name}
+          {template.title}
         </Text>
       </View>
     </div>
