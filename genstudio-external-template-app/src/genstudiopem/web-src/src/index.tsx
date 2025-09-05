@@ -16,6 +16,7 @@ import { createRoot } from "react-dom/client";
 
 import App from "./components/App";
 import "./index.css";
+import { Provider as S2Provider } from "@react-spectrum/s2";
 
 const container = document.getElementById("root");
 if (!container) {
@@ -23,4 +24,4 @@ if (!container) {
 }
 
 const root = createRoot(container);
-root.render(<App />);
+root.render(<S2Provider><App /></S2Provider>);

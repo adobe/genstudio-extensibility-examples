@@ -11,9 +11,12 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState } from "react";
-import { View, Image, Text, Heading, Content } from "@adobe/react-spectrum";
+import { Image } from "@adobe/react-spectrum";
 import { Template } from "@adobe/genstudio-extensibility-sdk";
-import { Card, Content as CardContent, CardPreview } from "@react-spectrum/s2";
+import { Card, Content as CardContent, CardPreview, Text } from "@react-spectrum/s2";
+import {
+  style as styleMacro
+} from "@react-spectrum/s2/style" with { type: "macro" };
 
 interface TemplateCardProps {
     template: Template;
@@ -21,146 +24,34 @@ interface TemplateCardProps {
     onSelect: (template: Template) => void;
 }
 
-export default function TemplateCard({ template, isSelected, onSelect }: TemplateCardProps): JSX.Element {
-
-  const cardStyles: React.CSSProperties = {
-    cursor: "pointer",
-    position: "relative",
-    width: "230px",
-    height: "241px",
-    borderRadius: "var(--spectrum-global-dimension-size-50)",
-    backgroundColor: "var(--spectrum-global-color-gray-50)",
-    overflow: "hidden",
-    transition: "box-shadow 0.2s ease-out",
-    transform: "translateZ(0)",
-    willChange: "box-shadow",
-    border: isSelected ? "2px solid var(--spectrum-global-color-gray-900)" : "2px solid transparent",
-    margin: "0px",
-    boxShadow: isSelected
-      ? "0px 4px 12px rgba(0, 0, 0, 0.15), 0px 1px 3px rgba(0, 0, 0, 0.1)"
-      : "0px 1px 3px rgba(0, 0, 0, 0.1)"
-  };
+export default function TemplateCard({template}: TemplateCardProps): JSX.Element {
+  const imageStyles = styleMacro({
+    width: "full",
+    pointerEvents: "none",
+    aspectRatio:"5/9",
+    objectFit: "contain",
+    backgroundColor: "gray-200",
+  });
 
   return (
-    <div
-    onClick={() => onSelect(template)}
-    style={cardStyles}
-  >
-    <View
-      position="relative"
-      height="192px"
-      width="100%"
-      overflow="hidden"
-      backgroundColor="gray-100"
-    >
-      <Image
-        src={template.thumbnailUrl}
-        alt={template.title}
-        objectFit="contain"
-        width="100%"
-        height="100%"
-        UNSAFE_style={{ backgroundColor: "#F2F4F5" }}
-      />
-
-      {(isSelected) && (
-        <div
-          style={{
-            position: "absolute",
-            top: "var(--spectrum-global-dimension-size-100)",
-            left: "var(--spectrum-global-dimension-size-100)",
-            zIndex: 10,
-            cursor: "pointer"
-          }}
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-            onSelect(template);
-          }}
-        >
-          <View
-            width="size-200"
-            height="size-200"
-            borderRadius="medium"
-            backgroundColor="static-white"
-            UNSAFE_style={{
-              backgroundColor: "rgba(255, 255, 255, 0.51)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backdropFilter: "blur(4px)",
-              padding: "var(--spectrum-global-dimension-size-50)"
-            }}
-          >
-            <View
-              width="size-150"
-              height="size-150"
-              borderRadius="small"
-              backgroundColor={isSelected ? "gray-900" : "gray-50"}
-              borderWidth="thin"
-              borderColor="gray-900"
-              UNSAFE_style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.15s ease-in-out"
-              }}
-            >
-              {isSelected && (
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ color: "#FFFFFF" }}
-                >
-                  <path
-                    d="M11.5 3.5L5.5 9.5L2.5 6.5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    fill="none"
-                  />
-                </svg>
-              )}
-            </View>
-          </View>
-        </div>
-      )}
-    </View>
-
-    <View
-      backgroundColor="gray-50"
-      padding="size-100"
-      UNSAFE_style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        justifyContent: "flex-start",
-        height: "49px",
-        borderRadius: "0px 0px var(--spectrum-global-dimension-size-50) var(--spectrum-global-dimension-size-50)"
-      }}
-    >
-      <Text
-        UNSAFE_style={{
-          overflow: "hidden",
-          color: "var(--spectrum-global-color-gray-900)",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-          fontFamily: "var(--spectrum-global-font-family-base)",
-          fontSize: "var(--spectrum-global-dimension-font-size-100)",
-          fontStyle: "normal",
-          fontWeight: "700",
-          lineHeight: "130%",
-          textAlign: "left",
-          marginBottom: "var(--spectrum-global-dimension-size-25)",
-          width: "100%"
-        }}
-      >
-        {template.title}
-      </Text>
-    </View>
-  </div>
+    <Card key={template.id} id={template.id} textValue={template.title} >
+        <>
+          <CardPreview>
+          <div className={imageStyles}>
+            <Image
+              src={(template as any).thumbnailUrl || ''}
+              width="100%"
+              height="100%"
+              objectFit="contain"
+            />
+            </div>
+          </CardPreview>
+          <CardContent>
+            <Text slot="title">{template.title}</Text>
+            <Text slot="description">{template.title}</Text>
+          </CardContent>
+        </>
+    </Card>
 );
 }
 

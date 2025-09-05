@@ -17,7 +17,6 @@ import {
   SearchField,
   ProgressCircle,
   Well,
-  Grid,
 } from "@adobe/react-spectrum";
 import TemplateCard from "./TemplateCard";
 import { useTemplateActions } from "../hooks/useTemplateActions";
@@ -25,12 +24,21 @@ import { Template } from "@adobe/genstudio-extensibility-sdk";
 import { extensionId } from "../Constants";
 import { useGuestConnection } from "../hooks";
 import { CardView } from "@react-spectrum/s2";
+import {
+  style as styleMacro
+} from "@react-spectrum/s2/style" with { type: "macro" };
+
 
 interface Auth {
-    imsToken: string;
-    imsOrg: string;
-  }
+  imsToken: string;
+  imsOrg: string;
+}
 
+const cardViewStyles = styleMacro({
+  width: 'screen',
+  maxWidth: 'full',
+  height: 600
+});
 export default function TemplateViewer(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState("");
   const [auth, setAuth] = useState<Auth | null>(null);
@@ -64,9 +72,12 @@ export default function TemplateViewer(): JSX.Element {
   };
 
   const renderTemplate = (template: Template) => {
+    
     const isSelected = selectedTemplate?.id === template.id;
-
-    return <TemplateCard key={template.id} template={template} isSelected={isSelected} onSelect={handleSelect} />
+    return (
+      
+            <TemplateCard key={template.id} template={template} isSelected={isSelected} onSelect={handleSelect} />
+    );
   };
 
   const renderTemplateContent = () => {
@@ -83,15 +94,14 @@ export default function TemplateViewer(): JSX.Element {
     }
 
     return (
-      <Grid
-        columns="repeat(auto-fill, 230px)"
-        autoRows="auto"
-        justifyContent="center"
-        gap="size-300"
-        width="100%"
-      >
+      <div className={cardViewStyles}>
+        <CardView
+            aria-label="Templates-list"
+            selectionMode="single"
+          >
         {filteredTemplates.map((template: Template) => renderTemplate(template))}
-      </Grid>
+      </CardView>
+      </div>
     );
   };
 
