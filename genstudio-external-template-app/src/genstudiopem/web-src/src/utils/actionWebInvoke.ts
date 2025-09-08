@@ -18,12 +18,12 @@ governing permissions and limitations under the License.
  * @param {object} params - Parameters to pass to the web action
  * @returns {Promise<object>} The response from the web action
  */
-export const actionWebInvoke = async (
+export const actionWebInvoke = async <T = any>(
   actionUrl: string,
   imsToken: string,
   imsOrg: string,
   params: Record<string, any> = {}
-): Promise<any> => {
+): Promise<T> => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${imsToken}`,
@@ -45,7 +45,7 @@ export const actionWebInvoke = async (
     }
 
     const data = await response.json();
-    return data;
+    return data as T;
   } catch (error) {
     console.warn("Error invoking action:", error);
     throw error;
