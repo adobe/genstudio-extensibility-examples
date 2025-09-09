@@ -18,8 +18,7 @@ import { useTemplateActions } from "../hooks/useTemplateActions";
 import { extensionId } from "../Constants";
 import { useGuestConnection } from "../hooks";
 import { Selection } from "@react-types/shared";
-import { TemplateWithThumbnail } from "../types";
-import { Template } from "@adobe/genstudio-extensibility-sdk";
+import { ImportTemplateExtensionService, Template } from "@adobe/genstudio-extensibility-sdk";
 
 interface Auth {
   imsToken: string;
@@ -64,9 +63,10 @@ export default function TemplateViewer(): JSX.Element {
       selectedTemplateIdsList.length > 0
         ? templates.find((t) => t.id === selectedTemplateIdsList[0]) || null
         : null;
-    guestConnection.host.api.importTemplateExtension.setSelectedTemplate(
-      selectedTemplate
-    );
+    ImportTemplateExtensionService.setSelectedTemplate(
+      guestConnection,
+      selectedTemplate as Template
+    )
   }, [selectedTemplateIds, guestConnection]);
 
   const renderTemplateContent = () => {
@@ -116,8 +116,6 @@ export default function TemplateViewer(): JSX.Element {
       <SearchField
         value={searchTerm}
         onChange={setSearchTerm}
-        placeholder="Search templates"
-        width="400px"
       />
       <div style={{ width: "100%", marginTop: "24px" }}>
         {isLoading ? (
