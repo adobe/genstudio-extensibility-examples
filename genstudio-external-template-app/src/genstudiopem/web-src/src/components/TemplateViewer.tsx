@@ -11,36 +11,31 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect, useState } from "react";
-import {
-  Flex,
-  View,
-  SearchField,
-  ProgressCircle,
-  Well,
-  Grid,
-} from "@adobe/react-spectrum";
-import TemplateCard from "./TemplateCard";
+
+import { CardView, SearchField, ProgressCircle } from "@react-spectrum/s2";
+import { TemplateCard } from "./TemplateCard";
 import { useTemplateActions } from "../hooks/useTemplateActions";
-import { Template } from "@adobe/genstudio-extensibility-sdk";
 import { extensionId } from "../Constants";
 import { useGuestConnection } from "../hooks";
-import { CardView } from "@react-spectrum/s2";
+import { Selection } from "@react-types/shared";
+import { TemplateWithThumbnail } from "../types";
+import { Template } from "@adobe/genstudio-extensibility-sdk";
 
 interface Auth {
-    imsToken: string;
-    imsOrg: string;
-  }
+  imsToken: string;
+  imsOrg: string;
+}
 
 export default function TemplateViewer(): JSX.Element {
+  const [selectedTemplateIds, setSelectedTemplateIds] = useState<Selection>(
+    new Set()
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [auth, setAuth] = useState<Auth | null>(null);
   const guestConnection = useGuestConnection(extensionId);
-  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
-  const {
-    templates,
-    fetchTemplates,
-    isLoading
-  } = useTemplateActions(auth as Auth);
+  const { templates, fetchTemplates, isLoading } = useTemplateActions(
+    auth as Auth
+  );
 
   useEffect(() => {
     if (auth) {
@@ -55,77 +50,91 @@ export default function TemplateViewer(): JSX.Element {
       setAuth(sharedAuth);
     }
   }, [guestConnection]);
-    
-      const filteredTemplates = !searchTerm ? templates
-      : templates.filter(t => (t.title ?? "").toLowerCase().includes(searchTerm.toLowerCase()));
 
-  const handleSelect = (t: Template) => {
-    setSelectedTemplate(prev => (prev?.id === t.id ? null : t));
-  };
+  const filteredTemplates = !searchTerm
+    ? templates
+    : templates.filter((t) =>
+        (t.title ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
-  const renderTemplate = (template: Template) => {
-    const isSelected = selectedTemplate?.id === template.id;
-
-    return <TemplateCard key={template.id} template={template} isSelected={isSelected} onSelect={handleSelect} />
-  };
+  useEffect(() => {
+    if (!guestConnection) return;
+    const selectedTemplateIdsList = Array.from(selectedTemplateIds);
+    const selectedTemplate =
+      selectedTemplateIdsList.length > 0
+        ? templates.find((t) => t.id === selectedTemplateIdsList[0]) || null
+        : null;
+    guestConnection.host.api.importTemplateExtension.setSelectedTemplate(
+      selectedTemplate
+    );
+  }, [selectedTemplateIds, guestConnection]);
 
   const renderTemplateContent = () => {
-    if (isLoading) {
+    if (filteredTemplates.length === 0) {
       return (
-        <Flex alignItems="center" justifyContent="center" height="100%">
-          <ProgressCircle aria-label="Loading templates" isIndeterminate />
-        </Flex>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "200px",
+            width: "100%",
+            fontSize: "1.2rem",
+            color: "#666",
+            textAlign: "center",
+          }}
+        >
+          No templates found.
+        </div>
       );
     }
 
-    if (filteredTemplates.length === 0) {
-      return <Well>No templates found.</Well>;
-    }
-
     return (
-      <Grid
-        columns="repeat(auto-fill, 230px)"
-        autoRows="auto"
-        justifyContent="center"
-        gap="size-300"
-        width="100%"
+      <CardView
+        aria-label="Templates"
+        loadingState={isLoading ? "loading" : "idle"}
+        selectionMode="single"
+        selectedKeys={selectedTemplateIds}
+        onSelectionChange={setSelectedTemplateIds}
       >
-        {filteredTemplates.map((template: Template) => renderTemplate(template))}
-      </Grid>
+        {filteredTemplates.map((template) => (
+          <TemplateCard key={template.id} template={template} />
+        ))}
+      </CardView>
     );
   };
 
   return (
-    <View height="100%" width="100%">
-      <Flex direction="column" height="100%">
-        <View
-          UNSAFE_style={{ backgroundColor: "var(--spectrum-gray-100)" }}
-          padding="size-300"
-        >
-          <Flex
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            gap="size-200"
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "32px 32px",
+      }}
+    >
+      <SearchField
+        value={searchTerm}
+        onChange={setSearchTerm}
+        placeholder="Search templates"
+        width="400px"
+      />
+      <div style={{ width: "100%", marginTop: "24px" }}>
+        {isLoading ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
           >
-           <SearchField
-              value={searchTerm}
-              onChange={setSearchTerm}
-              placeholder="Search templates"
-              width="400px"
-              maxWidth="90%"
-            />
-          </Flex>
-        </View>
-        <View
-          flex={1}
-          UNSAFE_style={{ backgroundColor: "var(--spectrum-gray-100)" }}
-          padding="size-300"
-          overflow="auto"
-        >
-          {renderTemplateContent()}
-        </View>
-      </Flex>
-    </View>
+            <ProgressCircle aria-label="Loading templates" isIndeterminate />
+          </div>
+        ) : (
+          renderTemplateContent()
+        )}
+      </div>
+    </div>
   );
 }

@@ -11,9 +11,10 @@ governing permissions and limitations under the License.
 */
 import { Template as TemplateType } from "@adobe/genstudio-extensibility-sdk";
 
-export type Template = TemplateType & {
-  thumbnailUrl?: string
+export type TemplateWithThumbnail = TemplateType & {
+  thumbnailUrl?: string;
 };
+
 export interface TemplateSearchParams {
   query?: string;
   fileType?: string;
