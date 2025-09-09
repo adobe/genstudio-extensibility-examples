@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Text, Flex, View } from "@adobe/react-spectrum";
 import { register } from "@adobe/uix-guest";
 import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
 import { AppMetadata, Toggle, App } from "@adobe/genstudio-extensibility-sdk";
@@ -55,14 +54,9 @@ const ExtensionRegistration = (): React.JSX.Element => {
   init().catch(console.error);
 
   return (
-    <View padding="size-300">
-      <Flex direction="column" gap="size-200">
-        <Text>
-          IFrame for integration with Host (GenStudio for Performance Marketing
-          App)
-        </Text>
-      </Flex>
-    </View>
+    <div>
+      IFrame for integration with Host (GenStudio for Performance Marketing App)
+    </div>
   );
 };
 
