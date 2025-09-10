@@ -15,11 +15,16 @@ import React, { useEffect, useState } from "react";
 import { CardView, SearchField, ProgressCircle } from "@react-spectrum/s2";
 import { TemplateCard } from "./TemplateCard";
 import { useTemplateActions } from "../hooks/useTemplateActions";
-import { extensionId } from "../Constants";
+import { extensionId, extensionLabel } from "../Constants";
 import { useGuestConnection } from "../hooks";
 import { Selection } from "@react-types/shared";
-import { TemplateWithThumbnail } from "../types";
-import { Template } from "@adobe/genstudio-extensibility-sdk";
+import {
+  noPodTemplateContent,
+  commonMapping,
+  twoPodTemplateContent,
+  noPodDuplicateFieldsTemplateContent,
+  twoPodDuplicateFieldsTemplateContent,
+} from "../utils/mapping";
 
 interface Auth {
   imsToken: string;
@@ -51,19 +56,76 @@ export default function TemplateViewer(): JSX.Element {
     }
   }, [guestConnection]);
 
-  const filteredTemplates = !searchTerm
-    ? templates
-    : templates.filter((t) =>
-        (t.title ?? "").toLowerCase().includes(searchTerm.toLowerCase())
-      );
+  // const filteredTemplates = !searchTerm
+  //   ? templates
+  //   : templates.filter((t) =>
+  //       (t.title ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+  //     );
+  const filteredTemplates = [
+    {
+      id: "1",
+      title: "No Pod",
+      content: noPodTemplateContent,
+      mapping: commonMapping,
+      source: extensionLabel,
+      additionalMetadata: {
+        extensionId: extensionId,
+      },
+    },
+    {
+      id: "2",
+      title: "No Pod with Duplicate Fields",
+      content: noPodDuplicateFieldsTemplateContent,
+      mapping: commonMapping,
+      source: extensionLabel,
+      additionalMetadata: {
+        extensionId: extensionId,
+      },
+    },
+    {
+      id: "3",
+      title: "Two Pods",
+      content: twoPodTemplateContent,
+      mapping: commonMapping,
+      source: extensionLabel,
+      additionalMetadata: {
+        extensionId: extensionId,
+      },
+    },
+    {
+      id: "4",
+      title: "Two Pods with Duplicate Fields",
+      content: twoPodDuplicateFieldsTemplateContent,
+      mapping: commonMapping,
+      source: extensionLabel,
+      additionalMetadata: {
+        extensionId: extensionId,
+      },
+    },
+  ];
 
   useEffect(() => {
     if (!guestConnection) return;
     const selectedTemplateIdsList = Array.from(selectedTemplateIds);
+    // const selectedTemplate =
+    //   selectedTemplateIdsList.length > 0
+    //     ? templates.find((t) => t.id === selectedTemplateIdsList[0]) || null
+    //     : null;
     const selectedTemplate =
       selectedTemplateIdsList.length > 0
-        ? templates.find((t) => t.id === selectedTemplateIdsList[0]) || null
+        ? filteredTemplates.find((t) => t.id === selectedTemplateIdsList[0]) ||
+          null
         : null;
+
+    // TODO Remove
+    if (selectedTemplate) {
+      selectedTemplate.mapping = commonMapping;
+      selectedTemplate.source = extensionLabel;
+      selectedTemplate.additionalMetadata = {
+        extensionId: extensionId,
+      };
+    }
+    console.log("selectedTemplate", selectedTemplate);
     guestConnection.host.api.importTemplateExtension.setSelectedTemplate(
       selectedTemplate
     );

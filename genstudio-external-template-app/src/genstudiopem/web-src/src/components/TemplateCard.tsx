@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { TemplateWithThumbnail } from "../types";
 import {
   Card,
   CardPreview,
@@ -20,10 +19,11 @@ import {
   Image,
 } from "@react-spectrum/s2";
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import { Template } from "@adobe/genstudio-extensibility-sdk";
 
 const DEFAULT_THUMBNAIL_URL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAADElEQVQImWPYtWsXAARgAi8sw/IhAAAAAElFTkSuQmCC';
-export function TemplateCard({ template }: { template: TemplateWithThumbnail }) {
-  const thumbnailUrl = template.thumbnailUrl || DEFAULT_THUMBNAIL_URL;
+export function TemplateCard({ template }: { template: Template }) {
+  const thumbnailUrl = template.additionalMetadata?.thumbnailUrl || DEFAULT_THUMBNAIL_URL;
   return (
     <Card id={template.id} textValue={template.title}>
       {() => (
