@@ -11,10 +11,11 @@ governing permissions and limitations under the License.
 */
 
 import { useState, useCallback } from "react";
-import { TemplateSearchParams, TemplateWithThumbnail } from "../types";
+import { TemplateSearchParams } from "../types";
 import { actionWebInvoke } from "../utils/actionWebInvoke";
 import actions from "../config.json";
 import { LOAD_TEMPLATE_ACTION } from "../Constants";
+import { Template } from "@adobe/genstudio-extensibility-sdk";
 
 interface Auth {
   imsToken: string;
@@ -22,7 +23,7 @@ interface Auth {
 }
 
 export const useTemplateActions = (auth: Auth | null) => {
-  const [templates, setTemplates] = useState<TemplateWithThumbnail[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +36,7 @@ export const useTemplateActions = (auth: Auth | null) => {
       try {
         const url = actions[LOAD_TEMPLATE_ACTION];
         const { templates: fetchedTemplates = [] } = await actionWebInvoke<{
-          templates: TemplateWithThumbnail[];
+          templates: Template[];
         }>(url, auth.imsToken, auth.imsOrg, params);
         setTemplates(fetchedTemplates);
       } catch (err) {
