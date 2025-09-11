@@ -25,6 +25,7 @@ import {
   noPodDuplicateFieldsTemplateContent,
   twoPodDuplicateFieldsTemplateContent,
 } from "../utils/mapping";
+import { ImportTemplateExtensionService, Template } from "@adobe/genstudio-extensibility-sdk";
 
 interface Auth {
   imsToken: string;
@@ -126,9 +127,10 @@ export default function TemplateViewer(): JSX.Element {
       };
     }
     console.log("selectedTemplate", selectedTemplate);
-    guestConnection.host.api.importTemplateExtension.setSelectedTemplate(
-      selectedTemplate
-    );
+    ImportTemplateExtensionService.setSelectedTemplate(
+      guestConnection,
+      selectedTemplate as Template
+    )
   }, [selectedTemplateIds, guestConnection]);
 
   const renderTemplateContent = () => {
