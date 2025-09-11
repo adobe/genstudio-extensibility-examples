@@ -18,19 +18,11 @@ const {
   twoPodDuplicateFieldsTemplateContent,
 } = require("./Template");
 const { COMMON_MAPPING } = require("../../../utils");
-const fs = require("fs");
+const thumbnails = require("./thumbnails/thumbnails");
 
 class LocalTemplateProvider extends TemplateProvider {
   constructor(params, logger) {
     super(params, logger);
-  }
-
-  async getThumbnailDataUri(templateId) {
-    const thumbnail = fs.readFileSync(
-      `./thumbnails/${templateId}.webp`,
-      "base64"
-    );
-    return `data:image/webp;base64,${thumbnail}`;
   }
 
   async searchAssets(param) {
@@ -41,30 +33,27 @@ class LocalTemplateProvider extends TemplateProvider {
       "two-pod-duplicate-fields": twoPodDuplicateFieldsTemplateContent,
     };
 
-    const templates = await Promise.all(
-      Object.entries(templateDefs).map(
-        async ([templateId, templateContent]) => {
-          return {
-            id: templateId,
-            title: templateId
-              .split("-")
-              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(" "),
-            content: templateContent,
-            mapping: COMMON_MAPPING,
-            additionalMetadata: {
-              thumbnailUrl: await this.getThumbnailDataUri(templateId),
-            },
-          };
-        }
-      )
+    const templates = Object.entries(templateDefs).map(
+      ([templateId, templateContent]) => {
+        return {
+          id: templateId,
+          title: templateId
+            .split("-")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" "),
+          content: templateContent,
+          mapping: COMMON_MAPPING,
+          additionalMetadata: {
+            thumbnailUrl: thumbnails[templateId],
+            test: "test",
+          },
+        };
+      }
     );
 
     return {
       statusCode: 200,
-      body: {
-        templates: templates,
-      },
+      body: { templates },
     };
   }
 }

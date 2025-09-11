@@ -18,14 +18,7 @@ import { useTemplateActions } from "../hooks/useTemplateActions";
 import { extensionId, extensionLabel } from "../Constants";
 import { useGuestConnection } from "../hooks";
 import { Selection } from "@react-types/shared";
-import {
-  noPodTemplateContent,
-  commonMapping,
-  twoPodTemplateContent,
-  noPodDuplicateFieldsTemplateContent,
-  twoPodDuplicateFieldsTemplateContent,
-} from "../utils/mapping";
-import { ImportTemplateExtensionService, Template } from "@adobe/genstudio-extensibility-sdk";
+import { ImportTemplateExtensionService } from "@adobe/genstudio-extensibility-sdk";
 
 interface Auth {
   imsToken: string;
@@ -57,80 +50,24 @@ export default function TemplateViewer(): JSX.Element {
     }
   }, [guestConnection]);
 
-  // const filteredTemplates = !searchTerm
-  //   ? templates
-  //   : templates.filter((t) =>
-  //       (t.title ?? "").toLowerCase().includes(searchTerm.toLowerCase())
-  //     );
-  const filteredTemplates = [
-    {
-      id: "1",
-      title: "No Pod",
-      content: noPodTemplateContent,
-      mapping: commonMapping,
-      source: extensionLabel,
-      additionalMetadata: {
-        extensionId: extensionId,
-      },
-    },
-    {
-      id: "2",
-      title: "No Pod with Duplicate Fields",
-      content: noPodDuplicateFieldsTemplateContent,
-      mapping: commonMapping,
-      source: extensionLabel,
-      additionalMetadata: {
-        extensionId: extensionId,
-      },
-    },
-    {
-      id: "3",
-      title: "Two Pods",
-      content: twoPodTemplateContent,
-      mapping: commonMapping,
-      source: extensionLabel,
-      additionalMetadata: {
-        extensionId: extensionId,
-      },
-    },
-    {
-      id: "4",
-      title: "Two Pods with Duplicate Fields",
-      content: twoPodDuplicateFieldsTemplateContent,
-      mapping: commonMapping,
-      source: extensionLabel,
-      additionalMetadata: {
-        extensionId: extensionId,
-      },
-    },
-  ];
-
+  const filteredTemplates = !searchTerm
+    ? templates
+    : templates.filter((t) =>
+        (t.title ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+      );
   useEffect(() => {
     if (!guestConnection) return;
     const selectedTemplateIdsList = Array.from(selectedTemplateIds);
-    // const selectedTemplate =
-    //   selectedTemplateIdsList.length > 0
-    //     ? templates.find((t) => t.id === selectedTemplateIdsList[0]) || null
-    //     : null;
     const selectedTemplate =
       selectedTemplateIdsList.length > 0
-        ? filteredTemplates.find((t) => t.id === selectedTemplateIdsList[0]) ||
-          null
-        : null;
-
-    // TODO Remove
-    if (selectedTemplate) {
-      selectedTemplate.mapping = commonMapping;
-      selectedTemplate.source = extensionLabel;
-      selectedTemplate.additionalMetadata = {
-        extensionId: extensionId,
-      };
-    }
-    console.log("selectedTemplate", selectedTemplate);
+        ? templates.find((t) => t.id === selectedTemplateIdsList[0]) ||
+          undefined
+        : undefined;
+    if (selectedTemplate) selectedTemplate.source = extensionLabel;
     ImportTemplateExtensionService.setSelectedTemplate(
       guestConnection,
-      selectedTemplate as Template
-    )
+      selectedTemplate
+    );
   }, [selectedTemplateIds, guestConnection]);
 
   const renderTemplateContent = () => {
