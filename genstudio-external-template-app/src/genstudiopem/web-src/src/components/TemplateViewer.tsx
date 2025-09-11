@@ -63,7 +63,10 @@ export default function TemplateViewer(): JSX.Element {
         ? templates.find((t) => t.id === selectedTemplateIdsList[0]) ||
           undefined
         : undefined;
-    if (selectedTemplate) selectedTemplate.source = extensionLabel;
+    if (selectedTemplate) {
+      selectedTemplate.source = extensionLabel;
+      delete selectedTemplate.additionalMetadata?.thumbnailUrl;
+    }
     ImportTemplateExtensionService.setSelectedTemplate(
       guestConnection,
       selectedTemplate
