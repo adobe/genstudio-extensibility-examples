@@ -15,11 +15,10 @@ import React, { useEffect, useState } from "react";
 import { CardView, SearchField, ProgressCircle } from "@react-spectrum/s2";
 import { TemplateCard } from "./TemplateCard";
 import { useTemplateActions } from "../hooks/useTemplateActions";
-import { extensionId } from "../Constants";
+import { extensionId, extensionLabel } from "../Constants";
 import { useGuestConnection } from "../hooks";
 import { Selection } from "@react-types/shared";
-import { TemplateWithThumbnail } from "../types";
-import { Template } from "@adobe/genstudio-extensibility-sdk";
+import { ImportTemplateExtensionService } from "@adobe/genstudio-extensibility-sdk";
 
 interface Auth {
   imsToken: string;
@@ -56,15 +55,20 @@ export default function TemplateViewer(): JSX.Element {
     : templates.filter((t) =>
         (t.title ?? "").toLowerCase().includes(searchTerm.toLowerCase())
       );
-
   useEffect(() => {
     if (!guestConnection) return;
     const selectedTemplateIdsList = Array.from(selectedTemplateIds);
     const selectedTemplate =
       selectedTemplateIdsList.length > 0
-        ? templates.find((t) => t.id === selectedTemplateIdsList[0]) || null
-        : null;
-    guestConnection.host.api.importTemplateExtension.setSelectedTemplate(
+        ? templates.find((t) => t.id === selectedTemplateIdsList[0]) ||
+          undefined
+        : undefined;
+    if (selectedTemplate) {
+      selectedTemplate.source = extensionLabel;
+      delete selectedTemplate.additionalMetadata?.thumbnailUrl;
+    }
+    ImportTemplateExtensionService.setSelectedTemplate(
+      guestConnection,
       selectedTemplate
     );
   }, [selectedTemplateIds, guestConnection]);

@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { checkMissingRequestInputs, ValidationError } = require("../../utils");
-
 /**
  * @typedef {Object} Asset - Asset object from @adobe/genstudio-extensibility-sdk
  */
@@ -24,20 +22,9 @@ const { checkMissingRequestInputs, ValidationError } = require("../../utils");
  *   - Public methods handle validation, then delegate to `do` methods.
  *   - Subclasses must override the `do` methods.
  */
-class DamProvider {
+class TemplateProvider {
   constructor(params, logger) {
     this.logger = logger;
-  }
-
-  /**
-   * Validate common parameters for asset operations.
-   * @param {Object} params
-   * @returns {string|null} error message if validation fails, otherwise null
-   */
-  validateAssetParams(params) {
-    const requiredParams = ["assetId"];
-    const requiredHeaders = ["Authorization"];
-    return checkMissingRequestInputs(params, requiredParams, requiredHeaders);
   }
 
   /**
@@ -56,88 +43,6 @@ class DamProvider {
   async searchAssets(_params) {
     throw new Error("searchAssets() not implemented");
   }
-
-  /**
-   * Template Method for retrieving a presigned URL.
-   * 1. Validates params via `validateAssetParams`
-   * 2. On validation error, throws `ValidationError`
-   * 3. Otherwise calls subclass's `doGetAssetUrl`
-   *
-   * @param {Object} params
-   * @param {string} params.assetId
-   * @returns {Promise<{statusCode:number, body:{url:string}}>}
-   * @throws {ValidationError}
-   */
-  async getAssetUrl(params) {
-    const err = this.validateAssetParams(params);
-    if (err) throw new ValidationError(err);
-    return this.doGetAssetUrl(params);
-  }
-
-  /**
-   * Template Method for retrieving a presigned URL for a template asset.
-   * Mirrors getAssetUrl but allows providers to customize template key handling.
-   *
-   * @param {Object} params
-   * @param {string} params.assetId
-   * @returns {Promise<{statusCode:number, body:{url:string}}>} 
-   * @throws {ValidationError}
-   */
-  async getTemplateAssetUrl(params) {
-    const err = this.validateAssetParams(params);
-    if (err) throw new ValidationError(err);
-    return this.doGetTemplateAssetUrl(params);
-  }
-
-  /**
-   * Template Method for fetching asset metadata.
-   * 1. Validates params via `validateAssetParams`
-   * 2. On validation error, throws `ValidationError`
-   * 3. Otherwise calls subclass's `doGetAssetMetadata`
-   *
-   * @param {Object} params
-   * @param {string} params.assetId
-   * @returns {Promise<{statusCode:number, body:{metadata:Object}}>}
-   * @throws {ValidationError}
-   */
-  async getAssetMetadata(params) {
-    const err = this.validateAssetParams(params);
-    if (err) throw new ValidationError(err);
-    return this.doGetAssetMetadata(params);
-  }
-
-  /**
-   * @abstract
-   * @protected
-   * @param {Object} params
-   * @returns {Promise<{statusCode:number, body:any}>}
-   */
-  // eslint-disable-next-line no-unused-vars
-  async doGetAssetUrl(_params) {
-    throw new Error("doGetAssetUrl() not implemented");
-  }
-
-  /**
-   * @abstract
-   * @protected
-   * @param {Object} params
-   * @returns {Promise<{statusCode:number, body:any}>}
-   */
-  // eslint-disable-next-line no-unused-vars
-  async doGetTemplateAssetUrl(_params) {
-    throw new Error("doGetTemplateAssetUrl() not implemented");
-  }
-
-  /**
-   * @abstract
-   * @protected
-   * @param {Object} params
-   * @returns {Promise<{statusCode:number, body:any}>}
-   */
-  // eslint-disable-next-line no-unused-vars
-  async doGetAssetMetadata(_params) {
-    throw new Error("doGetAssetMetadata() not implemented");
-  }
 }
 
-module.exports = DamProvider;
+module.exports = TemplateProvider;

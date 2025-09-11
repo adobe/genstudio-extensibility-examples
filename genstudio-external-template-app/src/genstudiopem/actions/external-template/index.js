@@ -12,15 +12,16 @@ governing permissions and limitations under the License.
 
 const { Core } = require("@adobe/aio-sdk");
 const { errorResponse, ValidationError } = require("../utils");
-const S3TemplateProvider = require("./provider/s3/S3TemplateProvider");
+// const S3TemplateProvider = require("./provider/s3/S3TemplateProvider");
+const LocalTemplateProvider = require("./provider/local/LocalTemplateProvider");
 
 exports.main = async (params) => {
   const logger = Core.Logger("main", { level: params.LOG_LEVEL || "info" });
   const actionType = params.actionType || "search";
-  const templateProvider = new S3TemplateProvider(params, logger);
-  
+  // const templateProvider = new S3TemplateProvider(params, logger);
+  const templateProvider = new LocalTemplateProvider(params, logger);
+
   try {
-    //TODO: Add other actions like selections or search here
     switch (actionType) {
       case "getTemplates":
         return await templateProvider.searchAssets(params);

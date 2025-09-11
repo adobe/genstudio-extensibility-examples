@@ -17,67 +17,6 @@ governing permissions and limitations under the License.
 class ValidationError extends Error {}
 
 /**
- * Returns a list of keys missing from `obj` based on the `required` list.
- * A parameter is missing if its value is undefined or ''.
- * A value of 0 or null is not considered as missing.
- *
- * @param {object} obj - object to inspect for missing keys
- * @param {string[]} required - list of required key paths (supports dot-notation)
- * @returns {string[]} array of missing key paths
- * @private
- */
-function getMissingKeys(obj, required) {
-  return required.filter((r) => {
-    const splits = r.split(".");
-    const last = splits[splits.length - 1];
-    const traverse = splits.slice(0, -1).reduce((tObj, split) => {
-      tObj = tObj[split] || {};
-      return tObj;
-    }, obj);
-    return traverse[last] === undefined || traverse[last] === ""; // missing default params are empty string
-  });
-}
-
-/**
- * Returns err message if `params` does not contain required params and headers.
- *
- * @param {object} params - action input parameters (including __ow_headers)
- * @param {string[]} requiredHeaders - list of required header names
- * @param {string[]} requiredParams - list of required parameter paths
- * @returns {string|null} err message listing missing inputs, or null if all present
- */
-function checkMissingRequestInputs(
-  params,
-  requiredParams = [],
-  requiredHeaders = []
-) {
-  let errorMessage = null;
-
-  // input headers are always lowercase
-  requiredHeaders = requiredHeaders.map((h) => h.toLowerCase());
-
-  const missingHeaders = getMissingKeys(
-    params.__ow_headers || {},
-    requiredHeaders
-  );
-  if (missingHeaders.length > 0) {
-    errorMessage = `missing header(s) '${missingHeaders}'`;
-  }
-
-  const missingParams = getMissingKeys(params, requiredParams);
-  if (missingParams.length > 0) {
-    if (errorMessage) {
-      errorMessage += " and ";
-    } else {
-      errorMessage = "";
-    }
-    errorMessage += `missing parameter(s) '${missingParams}'`;
-  }
-
-  return errorMessage;
-}
-
-/**
  * Returns and logs an err response obj (for returning from your action's main()).
  *
  * @param {number} statusCode - HTTP status code for the error
@@ -95,8 +34,63 @@ function errorResponse(statusCode, message, logger) {
   return { error: { statusCode, body: { error: message } } };
 }
 
+/**
+ * An example common mapping for all sample templates, but usually you would use a different mapping for each template
+ * This is used to map the template content to the GenStudio content
+ */
+const COMMON_MAPPING = {
+  // no pod
+  head: "headline",
+  head1: "headline",
+  head2: "headline",
+  subhead: "sub_headline",
+  subhead1: "sub_headline",
+  subhead2: "sub_headline",
+  content: "body",
+  content1: "body",
+  content2: "body",
+  btn: "cta",
+  btn1: "cta",
+  btn2: "cta",
+  else: "other",
+  else1: "other",
+  else2: "other",
+  // pod1
+  pod1_head: "headline",
+  pod1_head1: "headline",
+  pod1_head2: "headline",
+  pod1_subhead: "sub_headline",
+  pod1_subhead1: "sub_headline",
+  pod1_subhead2: "sub_headline",
+  pod1_content: "body",
+  pod1_content1: "body",
+  pod1_content2: "body",
+  pod1_btn: "cta",
+  pod1_btn1: "cta",
+  pod1_btn2: "cta",
+  pod1_else: "other",
+  pod1_else1: "other",
+  pod1_else2: "other",
+  // pod2
+  pod2_head: "headline",
+  pod2_head1: "headline",
+  pod2_head2: "headline",
+  pod2_subhead: "sub_headline",
+  pod2_subhead1: "sub_headline",
+  pod2_subhead2: "sub_headline",
+  pod2_content: "body",
+  pod2_content1: "body",
+  pod2_content2: "body",
+  pod2_btn: "cta",
+  pod2_btn1: "cta",
+  pod2_btn2: "cta",
+  pod2_else: "other",
+  pod2_else1: "other",
+  pod2_else2: "other",
+};
+
 module.exports = {
-  checkMissingRequestInputs,
+  COMMON_MAPPING,
   errorResponse,
   ValidationError,
 };

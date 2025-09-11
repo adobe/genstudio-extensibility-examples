@@ -18,6 +18,7 @@ const {
   GetObjectCommand,
 } = require("@aws-sdk/client-s3");
 const TemplateProvider = require("../TemplateProvider");
+const { COMMON_MAPPING } = require("../../../utils");
 
 class S3TemplateProvider extends TemplateProvider {
   constructor(params, logger) {
@@ -41,17 +42,19 @@ class S3TemplateProvider extends TemplateProvider {
   }
 
   async getThumbnailsMap() {
-    const list = await this.client.send(new ListObjectsV2Command({
-      Bucket: this.bucketName,
-      Prefix: 'templates/thumbnails',
-      MaxKeys: 1000
-    }));
+    const list = await this.client.send(
+      new ListObjectsV2Command({
+        Bucket: this.bucketName,
+        Prefix: "templates/thumbnails",
+        MaxKeys: 1000,
+      })
+    );
     const out = {};
-    for (const obj of (list.Contents || [])) {
-      if (!obj.Key || obj.Key.endsWith('/')) continue;
-      const file = obj.Key.split('/').pop();
+    for (const obj of list.Contents || []) {
+      if (!obj.Key || obj.Key.endsWith("/")) continue;
+      const file = obj.Key.split("/").pop();
       if (!file) continue;
-      const base = file.replace(/\.[^/.]+$/, '').toLowerCase();
+      const base = file.replace(/\.[^/.]+$/, "").toLowerCase();
       out[base] = await this.getS3PresignedUrl(obj.Key);
     }
     return out;
@@ -61,84 +64,56 @@ class S3TemplateProvider extends TemplateProvider {
     this.logger.info("Searching assets in S3");
     const listHTMLObjectsCmd = new ListObjectsV2Command({
       Bucket: this.bucketName,
-      Prefix: 'templates/html',
+      Prefix: "templates/html",
       MaxKeys: parseInt(params.limit) || 100,
     });
     const listHTMLResult = await this.client.send(listHTMLObjectsCmd);
     const thumbnailsByName = await this.getThumbnailsMap();
-    this.logger.info(`Found ${listHTMLResult?.Contents?.length || 0} HTML templates in S3`);
+    this.logger.info(
+      `Found ${listHTMLResult?.Contents?.length || 0} HTML templates in S3`
+    );
 
-    const templates = (await Promise.all(
-      listHTMLResult?.Contents?.map(async (item) => {
-        if (item.Key.endsWith('/')) return null;
-        const headObjCmd = new HeadObjectCommand({
-          Bucket: this.bucketName,
-          Key: item.Key,
-        });
-        try {
-          const metadata = await this.client.send(headObjCmd);
-          const originalUrl = await this.getS3PresignedUrl(item.Key);
-          const base = (item.Key.split('/').pop() || '').replace(/\.[^/.]+$/, '').toLowerCase();
-          const thumbnailUrl = thumbnailsByName[base];
-          return {
-            id: item.Key,
-            title: item.Key.split('/').pop() || 'Unknown',
-            thumbnailUrl,
-            url: originalUrl,
-            mapping: {
-              contentType: metadata.ContentType,
-              size: item.Size,
-              ...metadata.Metadata,
-            },
-          };
-        } catch (error) {
-          this.logger.error(`Error getting metadata for template ${item.Key}: ${error}`);
-          return null;
-        }
-      })
-    )).filter(template => template !== null);
-
-    return {
-      statusCode: 200,
-      body: { 
-        templates: templates
-      },
-    };
-  }
-
-  async doGetAssetUrl(params) {
-    this.logger.info("Getting presigned URL for asset", params.assetId);
-    const url = await this.getS3PresignedUrl(params.assetId);
-    return { statusCode: 200, body: { url } };
-  }
-
-  async doGetTemplateAssetUrl(params) {
-    this.logger.info("Getting presigned URL for template asset", params.assetId);
-    // If templates live under a specific prefix, normalize here
-    const key = params.assetId.startsWith("templates/")
-      ? params.assetId
-      : `templates/${params.assetId}`;
-    const url = await this.getS3PresignedUrl(key);
-    return { statusCode: 200, body: { url } };
-  }
-
-  async doGetAssetMetadata(params) {
-    this.logger.info("Getting metadata for asset", params.assetId);
-    const headObjCmd = new HeadObjectCommand({
-      Bucket: this.bucketName,
-      Key: params.assetId,
-    });
-    const metadata = await this.client.send(headObjCmd);
+    const templates = (
+      await Promise.all(
+        listHTMLResult?.Contents?.map(async (item) => {
+          if (item.Key.endsWith("/")) return null;
+          const headObjCmd = new HeadObjectCommand({
+            Bucket: this.bucketName,
+            Key: item.Key,
+          });
+          try {
+            const metadata = await this.client.send(headObjCmd);
+            const originalUrl = await this.getS3PresignedUrl(item.Key);
+            const base = (item.Key.split("/").pop() || "")
+              .replace(/\.[^/.]+$/, "")
+              .toLowerCase();
+            const thumbnailUrl = thumbnailsByName[base];
+            return {
+              id: item.Key,
+              title: item.Key.split("/").pop() || "Unknown",
+              mapping: COMMON_MAPPING,
+              additionalMetadata: {
+                thumbnailUrl,
+                originalUrl,
+                contentType: metadata.ContentType,
+                size: item.Size,
+                ...metadata.Metadata,
+              },
+            };
+          } catch (error) {
+            this.logger.error(
+              `Error getting metadata for template ${item.Key}: ${error}`
+            );
+            return null;
+          }
+        })
+      )
+    ).filter((template) => template !== null);
 
     return {
       statusCode: 200,
       body: {
-        metadata: {
-          contentType: metadata.ContentType,
-          contentLength: metadata.ContentLength,
-          lastModified: metadata.LastModified,
-          ...metadata.Metadata,
-        },
+        templates: templates,
       },
     };
   }
