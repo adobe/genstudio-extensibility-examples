@@ -18,7 +18,10 @@ import { useTemplateActions } from "../hooks/useTemplateActions";
 import { extensionId, extensionLabel } from "../Constants";
 import { useGuestConnection } from "../hooks";
 import { Selection } from "@react-types/shared";
-import { ImportTemplateExtensionService } from "@adobe/genstudio-extensibility-sdk";
+import {
+  ImportTemplateExtensionService,
+  Template,
+} from "@adobe/genstudio-extensibility-sdk";
 
 interface Auth {
   imsToken: string;
@@ -60,13 +63,17 @@ export default function TemplateViewer(): JSX.Element {
     const selectedTemplateIdsList = Array.from(selectedTemplateIds);
     const selectedTemplate =
       selectedTemplateIdsList.length > 0
-        ? templates.find((t) => t.id === selectedTemplateIdsList[0]) ||
-          undefined
+        ? Object.assign(
+            {},
+            templates.find(
+              (t) => t.id === selectedTemplateIdsList[0]
+            ) as Template,
+            {
+              source: extensionLabel,
+              additionalMetadata: { thumbnailUrl: undefined },
+            }
+          ) || undefined
         : undefined;
-    if (selectedTemplate) {
-      selectedTemplate.source = extensionLabel;
-      delete selectedTemplate.additionalMetadata?.thumbnailUrl;
-    }
     ImportTemplateExtensionService.setSelectedTemplate(
       guestConnection,
       selectedTemplate
