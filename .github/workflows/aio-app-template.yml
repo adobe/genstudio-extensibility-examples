@@ -114,7 +114,7 @@ jobs:
           AIO_PROJECT_WORKSPACE_ID: ${{ secrets.AIO_PROJECT_WORKSPACE_ID }}
           AIO_PROJECT_WORKSPACE_NAME: ${{ secrets.AIO_PROJECT_WORKSPACE_NAME }}
           AIO_PROJECT_WORKSPACE_DETAILS_SERVICES: ${{ secrets.AIO_PROJECT_WORKSPACE_DETAILS_SERVICES }}
-          # External DAM only
+          # External DAM and External Template only
           GS_S3_BUCKET_NAME: ${{ secrets.GS_S3_BUCKET_NAME }}
           GS_AWS_REGION: ${{ secrets.GS_AWS_REGION }}
           GS_AWS_ACCESS_KEY_ID: ${{ secrets.GS_AWS_ACCESS_KEY_ID }}
