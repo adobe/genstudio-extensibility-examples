@@ -1,0 +1,28 @@
+Examples:
+
+<li>
+    <a href="vanilla-esm/index.html">Vanilla JS with ES Module</a>
+</li>
+<li>
+    <a href="vanilla-umd-global-var/index.html">Vanilla JS with global variable</a>
+</li>
+
+<script>
+// Add current URL parameters to all links
+document.addEventListener('DOMContentLoaded', function() {
+    const currentParams = new URLSearchParams(window.location.search);
+
+    if (currentParams.toString()) {
+        for (const link of document.querySelectorAll('a')) {
+            const url = new URL(link.href, window.location.origin);
+
+            // Add each parameter from current page to the link
+            currentParams.forEach((value, key) => {
+                url.searchParams.set(key, value);
+            });
+
+            link.href = url.toString();
+        }
+    }
+});
+</script>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanilla JS GenStudio Experience Selector</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #42b883;
+            /* Vue's brand green */
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        button {
+            background-color: #1473e6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #0d66d0;
+        }
+
+        #experience-selector-root {
+            width: 80%;
+            height: 80%;
+            margin: auto;
+            border-radius: 12px;
+            border: none;
+        }
+
+        #experience-selector-result {
+            font-family: monospace;
+        }
+    </style>
+    <script src="https://experience-stage.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/umd/standalone.js?path=/story/api-package-experience-selector-dialog--experience-selector-dialog&GenStudio-experience-selector-mfe_version=PR-83-91d3d16382361be32ceaf2729b44434a67388828-5329"></script>
+    </head>
+<body>
+    <h1>Hello, this is Vanilla JS with GenStudio Experience Selector!</h1>
+    <p>
+        <button id="experience-selector-button">Select a GenStudio Experience</button>
+    </p>
+    <dialog id="experience-selector-root"></dialog>
+    <pre id="experience-selector-result"></pre>
+
+    <script src="app.js"></script>
+</body>
+</html>
