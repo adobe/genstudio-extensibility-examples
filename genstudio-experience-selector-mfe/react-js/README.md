@@ -15,7 +15,16 @@ This example demonstrates how to integrate the GenStudio Experience Selector MFE
    npm install
    ```
 
-2. **Update configuration** in `src/App.jsx`:
+2. **Create SSL certificates** (required for HTTPS):
+   ```bash
+   # Generate private key
+   openssl genrsa -out key.pem 2048
+
+   # Generate certificate for localhost
+   openssl req -new -x509 -key key.pem -out cert.pem -days 365 -subj "/CN=localhost"
+   ```
+
+3. **Update configuration** in `src/App.jsx`:
    ```javascript
    const experienceSelectorProps = {
      locale: 'en-US',
@@ -36,12 +45,14 @@ This example demonstrates how to integrate the GenStudio Experience Selector MFE
    };
    ```
 
-3. **Start development server**:
+4. **Start development server**:
    ```bash
    npm run dev
    ```
 
-4. **Open your browser** and navigate to `http://localhost:5173` (or the port shown in your terminal)
+5. **Open your browser** and navigate to `https://localhost.corp.adobe.com:63002`
+
+   > **Note**: You may need to accept the self-signed certificate warning in your browser.
 
 
 ## Code Structure

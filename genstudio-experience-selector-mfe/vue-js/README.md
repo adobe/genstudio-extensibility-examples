@@ -16,11 +16,20 @@ This example demonstrates how to integrate the GenStudio Experience Selector MFE
    npm install
    ```
 
-2. **Update configuration** in `App.vue`:
+2. **Create SSL certificates** (required for HTTPS):
+   ```bash
+   # Generate private key
+   openssl genrsa -out key.pem 2048
+
+   # Generate certificate for localhost
+   openssl req -new -x509 -key key.pem -out cert.pem -days 365 -subj "/CN=localhost"
+   ```
+
+3. **Update configuration** in `App.vue`:
    ```javascript
    const experienceSelectorProps = {
      locale: 'en-US',
-     apiKey: 'exc_app',         
+     apiKey: 'exc_app',
      imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Org
      env: 'stage', // or 'prod'
      susiConfig: {
@@ -37,12 +46,14 @@ This example demonstrates how to integrate the GenStudio Experience Selector MFE
    };
    ```
 
-3. **Start development server**:
+4. **Start development server**:
    ```bash
    npm run dev
    ```
 
-4. **Open your browser** and navigate to the URL shown in the terminal (typically `http://localhost:5173`)
+5. **Open your browser** and navigate to `https://localhost.corp.adobe.com:63001`
+
+   > **Note**: You may need to accept the self-signed certificate warning in your browser.
 
 ## Code Structure
 

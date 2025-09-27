@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { renderExperienceSelectorWithSUSI } from 'https://experience-stage.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js?path=/story/api-package-experience-selector-dialog--experience-selector-dialog&GenStudio-experience-selector-mfe_version=prod20250924024220';
+import { renderExperienceSelectorWithSUSI } from 'https://experience-stage.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
 
 function App() {
     const [result, setResult] = useState('');

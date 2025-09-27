@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 
-import {renderExperienceSelectorWithSUSI} from 'https://experience-stage.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js?path=/story/api-package-experience-selector-dialog--experience-selector-dialog&GenStudio-experience-selector-mfe_version=PR-83-91d3d16382361be32ceaf2729b44434a67388828-5329';
+import {renderExperienceSelectorWithSUSI} from 'https://experience-stage.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
 
 
 const dialogRef = ref();
@@ -16,7 +16,17 @@ function onSelectionConfirmed(experience) {
 const experienceSelectorProps = {
     locale: 'en-US',
     apiKey: 'exc_app',
-    imsToken: '',
+    susiConfig: {
+        clientId: 'genstudio',
+        environment: "stg1",
+        scope:
+            'additional_info.projectedProductContext,additional_info.ownerOrg,AdobeID,openid,session,read_organizations,ab.manage',
+        locale: 'en_US',
+        modalSettings: {
+            width: 500,
+            height: 700,
+        },
+    },
     imsOrg: '36031A56669DEACD0A49402F@AdobeOrg',
     // customFilters: ['genstudio-channel:email'],
     env: 'stage',

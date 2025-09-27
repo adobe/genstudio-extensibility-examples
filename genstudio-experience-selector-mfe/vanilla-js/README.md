@@ -61,19 +61,9 @@ To run the app over HTTPS, first create self-signed certificates:
    ```bash
    # HTTPS (with self-signed certificates): (recommended)
    npx http-server -S -C "$(pwd)/cert.pem" -K "$(pwd)/key.pem" -p 8080
-   
-   or
-
-   # Using Python
-   python -m http.server 8080
-
-   or
-   
-   # Using Node.js
-   npx serve -p 8080
    ```
 
-5. **Open browser** and navigate to `localhost.corp.adobe.com:8080` (HTTP) or `https://localhost:8080` (HTTPS) to view the app
+5. **Open browser** and navigate to `https://localhost.corp.adobe.com:8080` to view the app
 
 ### UMD Version Setup
 

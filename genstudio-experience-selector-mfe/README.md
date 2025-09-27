@@ -31,7 +31,7 @@ The `renderExperienceSelectorWithSUSI` function accepts a configuration object w
 
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
-| `locale` | string | Yes | Language locale (e.g., 'en-US') |
+| `locale` | string | No | Language locale (e.g., 'en-US') |
 | `apiKey` | string | Yes | API key for GenStudio services |
 | `imsOrg` | string | Yes | IMS Organization ID |
 | `env` | string | Yes | Environment ('stage', 'prod') |
@@ -88,7 +88,7 @@ Two vanilla JavaScript implementations:
    ```javascript
    const experienceSelectorProps = {
      locale: 'en-US',
-     apiKey: 'your-api-key',           // Replace with your API key
+     apiKey: 'exc_app',           
      imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Org
      env: 'stage', // or 'prod'
      // ... other configuration
