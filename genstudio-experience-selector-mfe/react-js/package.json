@@ -1,0 +1,21 @@
+{
+    "name": "react-js",
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "start": "vite build && vite preview --port 63002",
+        "dev": "vite --port 63002",
+        "build": "vite build",
+        "preview": "vite preview --port 63002"
+    },
+    "dependencies": {
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+    },
+    "devDependencies": {
+        "@types/react": "^18.3.3",
+        "@types/react-dom": "^18.3.0",
+        "@vitejs/plugin-react": "^4.3.1",
+        "vite": "^5.4.1"
+    }
+}
