@@ -45,7 +45,7 @@ The `renderExperienceSelectorWithSUSI` function accepts a configuration object w
 
 ### SUSI Configuration
 
-The `susiConfig` object should include:
+The `susiConfig` object may include:
 
 ```javascript
 {
