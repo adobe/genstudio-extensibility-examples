@@ -91,7 +91,19 @@ Two vanilla JavaScript implementations:
      apiKey: 'exc_app',           
      imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Org
      env: 'stage', // or 'prod'
-     // ... other configuration
+     susiConfig: {
+        clientId: 'genstudio',
+        environment: 'stg1', // or 'prod'
+        scope: 'additional_info.projectedProductContext,additional_info.ownerOrg,AdobeID,openid,session,read_organizations,ab.manage',
+        locale: 'en_US',
+        modalSettings: {
+          width: 500,
+          height: 700,
+        },
+     },
+     customFilters: ['genstudio-channel:email'],
+     selectionType: 'single', // or 'multiple'
+     dialogTitle: 'Select Email Templates'
    };
    ```
 5. **Run the development server**
