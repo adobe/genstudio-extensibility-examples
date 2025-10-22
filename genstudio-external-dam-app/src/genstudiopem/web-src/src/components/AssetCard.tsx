@@ -12,12 +12,12 @@ governing permissions and limitations under the License.
 
 import React, { useState } from "react";
 import { View, Image, Text, Checkbox } from "@adobe/react-spectrum";
-import { DamAsset } from "../types";
+import { Asset } from "@adobe/genstudio-extensibility-sdk";
 
 interface AssetCardProps {
-  asset: DamAsset;
+  asset: Asset;
   isSelected: boolean;
-  onSelect: (asset: DamAsset) => void;
+  onSelect: (asset: Asset) => void;
 }
 
 const AssetCard: React.FC<AssetCardProps> = ({
@@ -43,19 +43,21 @@ const AssetCard: React.FC<AssetCardProps> = ({
     position: "relative",
     width: "230px",
     height: "241px",
-    borderRadius: "var(--spectrum-global-dimension-size-50)", 
+    borderRadius: "var(--spectrum-global-dimension-size-50)",
     backgroundColor: "var(--spectrum-global-color-gray-50)",
     overflow: "hidden",
-    transition: "box-shadow 0.2s ease-out", 
-    transform: "translateZ(0)", 
-    willChange: "box-shadow", 
-    border: isSelected ? "2px solid var(--spectrum-global-color-gray-900)" : "2px solid transparent",
-    margin: "0px", 
-    boxShadow: isSelected 
+    transition: "box-shadow 0.2s ease-out",
+    transform: "translateZ(0)",
+    willChange: "box-shadow",
+    border: isSelected
+      ? "2px solid var(--spectrum-global-color-gray-900)"
+      : "2px solid transparent",
+    margin: "0px",
+    boxShadow: isSelected
       ? "0px 4px 12px rgba(0, 0, 0, 0.15), 0px 1px 3px rgba(0, 0, 0, 0.1)"
       : isHovered
-        ? "0px 4px 12px rgba(0, 0, 0, 0.15), 0px 2px 6px rgba(0, 0, 0, 0.1)"
-        : "0px 1px 3px rgba(0, 0, 0, 0.1)",
+      ? "0px 4px 12px rgba(0, 0, 0, 0.15), 0px 2px 6px rgba(0, 0, 0, 0.1)"
+      : "0px 1px 3px rgba(0, 0, 0, 0.1)",
   };
 
   const handleMouseEnter = () => {
@@ -67,13 +69,13 @@ const AssetCard: React.FC<AssetCardProps> = ({
   };
 
   return (
-    <div 
+    <div
       onClick={() => onSelect(asset)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={cardStyles}
     >
-      <View 
+      <View
         position="relative"
         height="192px"
         width="100%"
@@ -81,13 +83,13 @@ const AssetCard: React.FC<AssetCardProps> = ({
         backgroundColor="gray-100"
       >
         <Image
-          src={asset.thumbnailUrl}
+          src={asset.externalAssetInfo?.signedThumbnailUrl}
           alt={asset.name}
-          objectFit="contain" 
+          objectFit="contain"
           width="100%"
           height="100%"
-          UNSAFE_style={{ 
-            backgroundColor: "#F2F4F5" 
+          UNSAFE_style={{
+            backgroundColor: "#F2F4F5",
           }}
         />
 
@@ -98,36 +100,37 @@ const AssetCard: React.FC<AssetCardProps> = ({
           padding="size-50"
           borderRadius="small"
           UNSAFE_style={{
-            backgroundColor: "rgba(0, 0, 0, 0.40)", 
+            backgroundColor: "rgba(0, 0, 0, 0.40)",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center"
+            justifyContent: "center",
           }}
         >
-          <Text 
-            UNSAFE_style={{ 
-              color: "var(--spectrum-global-color-gray-50)", 
+          <Text
+            UNSAFE_style={{
+              color: "var(--spectrum-global-color-gray-50)",
               textAlign: "center",
-              fontFamily: "var(--spectrum-global-font-family-base)", 
-              fontSize: "var(--spectrum-global-dimension-font-size-75)", 
+              fontFamily: "var(--spectrum-global-font-family-base)",
+              fontSize: "var(--spectrum-global-dimension-font-size-75)",
               fontStyle: "normal",
-              fontWeight: "400", 
+              fontWeight: "400",
               lineHeight: "130%",
-              textTransform: "uppercase"
-            }}>
-            {asset.fileType}
+              textTransform: "uppercase",
+            }}
+          >
+            {asset.mimeType}
           </Text>
         </View>
 
         {}
         {(isHovered || isSelected) && (
-          <div 
+          <div
             style={{
               position: "absolute",
               top: "var(--spectrum-global-dimension-size-100)",
               left: "var(--spectrum-global-dimension-size-100)",
               zIndex: 10,
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
@@ -140,12 +143,12 @@ const AssetCard: React.FC<AssetCardProps> = ({
               borderRadius="medium"
               backgroundColor="static-white"
               UNSAFE_style={{
-                backgroundColor: "rgba(255, 255, 255, 0.51)", 
+                backgroundColor: "rgba(255, 255, 255, 0.51)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 backdropFilter: "blur(4px)",
-                padding: "var(--spectrum-global-dimension-size-50)"
+                padding: "var(--spectrum-global-dimension-size-50)",
               }}
             >
               <View
@@ -159,7 +162,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  transition: "all 0.15s ease-in-out"
+                  transition: "all 0.15s ease-in-out",
                 }}
               >
                 {isSelected && (
@@ -170,7 +173,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                     style={{
-                      color: "#FFFFFF"
+                      color: "#FFFFFF",
                     }}
                   >
                     <path
@@ -189,7 +192,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
         )}
       </View>
 
-      <View 
+      <View
         backgroundColor="gray-50"
         padding="size-100"
         UNSAFE_style={{
@@ -197,40 +200,41 @@ const AssetCard: React.FC<AssetCardProps> = ({
           flexDirection: "column",
           alignItems: "flex-start",
           justifyContent: "flex-start",
-          height: "49px", 
-          borderRadius: "0px 0px var(--spectrum-global-dimension-size-50) var(--spectrum-global-dimension-size-50)"
+          height: "49px",
+          borderRadius:
+            "0px 0px var(--spectrum-global-dimension-size-50) var(--spectrum-global-dimension-size-50)",
         }}
       >
         <Text
           UNSAFE_style={{
             overflow: "hidden",
-            color: "var(--spectrum-global-color-gray-900)", 
+            color: "var(--spectrum-global-color-gray-900)",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
-            fontFamily: "var(--spectrum-global-font-family-base)", 
-            fontSize: "var(--spectrum-global-dimension-font-size-100)", 
+            fontFamily: "var(--spectrum-global-font-family-base)",
+            fontSize: "var(--spectrum-global-dimension-font-size-100)",
             fontStyle: "normal",
             fontWeight: "700",
             lineHeight: "130%",
             textAlign: "left",
-            marginBottom: "var(--spectrum-global-dimension-size-25)", 
-            width: "100%"
+            marginBottom: "var(--spectrum-global-dimension-size-25)",
+            width: "100%",
           }}
         >
           {asset.name}
         </Text>
         <Text
           UNSAFE_style={{
-            fontFamily: "var(--spectrum-global-font-family-base)", 
-            fontSize: "var(--spectrum-global-dimension-font-size-75)", 
+            fontFamily: "var(--spectrum-global-font-family-base)",
+            fontSize: "var(--spectrum-global-dimension-font-size-75)",
             fontStyle: "normal",
             fontWeight: "400",
             lineHeight: "130%",
-            color: "var(--spectrum-global-color-gray-700)", 
-            textAlign: "left"
+            color: "var(--spectrum-global-color-gray-700)",
+            textAlign: "left",
           }}
         >
-          {formatFileSize(asset.metadata?.size || 0)}
+          {formatFileSize(asset.size ?? 0)}
         </Text>
       </View>
     </div>

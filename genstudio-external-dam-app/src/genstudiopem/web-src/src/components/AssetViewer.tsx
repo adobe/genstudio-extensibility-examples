@@ -23,9 +23,11 @@ import AssetCard from "./AssetCard";
 import AssetTypeFilter from "./AssetTypeFilter";
 import { useAssetActions } from "../hooks/useAssetActions";
 import { extensionId, extensionLabel, ICON_DATA_URI } from "../Constants";
-import { Asset, SelectContentExtensionService } from "@adobe/genstudio-extensibility-sdk";
+import {
+  Asset,
+  SelectContentExtensionService,
+} from "@adobe/genstudio-extensibility-sdk";
 import { attach } from "@adobe/uix-guest";
-import { DamAsset } from "../types";
 
 export default function AssetViewer(): JSX.Element {
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
@@ -57,18 +59,6 @@ export default function AssetViewer(): JSX.Element {
       hasInitialLoad.current = true;
     }
   }, [assets.length]);
-
-  const convertToGenStudioAsset = (asset: DamAsset): Asset => {
-    return {
-      id: asset.id,
-      name: asset.name,
-      signedUrl: asset.url,
-      source: extensionLabel,
-      sourceUrl: asset.url,
-      extensionId: extensionId,
-      iconUrl: ICON_DATA_URI,
-    };
-  };
 
   useEffect(() => {
     (async () => {
@@ -117,20 +107,17 @@ export default function AssetViewer(): JSX.Element {
     filterAssets(fileTypes, searchTerm);
   };
 
-  const handleAssetSelect = async (asset: DamAsset) => {
-    const { selectionLimit } =
-      await SelectContentExtensionService.sync(
-        guestConnection
-      );
-
+  const handleAssetSelect = async (asset: Asset) => {
+    const { selectionLimit } = await SelectContentExtensionService.sync(
+      guestConnection
+    );
     const isSelected = selectedAssets.some((a) => a.id === asset.id);
-
     let newSelectedAssets: Asset[] = [...selectedAssets];
 
     if (isSelected) {
       newSelectedAssets = selectedAssets.filter((a) => a.id !== asset.id);
     } else if (selectedAssets.length < selectionLimit) {
-      newSelectedAssets = [...selectedAssets, convertToGenStudioAsset(asset)];
+      newSelectedAssets = [...selectedAssets, asset];
     }
 
     setSelectedAssets(newSelectedAssets);
@@ -141,7 +128,14 @@ export default function AssetViewer(): JSX.Element {
       SelectContentExtensionService.setSelectedAssets(
         guestConnection,
         extensionId,
-        newSelectedAssets
+        newSelectedAssets.map((asset) => ({
+          ...asset,
+          extensionInfo: {
+            id: guestConnection?.id,
+            name: extensionLabel,
+            iconUrl: ICON_DATA_URI,
+          },
+        }))
       );
     } catch (error) {
       console.warn("Error sending selected assets to host:", error);
@@ -176,10 +170,9 @@ export default function AssetViewer(): JSX.Element {
 
   useEffect(() => {
     const getAssets = async () => {
-      const { selectedAssets } =
-        await SelectContentExtensionService.sync(
-          guestConnection
-        );
+      const { selectedAssets } = await SelectContentExtensionService.sync(
+        guestConnection
+      );
 
       if (selectedAssets) {
         const assets = selectedAssets.map((asset: any) =>
@@ -197,7 +190,7 @@ export default function AssetViewer(): JSX.Element {
     if (guestConnection) getAssets();
   }, [guestConnection]);
 
-  const renderAsset = (asset: DamAsset) => {
+  const renderAsset = (asset: Asset) => {
     const isSelected = selectedAssets?.some((a) => a.id === asset.id);
 
     return (
