@@ -13,8 +13,13 @@ governing permissions and limitations under the License.
 import { Text } from "@adobe/react-spectrum";
 import { register } from "@adobe/uix-guest";
 import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
-import { AppMetadata, Toggle, App } from "@adobe/genstudio-extensibility-sdk";
+import { AppMetadata, Toggle, App, getExtensionAuth, ExtensionAuth } from "@adobe/genstudio-extensibility-sdk";
 import React, { Key } from "react";
+
+import actions from "../config.json";
+import { actionWebInvoke } from "../utils/actionWebInvoke";
+
+const UPLOAD_AND_GET_URL_ACTION = "genstudio-external-dam-app/upload-and-get-url";
 
 const getAppMetadata = (id: Key): AppMetadata => ({
   // id: id.toString().includes("localhost") ? extensionId : id.toString(),
@@ -54,6 +59,30 @@ const ExtensionRegistration = (): React.JSX.Element => {
               metadata: getAppMetadata(id),
             },
           ],
+          uploadAndGetUrl: async (asset: {
+            id: string;
+            name: string;
+            originalUrl: string;
+            thumbnailUrl: string;
+          }, auth: ExtensionAuth): Promise<{
+            originalPath: string;
+            originalUrl: string;
+            thumbnailPath: string;
+            thumbnailUrl: string;
+          }> => {
+            // const auth: ExtensionAuth = getExtensionAuth(guestConnection);
+            return await actionWebInvoke(
+              actions[UPLOAD_AND_GET_URL_ACTION],
+              auth.imsToken,
+              auth.imsOrgId,
+              {
+                id: asset.id,
+                name: asset.name,
+                originalUrl: asset.originalUrl,
+                thumbnailUrl: asset.thumbnailUrl,
+              }
+            );
+          },
         },
       },
     });

@@ -23,7 +23,7 @@ import AssetCard from "./AssetCard";
 import AssetTypeFilter from "./AssetTypeFilter";
 import { useAssetActions } from "../hooks/useAssetActions";
 import { extensionId, extensionLabel, ICON_DATA_URI } from "../Constants";
-import { Asset, ExtensionRegistrationService } from "@adobe/genstudio-extensibility-sdk";
+import { Asset, SelectContentExtensionService } from "@adobe/genstudio-extensibility-sdk";
 import { attach } from "@adobe/uix-guest";
 import { DamAsset } from "../types";
 
@@ -119,7 +119,7 @@ export default function AssetViewer(): JSX.Element {
 
   const handleAssetSelect = async (asset: DamAsset) => {
     const { selectionLimit } =
-      await ExtensionRegistrationService.selectContentExtensionSync(
+      await SelectContentExtensionService.sync(
         guestConnection
       );
 
@@ -138,7 +138,7 @@ export default function AssetViewer(): JSX.Element {
     if (!guestConnection) return;
 
     try {
-      await ExtensionRegistrationService.selectContentExtensionSetSelectedAssets(
+      SelectContentExtensionService.setSelectedAssets(
         guestConnection,
         extensionId,
         newSelectedAssets
@@ -177,7 +177,7 @@ export default function AssetViewer(): JSX.Element {
   useEffect(() => {
     const getAssets = async () => {
       const { selectedAssets } =
-        await ExtensionRegistrationService.selectContentExtensionSync(
+        await SelectContentExtensionService.sync(
           guestConnection
         );
 

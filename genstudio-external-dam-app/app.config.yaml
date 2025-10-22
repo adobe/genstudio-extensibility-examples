@@ -38,8 +38,8 @@ extensions:
               annotations:
                 require-adobe-auth: true
                 final: false
-            get-metadata:
-              function: src/genstudiopem/actions/aio-lib-files/get-metadata.js
+            upload-and-get-url:
+              function: src/genstudiopem/actions/aio-lib-files/upload-and-get-url.js
               web: "yes"
               runtime: nodejs:22
               inputs:

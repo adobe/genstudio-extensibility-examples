@@ -11,16 +11,54 @@ governing permissions and limitations under the License.
 */
 
 const { Core } = require("@adobe/aio-sdk");
+const AIOFilesService = require('./AIOFilesService');
 
+/**
+ * Generate a presigned URL for an existing file in AIO Files
+ * @param {Object} params - Action parameters
+ * @param {string} params.filePath - Path to the file in AIO Files
+ * @param {number} [params.expiryInSeconds=3600] - Expiry time in seconds
+ * @returns {Promise<Object>} Response object with presigned URL
+ */
 exports.main = async (params) => {
   const logger = Core.Logger("main", { level: params.LOG_LEVEL || "info" });
 
-  logger.info("Uploading file to AIO Lib Files");
+  try {
+    const { filePath, expiryInSeconds = 3600 } = params;
 
-  return {
-    statusCode: 200,
-    body: {
-      url: "https://img.freepik.com/free-vector/moon-with-stars_98292-1046.jpg",
-    },
+    // Validate required parameters
+    if (!filePath) {
+      const message = "Missing required parameter: filePath";
+      logger.error(message);
+      return {
+        statusCode: 400,
+        body: {
+          error: message
+        }
+      };
+    }
+
+    logger.info(`Generating presigned URL for: ${filePath}`);
+
+    // Use AIO Files Service to generate presigned URL
+    const filesService = new AIOFilesService(logger);
+    const presignedUrl = await filesService.generatePresignedURL(filePath, expiryInSeconds);
+
+    return {
+      statusCode: 200,
+      body: {
+        url: presignedUrl
+      }
+    };
+  } catch (error) {
+    logger.error("Error generating presigned URL");
+    logger.error(error);
+
+    return {
+      statusCode: 500,
+      body: {
+        error: error.message || "Failed to generate presigned URL"
+      }
+    };
   }
 };
