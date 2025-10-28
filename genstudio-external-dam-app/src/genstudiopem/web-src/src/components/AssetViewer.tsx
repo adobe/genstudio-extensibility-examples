@@ -175,15 +175,14 @@ export default function AssetViewer(): JSX.Element {
       );
 
       if (selectedAssets) {
-        const assets = selectedAssets.map((asset: any) =>
-          convertToGenStudioAsset(asset)
-        );
         setSelectedAssets((prevAssets) => {
           const localAssets = prevAssets.filter(
             (asset) =>
-              !assets.some((extAsset: Asset) => extAsset.id === asset.id)
+              !selectedAssets.some(
+                (extAsset: Asset) => extAsset.id === asset.id
+              )
           );
-          return [...localAssets, ...assets];
+          return [...localAssets, ...selectedAssets];
         });
       }
     };
