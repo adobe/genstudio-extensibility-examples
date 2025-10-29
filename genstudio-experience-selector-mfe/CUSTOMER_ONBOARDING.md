@@ -125,7 +125,9 @@ Create a Cloud Manager customer support ticket with the following information.
 > **Note:** If urgent, ping `#cloudmanager-oncall` Slack channel for assistance.
 
 1. Log in to the HAL Browser with admin permissions:
-**https://git.corp.adobe.com/pages/experience-platform/self-service-hal-browser/#https://ssg.adobe.io/api/program/<CUSTOMER_PROGRAM_ID>/environment/<CUSTOMER_ENVIRONMENT_ID>/variables**
+```bash
+https://git.corp.adobe.com/pages/experience-platform/self-service-hal-browser/#https://ssg.adobe.io/api/program/<CUSTOMER_PROGRAM_ID>/environment/<CUSTOMER_ENVIRONMENT_ID>/variables
+```
 
 2. Send a PATCH request to the endpoint to update the environment variables.
 ```bash
