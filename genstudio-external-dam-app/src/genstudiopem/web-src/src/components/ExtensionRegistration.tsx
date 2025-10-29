@@ -10,19 +10,24 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Text } from "@adobe/react-spectrum";
 import { register } from "@adobe/uix-guest";
 import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
-import { AppMetadata, Toggle, App, getExtensionAuth, ExtensionAuth, Asset } from "@adobe/genstudio-extensibility-sdk";
+import {
+  AppMetadata,
+  Toggle,
+  App,
+  ExtensionAuth,
+  Asset,
+} from "@adobe/genstudio-extensibility-sdk";
 import React, { Key } from "react";
 
 import actions from "../config.json";
 import { actionWebInvoke } from "../utils/actionWebInvoke";
 
-const UPLOAD_AND_GET_URL_ACTION = "genstudio-external-dam-app/upload-and-get-url";
+const UPLOAD_AND_GET_URL_ACTION =
+  "genstudio-external-dam-app/upload-and-get-url";
 
 const getAppMetadata = (id: Key): AppMetadata => ({
-  // id: id.toString().includes("localhost") ? extensionId : id.toString(),
   id: id.toString(),
   label: extensionLabel,
   iconDataUri: ICON_DATA_URI,
@@ -33,12 +38,6 @@ const getAppMetadata = (id: Key): AppMetadata => ({
     },
   ],
   extensionId: "deprecated",
-  // accounts: [
-  //   {
-  //     id: '12373425',
-  //     name: 'test account'
-  //   }
-  // ]
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
@@ -60,7 +59,10 @@ const ExtensionRegistration = (): React.JSX.Element => {
             },
           ],
           // DO NOT REMOVE THIS METHOD, IT IS USED BY GENSTUDIO
-          uploadAndGetUrl: async (auth: ExtensionAuth, asset: Asset): Promise<{
+          uploadAndGetUrl: async (
+            auth: ExtensionAuth,
+            asset: Asset
+          ): Promise<{
             originalPath: string;
             originalUrl: string;
             thumbnailPath: string;
@@ -86,10 +88,9 @@ const ExtensionRegistration = (): React.JSX.Element => {
   init().catch(console.error);
 
   return (
-    <Text>
-      IFrame for integration with Host (GenStudio for Performance Marketing
-      App)...
-    </Text>
+    <div>
+      IFrame for integration with Host (GenStudio for Performance Marketing App)
+    </div>
   );
 };
 
