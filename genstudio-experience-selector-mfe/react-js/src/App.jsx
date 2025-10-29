@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { renderExperienceSelectorWithSUSI } from 'https://experience-stage.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
+import { renderExperienceSelectorWithSUSI } from 'https://experience.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
 
 function App() {
     const [result, setResult] = useState('');
@@ -13,13 +13,13 @@ function App() {
     const experienceSelectorProps = {
         locale: 'en-US',
         apiKey: 'exc_app',
-        imsOrg: '36031A56669DEACD0A49402F@AdobeOrg',
-        env: 'stage',
+        imsOrg: 'your-ims-org@AdobeOrg', // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
+        env: 'prod',
         susiConfig: {
-            clientId: 'genstudio',
-            environment: "stg1",
+            clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
+            environment: "prod",
             scope:
-                'additional_info.projectedProductContext,additional_info.ownerOrg,AdobeID,openid,session,read_organizations,ab.manage',
+                'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
             locale: 'en_US',
             modalSettings: {
                 width: 500,

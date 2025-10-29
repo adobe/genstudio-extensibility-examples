@@ -17,12 +17,12 @@ The MFE can be integrated using two different approaches:
 
 ### ESM (ES Modules) - Recommended
 ```javascript
-import { renderExperienceSelectorWithSUSI } from 'https://experience-stage.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
+import { renderExperienceSelectorWithSUSI } from 'https://experience.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
 ```
 
 ### UMD (Universal Module Definition)
 ```html
-<script src="https://experience-stage.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/umd/standalone.js"></script>
+<script src="https://experience.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/umd/standalone.js"></script>
 ```
 
 ## Configuration Properties
@@ -34,7 +34,7 @@ The `renderExperienceSelectorWithSUSI` function accepts a configuration object w
 | `locale` | string | No | Language locale (e.g., 'en-US') |
 | `apiKey` | string | Yes | API key for GenStudio services |
 | `imsOrg` | string | Yes | IMS Organization ID |
-| `env` | string | Yes | Environment ('stage', 'prod') |
+| `env` | string | Yes | Environment ('prod') |
 | `susiConfig` | object | Yes | SUSI authentication configuration |
 | `isOpen` | boolean | No | Initial dialog state |
 | `selectionType` | string | No | 'single' or 'multiple' selection mode |
@@ -49,9 +49,9 @@ The `susiConfig` object may include:
 
 ```javascript
 {
-  clientId: 'genstudio',
-  environment: 'stg1', // or 'prod'
-  scope: 'additional_info.projectedProductContext,additional_info.ownerOrg,AdobeID,openid,session,read_organizations,ab.manage',
+  clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
+  environment: 'prod',
+  scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
   locale: 'en_US',
   modalSettings: {
     width: 500,
@@ -89,12 +89,12 @@ Two vanilla JavaScript implementations:
    const experienceSelectorProps = {
      locale: 'en-US',
      apiKey: 'exc_app',           
-     imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Org
-     env: 'stage', // or 'prod'
+     imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
+     env: 'prod', 
      susiConfig: {
-        clientId: 'genstudio',
-        environment: 'stg1', // or 'prod'
-        scope: 'additional_info.projectedProductContext,additional_info.ownerOrg,AdobeID,openid,session,read_organizations,ab.manage',
+        clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
+        environment: 'prod', 
+        scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
         locale: 'en_US',
         modalSettings: {
           width: 500,

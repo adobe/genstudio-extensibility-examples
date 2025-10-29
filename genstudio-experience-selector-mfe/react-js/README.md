@@ -29,12 +29,12 @@ This example demonstrates how to integrate the GenStudio Experience Selector MFE
    const experienceSelectorProps = {
      locale: 'en-US',
      apiKey: 'exc_app',
-     imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Org
-     env: 'stage', // or 'prod'
+     imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
+     env: 'prod',
      susiConfig: {
-       clientId: 'genstudio',
-       environment: 'stg1', // or 'prod'
-       scope: 'additional_info.projectedProductContext,additional_info.ownerOrg,AdobeID,openid,session,read_organizations,ab.manage',
+       clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
+       environment: 'prod',
+       scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
        locale: 'en_US',
        modalSettings: {
          width: 500,
@@ -63,7 +63,7 @@ The main component demonstrates:
 
 ```javascript
 import React, { useState, useRef } from 'react';
-import { renderExperienceSelectorWithSUSI } from 'https://experience-stage.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
+import { renderExperienceSelectorWithSUSI } from 'https://experience.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
 
 function App() {
     const [result, setResult] = useState('');
@@ -79,12 +79,12 @@ function App() {
     const experienceSelectorProps = {
         locale: 'en-US',
         apiKey: 'exc_app',          
-        imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Org
-        env: 'stage', // or 'prod'
+        imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
+        env: 'prod',
         susiConfig: {
-            clientId: 'genstudio',
-            environment: 'stg1', // or 'prod'
-            scope: 'additional_info.projectedProductContext,additional_info.ownerOrg,AdobeID,openid,session,read_organizations,ab.manage',
+            clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
+            environment: 'prod',
+            scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
             locale: 'en_US',
             modalSettings: {
                 width: 500,
@@ -123,8 +123,8 @@ function App() {
 |----------|-------------|---------|
 | `locale` | Language locale | `'en-US'` |
 | `apiKey` | GenStudio API key | `'exc_app'` |
-| `imsOrg` | IMS Organization ID | `'36031A56669DEACD0A49402F@AdobeOrg'` |
-| `env` | Environment | `'stage'` or `'prod'` |
+| `imsOrg` | IMS Organization ID | `'your-ims-org@AdobeOrg'` |
+| `env` | Environment | `'prod'` |
 | `susiConfig` | Authentication configuration | See SUSI Config below |
 
 ### Optional Properties
@@ -140,9 +140,9 @@ function App() {
 
 ```javascript
 susiConfig: {
-    clientId: 'genstudio',
-    environment: 'stg1', // 'stg1' for stage, 'prod' for production
-    scope: 'additional_info.projectedProductContext,additional_info.ownerOrg,AdobeID,openid,session,read_organizations,ab.manage',
+    clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
+    environment: 'prod',
+            scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
     locale: 'en_US',
     modalSettings: {
         width: 500,
