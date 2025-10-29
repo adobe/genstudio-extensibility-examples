@@ -22,7 +22,7 @@ Before beginning the onboarding process, ensure you have:
 
 **Note:** 
 - For ProgramID and EnvironmentID: customers can get this information from the Browser Network tab by searching for delivery requests
-- For IMSOrgID: customers can get this information by pressing Ctrl + i and copying the IMSOrg string
+- For IMSOrgID: customers can get this information by pressing Ctrl + i and copying the Current Org ID string
 
 ## Onboarding Steps
 
@@ -125,7 +125,7 @@ Create a Cloud Manager customer support ticket with the following information.
 > **Note:** If urgent, ping `#cloudmanager-oncall` Slack channel for assistance.
 
 1. Log in to the HAL Browser with admin permissions:
-https://git.corp.adobe.com/pages/experience-platform/self-service-hal-browser/#https://ssg.adobe.io/api/program/<CUSTOMER_PROGRAM_ID>/environment/<CUSTOMER_ENVIRONMENT_ID>/variables
+**https://git.corp.adobe.com/pages/experience-platform/self-service-hal-browser/#https://ssg.adobe.io/api/program/<CUSTOMER_PROGRAM_ID>/environment/<CUSTOMER_ENVIRONMENT_ID>/variables**
 
 2. Send a PATCH request to the endpoint to update the environment variables.
 ```bash
