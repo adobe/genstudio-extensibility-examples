@@ -15,10 +15,7 @@ import { CardView, SearchField, ProgressCircle } from "@react-spectrum/s2";
 import { AssetCard } from "./AssetCard";
 import { useAssetActions } from "../hooks/useAssetActions";
 import { extensionId, extensionLabel, ICON_DATA_URI } from "../Constants";
-import {
-  Asset,
-  SelectContentExtensionService,
-} from "@adobe/genstudio-extensibility-sdk";
+import { SelectContentExtensionService } from "@adobe/genstudio-extensibility-sdk";
 import { useGuestConnection } from "../hooks";
 import { Selection } from "@react-types/shared";
 
@@ -135,12 +132,26 @@ export default function AssetViewer(): JSX.Element {
     );
   };
 
-  return (
+  const containerStyles = {
+    display: "flex",
+    flexDirection: "column" as const,
+    alignItems: "center",
+  };
+
+  return isLoading ? (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        ...containerStyles,
+        justifyContent: "center",
+        height: "100%",
+      }}
+    >
+      <ProgressCircle aria-label="Loading assets" size="L" isIndeterminate />
+    </div>
+  ) : (
+    <div
+      style={{
+        ...containerStyles,
         padding: "32px 32px",
       }}
     >
@@ -151,20 +162,7 @@ export default function AssetViewer(): JSX.Element {
         width="400px"
       />
       <div style={{ width: "100%", marginTop: "24px" }}>
-        {isLoading ? (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <ProgressCircle aria-label="Loading templates" isIndeterminate />
-          </div>
-        ) : (
-          renderAssetContent()
-        )}
+        {renderAssetContent()}
       </div>
     </div>
   );

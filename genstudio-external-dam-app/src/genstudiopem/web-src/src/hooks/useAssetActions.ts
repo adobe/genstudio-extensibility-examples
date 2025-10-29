@@ -15,14 +15,11 @@ import { AssetSearchParams } from "../types";
 import { actionWebInvoke } from "../utils/actionWebInvoke";
 import actions from "../config.json";
 import { Asset } from "@adobe/genstudio-extensibility-sdk";
-
+import { SEARCH_ASSETS_ACTION } from "../Constants";
 interface Auth {
   imsToken: string;
   imsOrg: string;
 }
-
-// Define constants for our action endpoints
-const SEARCH_ASSETS_ACTION = "genstudio-external-dam-app/search";
 
 export const useAssetActions = (auth: Auth) => {
   const [assets, setAssets] = useState<Asset[]>([]);
