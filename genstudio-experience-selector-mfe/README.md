@@ -79,6 +79,13 @@ Two vanilla JavaScript implementations:
 #### UMD Version (`/vanilla-js/vanilla-umd-global-var`)
 - Uses UMD bundle loaded via script tag
 
+## Customer Onboarding
+
+**For 3rd party customers** integrating the Experience Selector MFE into their own applications:
+
+📚 **[Complete Customer Onboarding Guide](./CUSTOMER_ONBOARDING.md)**
+
+
 ## Quick Start
 
 1. **Choose your framework** from the available examples
