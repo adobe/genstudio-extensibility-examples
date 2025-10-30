@@ -66,7 +66,7 @@ export default function AssetViewer(): JSX.Element {
         ...asset,
         extensionInfo,
       }));
-      await SelectContentExtensionService.setSelectedAssets(
+      SelectContentExtensionService.setSelectedAssets(
         guestConnection,
         extensionId,
         newSelectedAssets
