@@ -37,7 +37,8 @@ export default function AssetViewer(): JSX.Element {
   const syncHostAssets = async () => {
     if (!guestConnection) return;
     const { selectedAssets } = await SelectContentExtensionService.sync(
-      guestConnection
+      guestConnection,
+      extensionId
     );
     if (selectedAssets)
       setSelectedAssets(new Set(selectedAssets.map((asset) => asset.id)));
@@ -46,7 +47,8 @@ export default function AssetViewer(): JSX.Element {
   const handleSelectionChange = async (selection: Selection) => {
     if (!guestConnection) return;
     const { selectionLimit } = await SelectContentExtensionService.sync(
-      guestConnection
+      guestConnection,
+      extensionId
     );
     const selectedAssetIdsList = Array.from(selection);
     // show all other assets as disabled if max selection is reached
