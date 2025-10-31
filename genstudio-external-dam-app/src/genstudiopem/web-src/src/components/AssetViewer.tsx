@@ -41,7 +41,13 @@ export default function AssetViewer(): JSX.Element {
       extensionId
     );
     if (selectedAssets)
-      setSelectedAssets(new Set(selectedAssets.map((asset) => asset.id)));
+      setSelectedAssets(
+        new Set(
+          selectedAssets
+            .filter((asset) => asset.extensionInfo.id === extensionId)
+            .map((asset) => asset.id)
+        )
+      );
   };
 
   const handleSelectionChange = async (selection: Selection) => {
@@ -58,22 +64,21 @@ export default function AssetViewer(): JSX.Element {
     const selectedAssets = assets.filter((asset) =>
       selectedAssetIdsList.includes(asset.id)
     );
-    const extensionInfo = {
-      id: guestConnection?.id,
-      name: extensionLabel,
-      iconUrl: ICON_DATA_URI,
-    };
     try {
       const newSelectedAssets = selectedAssets.map((asset) => ({
         ...asset,
-        extensionInfo,
+        extensionInfo: {
+          id: extensionId,
+          name: extensionLabel,
+          iconUrl: ICON_DATA_URI,
+        },
       }));
       SelectContentExtensionService.setSelectedAssets(
         guestConnection,
         extensionId,
         newSelectedAssets
       );
-      await syncHostAssets();
+      syncHostAssets();
     } catch (error) {
       console.warn("Error sending selected assets to host:", error);
     }
