@@ -1,7 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 
-import {renderExperienceSelectorWithSUSI} from 'https://experience.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
+import {
+  renderExperienceSelectorWithSUSI
+} from 'https://experience.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
 
 
 const dialogRef = ref();
@@ -13,31 +15,23 @@ function onSelectionConfirmed(experience) {
     resultRef.value.textContent = JSON.stringify(experience, null, 2);
 }
 
-const experienceSelectorProps = {
-    locale: 'en-US',
-    apiKey: 'exc_app',
-    susiConfig: {
-        clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
-        environment: "prod",
-        scope:
-            'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
-        locale: 'en_US',
-        modalSettings: {
-            width: 500,
-            height: 700,
-        },
-    },
-    imsOrg: 'your-ims-org@AdobeOrg', // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
-    // customFilters: ['genstudio-channel:email'],
-    env: 'prod',
-    isOpen: true,
-    onDismiss: () => dialogRef.value?.close(),
-    onSelectionConfirmed
-};
-
-
 function openDialog() {
-    renderExperienceSelectorWithSUSI(dialogRef.value, experienceSelectorProps);
+    renderExperienceSelectorWithSUSI(dialogRef.value, {
+      apiKey: 'exc_app',
+      imsOrg: 'your-ims-org@AdobeOrg', // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
+      env: 'prod',
+      susiConfig: {
+        clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
+      },
+      customFilters: [
+        // Multiple filters are combined with OR logic. Example filters:
+        // 'genstudio-channel:email',
+        // 'genstudio-externalTemplateId=two-pods',
+      ],
+      isOpen: true,
+      onDismiss: () => dialogRef.value?.close(),
+      onSelectionConfirmed
+    });
 
     dialogRef.value?.showModal()
 }

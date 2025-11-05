@@ -1,5 +1,7 @@
-import React, { useState, useRef } from 'react';
-import { renderExperienceSelectorWithSUSI } from 'https://experience.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
+import React, {useRef, useState} from 'react';
+import {
+    renderExperienceSelectorWithSUSI
+} from 'https://experience.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js';
 
 function App() {
     const [result, setResult] = useState('');
@@ -10,29 +12,23 @@ function App() {
         setResult(JSON.stringify(experience, null, 2));
     }
 
-    const experienceSelectorProps = {
-        locale: 'en-US',
-        apiKey: 'exc_app',
-        imsOrg: 'your-ims-org@AdobeOrg', // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
-        env: 'prod',
-        susiConfig: {
-            clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
-            environment: "prod",
-            scope:
-                'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
-            locale: 'en_US',
-            modalSettings: {
-                width: 500,
-                height: 700,
-            },
-        },
-        isOpen: true,
-        onDismiss: () => dialogRef.current?.close(),
-        onSelectionConfirmed
-    };
-
     function openDialog() {
-        renderExperienceSelectorWithSUSI(dialogRef.current, experienceSelectorProps);
+        renderExperienceSelectorWithSUSI(dialogRef.current, {
+            apiKey: 'exc_app',
+            imsOrg: 'your-ims-org@AdobeOrg', // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
+            env: 'prod',
+            susiConfig: {
+                clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
+            },
+            customFilters: [
+                // Multiple filters are combined with OR logic. Example filters:
+                // 'genstudio-channel:email',
+                // 'genstudio-externalTemplateId=two-pods',
+            ],
+            isOpen: true,
+            onDismiss: () => dialogRef.current?.close(),
+            onSelectionConfirmed
+        });
         dialogRef.current?.showModal();
     }
 

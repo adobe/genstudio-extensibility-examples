@@ -12,32 +12,25 @@ function onSelectionConfirmed(experience) {
     resultRef.textContent = JSON.stringify(experience, null, 2);
 }
 
-const experienceSelectorProps = {
-    locale: 'en-US',
-    apiKey: 'exc_app',
-    imsOrg: 'your-ims-org@AdobeOrg', // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
-    // customFilters: ['genstudio-channel:email'],
-    env: 'prod',
-    susiConfig: {
-        clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
-        environment: "prod",
-        scope:
-            'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
-        locale: 'en_US',
-        modalSettings: {
-            width: 500,
-            height: 700,
-        },
-    },
-    isOpen: true,
-    onDismiss: () => dialogRef?.close(),
-    onSelectionConfirmed
-};
-
 function openDialog() {
     GenStudioExperienceSelector.renderExperienceSelectorWithSUSI(
         dialogRef,
-        experienceSelectorProps
+        {
+            apiKey: 'exc_app',
+            imsOrg: 'your-ims-org@AdobeOrg', // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
+            env: 'prod',
+            susiConfig: {
+                clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
+            },
+            customFilters: [
+                // Multiple filters are combined with OR logic. Example filters:
+                // 'genstudio-channel:email',
+                // 'genstudio-externalTemplateId=two-pods',
+            ],
+            isOpen: true,
+            onDismiss: () => dialogRef?.close(),
+            onSelectionConfirmed
+        }
     );
 
     dialogRef?.showModal();

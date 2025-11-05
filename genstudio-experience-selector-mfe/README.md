@@ -80,27 +80,28 @@ Two vanilla JavaScript implementations:
 1. **Choose your framework** from the available examples
 2. **Navigate to the example directory**
 3. **Install dependencies** (for React/Vue examples)
-4. **Update configuration** with your API keys and IMS organization:
+4. **Configure and call the function** with your API keys and IMS organization (configuration can be dynamic):
    ```javascript
-   const experienceSelectorProps = {
-     locale: 'en-US',
-     apiKey: 'exc_app',           
+   renderExperienceSelectorWithSUSI(dialogElement, {
+     apiKey: 'exc_app',
      imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
-     env: 'prod', 
+     env: 'prod',
      susiConfig: {
         clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
-        environment: 'prod', 
-        scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
-        locale: 'en_US',
-        modalSettings: {
-          width: 500,
-          height: 700,
-        },
      },
-     customFilters: ['genstudio-channel:email'],
-     selectionType: 'single', // or 'multiple'
-     dialogTitle: 'Select Email Templates'
-   };
+     customFilters: [
+        // Multiple filters are combined with OR logic. Example filters:
+        // 'genstudio-channel:email',
+        // 'genstudio-externalTemplateId=two-pods',
+     ],
+     isOpen: true,
+     onSelectionConfirmed: (selection) => {
+       console.log('Selected experiences:', selection);
+     },
+     onDismiss: () => {
+       console.log('Dialog dismissed');
+     }
+   });
    ```
 5. **Run the development server**
 
