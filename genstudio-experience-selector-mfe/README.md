@@ -38,7 +38,7 @@ The `renderExperienceSelectorWithSUSI` function accepts a configuration object w
 | `susiConfig` | `object` | Required | SUSI authentication configuration (see below)              |
 | `isOpen` | `boolean` | Required | To show or hide the dialog. Should usually be true.        |
 | `selectionType` | `'single' \| 'multiple'` | Optional | Wether a ingle or multiple experiences can be selected     |
-| `customFilters` | `string[]` | Optional | Custom filter criteria combined with OR logic (e.g., `['genstudio-channel:email', 'genstudio-externalTemplateId=two-pods']`) |
+| `customFilters` | `string[]` | Optional | Custom filter criteria. Multiple array elements are combined with OR logic. To combine with AND, use a single string (e.g., `['genstudio-channel:email AND genstudio-externalTemplateId:two-pods']`) |
 | `dialogTitle` | `string` | Optional | Custom dialog title                                        |
 | `onSelectionConfirmed` | `(selection: Experience[]) => void` | Required | Callback when selection is confirmed                       |
 | `onDismiss` | `() => void` | Required | Callback when dialog is dismissed                          |
@@ -90,9 +90,11 @@ Two vanilla JavaScript implementations:
         clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
      },
      customFilters: [
-        // Multiple filters are combined with OR logic. Example filters:
+        // Multiple array elements are combined with OR logic. Example filters:
         // 'genstudio-channel:email',
-        // 'genstudio-externalTemplateId=two-pods',
+        // 'genstudio-externalTemplateId:two-pods',
+        // To combine with AND, use a single string:
+        // 'genstudio-channel:email AND genstudio-externalTemplateId:two-pods',
      ],
      isOpen: true,
      onSelectionConfirmed: (selection) => {

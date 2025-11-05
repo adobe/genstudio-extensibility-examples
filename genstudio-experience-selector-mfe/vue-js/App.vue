@@ -24,9 +24,11 @@ function openDialog() {
         clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
       },
       customFilters: [
-        // Multiple filters are combined with OR logic. Example filters:
+        // Multiple array elements are combined with OR logic. Example filters:
         // 'genstudio-channel:email',
-        // 'genstudio-externalTemplateId=two-pods',
+        // 'genstudio-externalTemplateId:two-pods',
+        // To combine with AND, use a single string:
+        // 'genstudio-channel:email AND genstudio-externalTemplateId:two-pods',
       ],
       isOpen: true,
       onDismiss: () => dialogRef.value?.close(),
