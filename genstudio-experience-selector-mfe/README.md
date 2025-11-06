@@ -50,8 +50,8 @@ The `susiConfig` object includes the following properties:
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
 | `clientId` | `string` | Required | Client ID for SUSI authentication. Format: `genstudio-<CUSTOMER_NAME>-experienceselectormfe`. Provided by your Adobe support engineer during onboarding |
-| `environment` | `'prod' \| 'stage'` | Optional | SUSI environment. Falls back to default if not provided |
-| `scope` | `string` | Optional | OAuth scopes for authentication. Falls back to `'additional_info.projectedProductContext,read_organizations,AdobeID,openid'` if not provided |
+| `environment` | `'prod' \| 'stage'` | Required | SUSI environment |
+| `scope` | `string` | Required | OAuth scopes for authentication.  |
 | `locale` | `string` | Optional | Language locale for SUSI (e.g., 'en_US'). Falls back to dialog locale or default if not provided |
 | `modalSettings` | `{ width?: number, height?: number, top?: number, left?: number }` | Optional | Modal display configuration. Falls back to defaults if not provided |
 | `redirectUri` | `string` | Optional | Redirect URI after authentication. Falls back to `window.location.href` if not provided |
