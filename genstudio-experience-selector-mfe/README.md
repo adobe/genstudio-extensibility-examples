@@ -51,7 +51,7 @@ The `susiConfig` object includes the following properties:
 |----------|------|----------|-------------|
 | `clientId` | `string` | Required | Client ID for SUSI authentication. Format: `genstudio-<CUSTOMER_NAME>-experienceselectormfe`. Provided by your Adobe support engineer during onboarding |
 | `environment` | `'prod' \| 'stage'` | Required | SUSI environment |
-| `scope` | `string` | Required | OAuth scopes for authentication.  |
+| `scope` | `string` | Required | OAuth scopes for authentication. Default: `'additional_info.projectedProductContext,read_organizations,AdobeID,openid'` |
 | `locale` | `string` | Optional | Language locale for SUSI (e.g., 'en_US'). Falls back to dialog locale or default if not provided |
 | `modalSettings` | `{ width?: number, height?: number, top?: number, left?: number }` | Optional | Modal display configuration. Falls back to defaults if not provided |
 | `redirectUri` | `string` | Optional | Redirect URI after authentication. Falls back to `window.location.href` if not provided |
@@ -88,6 +88,8 @@ Two vanilla JavaScript implementations:
      env: 'prod',
      susiConfig: {
         clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
+        environment: 'prod',
+        scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
      },
      customFilters: [
         // Multiple array elements are combined with OR logic. Example filters:

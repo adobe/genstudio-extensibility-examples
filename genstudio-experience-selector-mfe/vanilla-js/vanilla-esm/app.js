@@ -26,6 +26,8 @@ function openDialog() {
             env: 'prod',
             susiConfig: {
                 clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
+                environment: 'prod',
+                scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
             },
             customFilters: [
                 // Multiple array elements are combined with OR logic. Example filters:
