@@ -79,6 +79,14 @@ export default function RightPanel(): JSX.Element {
               <strong>{field.fieldName}</strong>
             </Text>
             <Text>{field.fieldValue}</Text>
+            {field.keywords && (
+              <Text>keywords: {field.keywords.join(", ")}</Text>
+            )}
+            {field.additionalMetadata && (
+              <Text>
+                additionalMetadata: {JSON.stringify(field.additionalMetadata)}
+              </Text>
+            )}
           </Flex>
         ))}
       </Flex>
