@@ -20,24 +20,6 @@ extensions:
               annotations:
                 require-adobe-auth: true
                 final: false
-            upload:
-              function: src/genstudiopem/actions/aio-lib-files/upload.js
-              web: "yes"
-              runtime: nodejs:22
-              inputs:
-                LOG_LEVEL: debug
-              annotations:
-                require-adobe-auth: true
-                final: false
-            get-presigned-url:
-              function: src/genstudiopem/actions/aio-lib-files/get-presigned-url.js
-              web: "yes"
-              runtime: nodejs:22
-              inputs:
-                LOG_LEVEL: debug
-              annotations:
-                require-adobe-auth: true
-                final: false
             upload-and-get-url:
               function: src/genstudiopem/actions/aio-lib-files/upload-and-get-url.js
               web: "yes"
