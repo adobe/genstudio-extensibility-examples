@@ -1,0 +1,16 @@
+name: GenStudio App Template Main
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/aio-app-template.yml
+    with:
+      app: genstudio-app-template
+      # See scripts folder for how to programmatically create the environment
+      environment: '["You Github Environment Name 1", "You Github Environment Name 2"]'
+    secrets: inherit
