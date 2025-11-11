@@ -11,25 +11,30 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { Provider, defaultTheme, Heading } from "@adobe/react-spectrum";
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import { Provider as S2Provider } from "@react-spectrum/s2";
 import { ErrorBoundary } from "react-error-boundary";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ExtensionRegistration from "./ExtensionRegistration";
 import AssetViewer from "./AssetViewer";
 
-const ErrorFallback = () => <Heading level={1}>Something went wrong!</Heading>;
+const ErrorFallback = () => <div>Something went wrong!</div>;
 
 const App = (): React.JSX.Element => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <Provider theme={defaultTheme} colorScheme="light">
+      <S2Provider
+        background="base"
+        colorScheme="light"
+        styles={style({ height: "screen", overflow: "auto" })}
+      >
         <Router>
           <Routes>
             <Route path="/" element={<ExtensionRegistration />} />
             <Route path="/select-content-dialog" element={<AssetViewer />} />
           </Routes>
         </Router>
-      </Provider>
+      </S2Provider>
     </ErrorBoundary>
   );
 };
