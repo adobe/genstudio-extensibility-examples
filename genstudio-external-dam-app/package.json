@@ -1,19 +1,16 @@
 {
-  "name": "genstudio-mlr-claims-app",
-  "version": "0.2.0",
+  "name": "genstudio-external-dam-app",
+  "version": "1.0.0",
+  "description": "GS UIX External DAM Reference App",
   "private": true,
   "dependencies": {
-    "@adobe/aem-cf-editor-ui-ext-tpl": "^2.1.0",
     "@adobe/aio-lib-files": "^4.1.0",
-    "@adobe/aio-sdk": "^6",
-    "@adobe/generator-add-action-generic": "^1.0.1",
-    "@adobe/genstudio-extensibility-sdk": "^2.3.0",
-    "@adobe/react-spectrum": "^3.4.0",
+    "@adobe/aio-sdk": "^6.0.0",
+    "@adobe/genstudio-extensibility-sdk": "^4.0.3",
     "@adobe/uix-guest": "^1.0.0",
-    "@aws-sdk/client-s3": "^3.777.0",
-    "@aws-sdk/s3-request-presigner": "^3.777.0",
+    "@aws-sdk/client-s3": "^3.879.0",
+    "@aws-sdk/s3-request-presigner": "^3.879.0",
     "@react-spectrum/s2": "^0.9.0",
-    "@spectrum-icons/workflow": "^4.2.22",
     "chalk": "^4",
     "core-js": "^3.6.4",
     "node-fetch": "^2.6.0",
@@ -48,11 +45,6 @@
     "type-check:watch": "tsc --noEmit --watch",
     "build": "tsc"
   },
-  "description": "GS Create UIX Reference App",
-  "aio-app-builder-templates": [
-    "@adobe/aem-cf-editor-ui-ext-tpl",
-    "@adobe/generator-add-action-generic"
-  ],
   "engines": {
     "node": ">=18"
   }

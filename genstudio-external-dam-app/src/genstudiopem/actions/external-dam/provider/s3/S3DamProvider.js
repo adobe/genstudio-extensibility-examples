@@ -41,7 +41,8 @@ class S3DamProvider extends DamProvider {
   }
 
   async getThumbnailUrl(key) {
-    const thumbnailKey = "thumbnails/" + key.replace('assets/', '').replace(/\.[^/.]+$/, ".jpg");
+    const thumbnailKey =
+      "thumbnails/" + key.replace("assets/", "").replace(/\.[^/.]+$/, ".jpg");
     return await this.getS3PresignedUrl(thumbnailKey);
   }
 
@@ -49,50 +50,62 @@ class S3DamProvider extends DamProvider {
     this.logger.info("Searching assets in S3");
     const listObjectsCmd = new ListObjectsV2Command({
       Bucket: this.bucketName,
-      Prefix: 'assets/',
+      Prefix: "assets/",
       MaxKeys: parseInt(params.limit) || 100,
     });
     const listResult = await this.client.send(listObjectsCmd);
     this.logger.info(`Found ${listResult?.Contents?.length || 0} assets in S3`);
 
-    const assets = (await Promise.all(
-      listResult?.Contents?.map(async (item) => {
-        if (item.Key.endsWith('/')) return null;
-        const headObjCmd = new HeadObjectCommand({
-          Bucket: this.bucketName,
-          Key: item.Key,
-        });
-        try {
-          const metadata = await this.client.send(headObjCmd);
-          const originalUrl = await this.getS3PresignedUrl(item.Key);
-          const thumbnailUrl = await this.getThumbnailUrl(item.Key);
-          return {
-            id: item.Key,
-            name: item.Key.split("/").pop() || "Unknown",
-            fileType: item.Key.split(".").pop()?.toUpperCase() || "UNKNOWN",
-            size: item.Size,
-            thumbnailUrl: thumbnailUrl,
-            url: originalUrl,
-            dateCreated: item.LastModified?.toISOString() || new Date().toISOString(),
-            dateModified: item.LastModified?.toISOString() || new Date().toISOString(),
-            metadata: {
-              contentType: metadata.ContentType,
+    const assets = (
+      await Promise.all(
+        listResult?.Contents?.map(async (item) => {
+          if (item.Key.endsWith("/")) return null;
+          const headObjCmd = new HeadObjectCommand({
+            Bucket: this.bucketName,
+            Key: item.Key,
+          });
+          try {
+            const metadata = await this.client.send(headObjCmd);
+            const originalUrl = await this.getS3PresignedUrl(item.Key);
+            const thumbnailUrl = await this.getThumbnailUrl(item.Key);
+
+            return {
+              id: item.Key,
+              mimeType: metadata.ContentType,
+              name: item.Key.split("/").pop() || "Unknown",
               size: item.Size,
-              ...metadata.Metadata,
-            },
-          };
-        } catch (error) {
-          this.logger.error(`Error getting metadata for asset ${item.Key}: ${error}`);
-          return null;
-        }
-      })
-    )).filter(asset => asset !== null);
+              externalAssetInfo: {
+                sourceUrl: originalUrl,
+                signedUrl: originalUrl,
+                signedThumbnailUrl: thumbnailUrl,
+              },
+              additionalMetadata: {
+                ...metadata.Metadata,
+                testAdditionalMetadata: "testAdditionalMetadata",
+              },
+              keywords: ["S3Asset"],
+            };
+          } catch (error) {
+            this.logger.error(
+              `Error getting metadata for asset ${item.Key}: ${error}`
+            );
+            return null;
+          }
+        })
+      )
+    ).filter((asset) => asset !== null);
 
     return {
       statusCode: 200,
-      body: { 
+      body: {
         assets: assets,
-        availableFileTypes: [...new Set(assets.map(asset => asset.fileType).filter(type => type && type !== 'UNKNOWN'))].sort()
+        availableFileTypes: [
+          ...new Set(
+            assets
+              .map((asset) => asset.fileType)
+              .filter((type) => type && type !== "UNKNOWN")
+          ),
+        ].sort(),
       },
     };
   }
