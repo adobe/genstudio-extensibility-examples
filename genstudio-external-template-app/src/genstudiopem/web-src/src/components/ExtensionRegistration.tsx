@@ -25,7 +25,7 @@ const getAppMetadata = (id: Key): AppMetadata => ({
       name: "Email",
     },
   ],
-  extensionId: "deprecated", // TODO: remove this once updated to SDK as optional
+  extensionId,
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
