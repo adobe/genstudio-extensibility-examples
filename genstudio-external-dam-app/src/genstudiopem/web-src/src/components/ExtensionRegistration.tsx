@@ -37,7 +37,7 @@ const getAppMetadata = (id: Key): AppMetadata => ({
       name: "Email",
     },
   ],
-  extensionId: "deprecated",
+  extensionId,
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {

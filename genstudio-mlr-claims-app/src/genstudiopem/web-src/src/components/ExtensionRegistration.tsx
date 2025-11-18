@@ -33,7 +33,7 @@ const getAppMetadata = (id: Key): AppMetadata => ({
       name: "Email",
     },
   ],
-  extensionId: "deprecated",
+  extensionId,
   options: {
     validation: {
       singleExperienceViewMode: true,
