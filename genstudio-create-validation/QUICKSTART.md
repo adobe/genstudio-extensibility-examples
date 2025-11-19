@@ -1,1 +1,1 @@
-../common/reference-app-quickstart.md
+../docs/reference-app-quickstart.md
