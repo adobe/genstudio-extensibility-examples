@@ -82,6 +82,72 @@ To start a local serverless stack and also run your actions locally use the `aio
 - `aio app deploy` to build and deploy all actions on Runtime and static files to CDN
 - `aio app undeploy` to undeploy the app
 
+## CI/CD Automation (GitHub Actions)
+
+This reference app includes GitHub Actions workflows for automated deployment in `.github/workflows/`:
+
+### Workflow Files
+
+- **`aio-app-template.yml`** - Reusable workflow template for building and deploying
+- **`main-genstudio-app-template.yml`** - Triggers on push to `main` branch
+- **`pr-genstudio-app-template.yml`** - Triggers on pull requests for preview deployments
+
+### Setup GitHub Actions
+
+1. **Update Workflow Configuration**
+
+   Edit `main-genstudio-app-template.yml` and `pr-genstudio-app-template.yml`:
+
+   ```yaml
+   with:
+     app: genstudio-create-validation # Change from 'genstudio-app-template'
+     environment: '["production"]' # Your GitHub environment name(s)
+   ```
+
+2. **Configure GitHub Secrets**
+
+   In your GitHub repository settings, add these secrets under **Environments**:
+
+   **Required Secrets:**
+
+   - `CLIENTID` - Adobe I/O Client ID
+   - `CLIENTSECRET` - Adobe I/O Client Secret
+   - `TECHNICALACCOUNTID` - Technical Account ID
+   - `TECHNICALACCOUNTEMAIL` - Technical Account Email
+   - `IMSORGID` - IMS Organization ID
+   - `SCOPES` - API Scopes (space-separated)
+   - `AIO_RUNTIME_NAMESPACE` - Adobe I/O Runtime Namespace
+   - `AIO_RUNTIME_AUTH` - Adobe I/O Runtime Auth
+   - `AIO_PROJECT_ID` - Project ID
+   - `AIO_PROJECT_NAME` - Project Name
+   - `AIO_PROJECT_ORG_ID` - Project Organization ID
+   - `AIO_PROJECT_WORKSPACE_ID` - Workspace ID
+   - `AIO_PROJECT_WORKSPACE_NAME` - Workspace Name
+   - `AIO_PROJECT_WORKSPACE_DETAILS_SERVICES` - Workspace Services JSON
+
+3. **Set Environment Variables**
+
+   In GitHub Environment settings, add:
+
+   - `AIO_CLI_ENV` - Set to `prod` or `stage`
+
+### Automated Deployment
+
+Once configured:
+
+- **Pushes to `main`** → Automatically deploys to production environment(s)
+- **Pull Requests** → Automatically deploys preview and comments with test URL
+- **Manual trigger** → Use workflow_dispatch from GitHub Actions UI
+
+### PR Preview Comments
+
+For pull requests, the workflow automatically comments with:
+
+- ✅ Deployment status
+- 🔗 Runtime URL
+- 🧪 Test URL with `devMode` enabled
+- 📊 Link to action run
+
 ## Config
 
 ### `.env`
