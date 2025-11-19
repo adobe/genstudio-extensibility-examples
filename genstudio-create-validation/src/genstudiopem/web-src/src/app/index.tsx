@@ -10,30 +10,34 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from 'react';
-import { Provider, defaultTheme, Heading } from '@adobe/react-spectrum';
-import ErrorBoundary from 'react-error-boundary';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import ExtensionRegistration from './ExtensionRegistration';
-import RightPanel from './RightPanel';
+import React from "react";
+import { Provider as S2Provider, Heading } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
+import { ErrorBoundary } from "react-error-boundary";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import ExtensionRegistration from "./ExtensionRegistration";
+import RightPanel from "../components/RightPanel";
+import { APP_ROUTE } from "../Constants";
 
-const ErrorFallback = () => (
-  <Heading level={1}>Something went wrong!</Heading>
-);
+const ErrorFallback = () => <Heading>Something went wrong!</Heading>;
 
 const App = (): React.JSX.Element => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <Provider theme={defaultTheme} colorScheme="light">
+      <S2Provider
+        background="base"
+        colorScheme="light"
+        styles={style({ height: "screen", overflow: "auto" })}
+      >
         <Router>
           <Routes>
             <Route path="/" element={<ExtensionRegistration />} />
-            <Route path="/right-panel" element={<RightPanel />} />
+            <Route path={APP_ROUTE} element={<RightPanel />} />
           </Routes>
         </Router>
-      </Provider>
+      </S2Provider>
     </ErrorBoundary>
   );
 };
 
-export default App; 
+export default App;

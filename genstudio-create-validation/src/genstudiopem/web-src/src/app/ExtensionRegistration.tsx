@@ -10,36 +10,30 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Text } from "@adobe/react-spectrum";
+// ==========================================================
+// DO NOT MODIFY THIS FILE UNLESS YOU KNOW WHAT YOU ARE DOING
+// ==========================================================
+
+import { Text } from "@react-spectrum/s2";
 import { register } from "@adobe/uix-guest";
-import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
-import { AppMetadata } from "@adobe/genstudio-extensibility-sdk";
+import { EXTENSION_ID, APP_METADATA, APP_ROUTE } from "../Constants";
+import {
+  AppMetadata,
+  ValidationExtensionService,
+} from "@adobe/genstudio-extensibility-sdk";
 import React from "react";
 import { App, Toggle } from "@adobe/genstudio-extensibility-sdk";
 import { Key } from "react";
 
 const getAppMetadata = (id: Key): AppMetadata => ({
+  ...APP_METADATA,
   id: id.toString(),
-  label: extensionLabel,
-  iconDataUri: ICON_DATA_URI,
-  supportedChannels: [
-    {
-      id: "email",
-      name: "Email",
-    },
-  ],
-  extensionId,
-  options: {
-    validation: {
-      // autoOpenApp: true,
-    },
-  },
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
   const init = async (): Promise<void> => {
     const guestConnection = await register({
-      id: extensionId,
+      id: EXTENSION_ID,
       methods: {
         validationExtension: {
           getToggles: async (id: string): Promise<Toggle[]> => {
@@ -47,9 +41,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
               {
                 metadata: getAppMetadata(id),
                 onClick: async () => {
-                  // @ts-ignore
-                  // TODO: add to sdk
-                  await guestConnection.host.api.validationExtension.open(id);
+                  await ValidationExtensionService.open(guestConnection, id);
                 },
               },
             ];
@@ -57,7 +49,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
           getApps(id: string): App[] {
             return [
               {
-                url: "#/right-panel",
+                url: `#${APP_ROUTE}`,
                 metadata: getAppMetadata(id),
               },
             ];

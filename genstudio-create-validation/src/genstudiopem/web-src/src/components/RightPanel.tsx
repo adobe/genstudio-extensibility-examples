@@ -10,29 +10,19 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState } from "react";
-import { attach } from "@adobe/uix-guest";
-import { extensionId } from "../Constants";
-import {
-  View,
-  Provider,
-  defaultTheme,
-  Button,
-  ComboBox,
-  Item,
-  Heading,
-  Text,
-  Flex,
-  Divider,
-} from "@adobe/react-spectrum";
+import React, { useState } from "react";
+import { EXTENSION_ID } from "../Constants";
+import { Button } from "@react-spectrum/s2";
 import {
   Experience,
   ValidationExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
+import { useGuestConnection } from "../hooks";
 import Spinner from "./Spinner";
+import { ExperiencePanel } from "./ExperiencePanel";
 
 export default function RightPanel(): JSX.Element {
-  const [guestConnection, setGuestConnection] = useState<any>(null);
+  const guestConnection = useGuestConnection(EXTENSION_ID);
   const [experiences, setExperiences] = useState<Experience[] | null>(null);
   const [selectedExperienceIndex, setSelectedExperienceIndex] = useState<
     number | null
@@ -41,143 +31,59 @@ export default function RightPanel(): JSX.Element {
     useState<Experience | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    (async () => {
-      const connection = await attach({ id: extensionId });
-      setGuestConnection(connection as any);
-    })();
-  }, []);
-
-  const getExperience = async (): Promise<void> => {
+  /**
+   * Syncs the list of experiences from the host.
+   * Fetches the experiences from the host and sets the experiences state.
+   * @returns void
+   */
+  const syncExperience = async (): Promise<void> => {
     if (!guestConnection) return;
     setIsLoading(true);
 
     try {
-      const remoteExperiences = await ValidationExtensionService.getExperiences(
-        guestConnection
+      setExperiences(
+        await ValidationExtensionService.getExperiences(guestConnection)
       );
-      // Add a minimum loading time of 0.5 seconds
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setExperiences(remoteExperiences);
-      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching experiences:", error);
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
-  const renderExperienceDetails = (experience: Experience) => (
-    <Flex direction="column" gap="size-200">
-      <Heading level={3}>Experience Details</Heading>
-      <Flex direction="column" gap="size-100">
-        <Text>ID: {experience.id}</Text>
-        <Divider size="S" />
-        <Heading level={4}>Fields</Heading>
-        {Object.entries(experience.experienceFields).map(([key, field]) => (
-          <Flex direction="column" gap="size-50" key={key}>
-            <Text>
-              <strong>{field.fieldName}</strong>
-            </Text>
-            <Text>{field.fieldValue}</Text>
-            {field.keywords && (
-              <Text>keywords: {field.keywords.join(", ")}</Text>
-            )}
-            {field.additionalMetadata && (
-              <Text>
-                additionalMetadata: {JSON.stringify(field.additionalMetadata)}
-              </Text>
-            )}
-          </Flex>
-        ))}
-      </Flex>
-    </Flex>
-  );
+  /**
+   * Handles the run claims check action.
+   * Sets the selected experience based on the selected experience index.
+   * @returns void
+   */
+  const handleRunClaimsCheck = (): void => {
+    if (experiences && selectedExperienceIndex !== null)
+      setSelectedExperience(experiences[selectedExperienceIndex]);
+  };
 
+  if (isLoading) return <Spinner message="Loading experiences..." />;
+
+  const hasExperiences = experiences && experiences.length > 0;
   return (
-    <Provider theme={defaultTheme}>
-      <View backgroundColor="static-white" height="100vh">
-        {isLoading ? (
-          <Spinner message="Loading experiences..." />
+    <div style={{ backgroundColor: "white", height: "100vh" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        {hasExperiences ? ( // Show the experience panel if there are experiences
+          <ExperiencePanel
+            experiences={experiences}
+            selectedExperienceIndex={selectedExperienceIndex}
+            selectedExperience={selectedExperience}
+            onSync={syncExperience}
+            onExperienceSelect={setSelectedExperienceIndex}
+            onRunClaimsCheck={handleRunClaimsCheck}
+          />
         ) : (
-          <Flex direction="column" height="100%">
-            {experiences && experiences.length > 0 ? (
-              <Flex direction="column" gap="size-200">
-                <View paddingX="size-200" paddingTop="size-200">
-                  <Flex
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    marginBottom="size-100"
-                  >
-                    <Heading level={3}>Experiences</Heading>
-                    <Button
-                      variant="secondary"
-                      onPress={getExperience}
-                      UNSAFE_style={{ minWidth: "auto" }}
-                    >
-                      Sync
-                    </Button>
-                  </Flex>
-                  <Divider size="S" marginY="size-100" />
-                </View>
-                <View paddingX="size-200">
-                  <Heading level={3}>Claims Libraries</Heading>
-                  <ComboBox
-                    label="Select Experience to Run Claims Check"
-                    align="start"
-                    onSelectionChange={(key: React.Key | null) => {
-                      if (key !== null) {
-                        const index = experiences.findIndex(
-                          (exp) => exp.id === key
-                        );
-                        if (index !== -1) {
-                          setSelectedExperienceIndex(index);
-                        }
-                      }
-                    }}
-                  >
-                    {experiences.map((experience, index) => (
-                      <Item key={experience.id}>{`Experience ${
-                        index + 1
-                      }`}</Item>
-                    ))}
-                  </ComboBox>
-                </View>
-
-                {selectedExperienceIndex !== null && (
-                  <View paddingX="size-200" paddingTop="size-100">
-                    <Button
-                      variant="primary"
-                      width="100%"
-                      onPress={() => {
-                        const experience = experiences[selectedExperienceIndex];
-                        setSelectedExperience(experience);
-                      }}
-                    >
-                      Run Claims Check
-                    </Button>
-                  </View>
-                )}
-
-                {selectedExperience && (
-                  <View paddingX="size-200" paddingTop="size-200" flex="1">
-                    <Divider size="S" marginBottom="size-200" />
-                    <Flex direction="column" width="100%">
-                      {renderExperienceDetails(selectedExperience)}
-                    </Flex>
-                  </View>
-                )}
-              </Flex>
-            ) : (
-              <View padding="size-200">
-                <Button variant="primary" width="100%" onPress={getExperience}>
-                  Get Experiences
-                </Button>
-              </View>
-            )}
-          </Flex>
+          // Show the button to get experiences if there are no experiences
+          <div style={{ padding: "1rem" }}>
+            <Button variant="primary" onPress={syncExperience}>
+              Get Experiences
+            </Button>
+          </div>
         )}
-      </View>
-    </Provider>
+      </div>
+    </div>
   );
 }
