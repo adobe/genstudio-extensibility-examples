@@ -1,5 +1,5 @@
 {
-  "name": "genstudio-external-template-app",
+  "name": "genstudio-create-validation",
   "version": "0.2.0",
   "private": true,
   "dependencies": {
