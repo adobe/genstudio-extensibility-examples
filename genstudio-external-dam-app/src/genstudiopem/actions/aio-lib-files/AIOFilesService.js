@@ -10,9 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const lib = require('@adobe/aio-lib-files');
-const https = require('https');
-const http = require('http');
+const lib = require("@adobe/aio-lib-files");
+const https = require("https");
+const http = require("http");
 
 /**
  * AIO Files Service - A clean abstraction for Adobe I/O Files operations
@@ -30,9 +30,9 @@ class AIOFilesService {
    */
   async init() {
     if (!this.filesClient) {
-      this.logger.info('Initializing AIO Files client');
+      this.logger.info("Initializing AIO Files client");
       this.filesClient = await lib.init();
-      this.logger.info('AIO Files client initialized successfully');
+      this.logger.info("AIO Files client initialized successfully");
     }
   }
 
@@ -64,17 +64,19 @@ class AIOFilesService {
     const startFetch = Date.now();
     const fileData = await this._fetchFileStream(url);
     const fetchDuration = Date.now() - startFetch;
-    
+
     this.logger.info(`File fetched in ${fetchDuration}ms`);
     this.logger.info(`Content-Type: ${fileData.contentType}`);
-    this.logger.info(`Content-Length: ${this._formatBytes(fileData.contentLength)}`);
+    this.logger.info(
+      `Content-Length: ${this._formatBytes(fileData.contentLength)}`
+    );
 
     // Upload to AIO Files
     const filePath = `uploads/${id}/${name}`;
     const startUpload = Date.now();
     await this.filesClient.write(filePath, fileData.stream);
     const uploadDuration = Date.now() - startUpload;
-    
+
     this.logger.info(`File uploaded to ${filePath} in ${uploadDuration}ms`);
 
     const totalDuration = Date.now() - startFetch;
@@ -85,13 +87,13 @@ class AIOFilesService {
       metadata: {
         contentType: fileData.contentType,
         size: this._formatBytes(fileData.contentLength),
-        sizeBytes: fileData.contentLength
+        sizeBytes: fileData.contentLength,
       },
       performance: {
         fetchDurationMs: fetchDuration,
         uploadDurationMs: uploadDuration,
-        totalDurationMs: totalDuration
-      }
+        totalDurationMs: totalDuration,
+      },
     };
   }
 
@@ -106,10 +108,12 @@ class AIOFilesService {
 
     this.logger.info(`Generating presigned URL for: ${filePath}`);
     const url = await this.filesClient.generatePresignURL(filePath, {
-      expiryInSeconds
+      expiryInSeconds,
     });
-    
-    this.logger.info(`Presigned URL generated (expires in ${expiryInSeconds}s)`);
+
+    this.logger.info(
+      `Presigned URL generated (expires in ${expiryInSeconds}s)`
+    );
     return url;
   }
 
@@ -123,7 +127,7 @@ class AIOFilesService {
 
     this.logger.info(`Retrieving metadata for: ${filePath}`);
     const properties = await this.filesClient.getProperties(filePath);
-    
+
     return {
       path: filePath,
       size: this._formatBytes(properties.contentLength || 0),
@@ -131,7 +135,7 @@ class AIOFilesService {
       contentType: properties.contentType,
       lastModified: properties.lastModified,
       isDirectory: properties.isDirectory,
-      isPublic: properties.isPublic
+      isPublic: properties.isPublic,
     };
   }
 
@@ -146,8 +150,8 @@ class AIOFilesService {
 
     this.logger.info(`Writing file to: ${filePath}`);
     await this.filesClient.write(filePath, content);
-    this.logger.info('File written successfully');
-    
+    this.logger.info("File written successfully");
+
     return filePath;
   }
 
@@ -157,32 +161,62 @@ class AIOFilesService {
    * @param {string} url - The URL to fetch
    * @returns {Promise<Object>} Stream and metadata
    */
-  async _fetchFileStream(url) {
+  /**
+   * Fetch a file from URL and return a readable stream with metadata.
+   * Handles HTTP(S) redirects up to a maximum number of hops.
+   * @private
+   * @param {string} url - The URL to fetch
+   * @returns {Promise<Object>} Stream and metadata
+   */
+  async _fetchFileStream(url, _redirectCount = 0) {
+    const MAX_REDIRECTS = 5;
     return new Promise((resolve, reject) => {
-      const protocol = url.startsWith('https') ? https : http;
-      
-      protocol.get(url, (response) => {
-        // Handle redirects
-        if (response.statusCode === 301 || response.statusCode === 302) {
-          if (response.headers.location) {
-            this._fetchFileStream(response.headers.location)
-              .then(resolve)
-              .catch(reject);
+      const protocol = url.startsWith("https") ? https : http;
+      protocol
+        .get(url, (response) => {
+          // Handle HTTP redirects (3xx)
+          if ([301, 302, 303, 307, 308].includes(response.statusCode)) {
+            if (response.headers.location) {
+              if (_redirectCount >= MAX_REDIRECTS) {
+                reject(
+                  new Error(`Too many redirects when fetching file: ${url}`)
+                );
+                return;
+              }
+              // Support for relative Location header
+              const newUrl = new URL(response.headers.location, url).toString();
+              this._fetchFileStream(newUrl, _redirectCount + 1)
+                .then(resolve)
+                .catch(reject);
+              return;
+            } else {
+              reject(
+                new Error(
+                  `Redirected with no location header when fetching file: ${url}`
+                )
+              );
+              return;
+            }
+          }
+
+          if (response.statusCode !== 200) {
+            reject(
+              new Error(`Failed to fetch file: HTTP ${response.statusCode}`)
+            );
             return;
           }
-        }
-        
-        if (response.statusCode !== 200) {
-          reject(new Error(`Failed to fetch file: HTTP ${response.statusCode}`));
-          return;
-        }
-        
-        resolve({
-          stream: response,
-          contentType: response.headers['content-type'] || 'application/octet-stream',
-          contentLength: parseInt(response.headers['content-length'] || '0', 10)
-        });
-      }).on('error', reject);
+
+          resolve({
+            stream: response,
+            contentType:
+              response.headers["content-type"] || "application/octet-stream",
+            contentLength: parseInt(
+              response.headers["content-length"] || "0",
+              10
+            ),
+          });
+        })
+        .on("error", reject);
     });
   }
 
@@ -193,11 +227,11 @@ class AIOFilesService {
    * @returns {string} Formatted string
    */
   _formatBytes(bytes) {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   }
 }
 
