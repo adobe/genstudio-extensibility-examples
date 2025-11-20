@@ -15,6 +15,7 @@ config.json
 
 # Adobe I/O console config
 console.json
+console*.json
 
 # Test output
 junit.xml
