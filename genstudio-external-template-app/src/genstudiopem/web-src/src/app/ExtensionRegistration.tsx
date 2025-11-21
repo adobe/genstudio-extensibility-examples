@@ -10,28 +10,29 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+// ==========================================================
+// DO NOT MODIFY THIS FILE UNLESS YOU KNOW WHAT YOU ARE DOING
+// ==========================================================
+
+import { Text } from "@react-spectrum/s2";
 import { register } from "@adobe/uix-guest";
-import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
+import {
+  EXTENSION_ID,
+  APP_METADATA,
+  TEMPLATE_VIEWER_ROUTE,
+} from "../Constants";
 import { AppMetadata, Toggle, App } from "@adobe/genstudio-extensibility-sdk";
 import React, { Key } from "react";
 
 const getAppMetadata = (id: Key): AppMetadata => ({
+  ...APP_METADATA,
   id: id.toString(),
-  label: extensionLabel,
-  iconDataUri: ICON_DATA_URI,
-  supportedChannels: [
-    {
-      id: "email",
-      name: "Email",
-    },
-  ],
-  extensionId,
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
   const init = async (): Promise<void> => {
     const guestConnection = await register({
-      id: extensionId,
+      id: EXTENSION_ID,
       methods: {
         importTemplateExtension: {
           getToggles: async (id: string): Promise<Toggle[]> => [
@@ -42,7 +43,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
           ],
           getApps: (id: string): App[] => [
             {
-              url: "#/select-template-dialog",
+              url: `#${TEMPLATE_VIEWER_ROUTE}`,
               metadata: getAppMetadata(id),
             },
           ],
@@ -54,10 +55,12 @@ const ExtensionRegistration = (): React.JSX.Element => {
   init().catch(console.error);
 
   return (
-    <div>
-      IFrame for integration with Host (GenStudio for Performance Marketing App)
-    </div>
+    <Text>
+      IFrame for integration with Host (GenStudio for Performance Marketing
+      App)...
+    </Text>
   );
 };
 
 export default ExtensionRegistration;
+

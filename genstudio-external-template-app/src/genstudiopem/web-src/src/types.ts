@@ -15,3 +15,8 @@ export interface TemplateSearchParams {
   limit?: number;
   offset?: number;
 }
+
+export interface Auth {
+  imsToken: string;
+  imsOrg: string;
+}

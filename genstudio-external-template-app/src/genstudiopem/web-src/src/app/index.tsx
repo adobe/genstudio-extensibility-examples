@@ -11,14 +11,15 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import { ErrorBoundary } from "react-error-boundary";
-import { Provider as S2Provider } from "@react-spectrum/s2";
+import { Provider as S2Provider, Heading } from "@react-spectrum/s2";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ExtensionRegistration from "./ExtensionRegistration";
-import TemplateViewer from "./TemplateViewer";
+import TemplateViewer from "../components/TemplateViewer";
+import { TEMPLATE_VIEWER_ROUTE } from "../Constants";
 
-const ErrorFallback = () => <div>Something went wrong!</div>;
+const ErrorFallback = () => <Heading>Something went wrong!</Heading>;
 
 const App = (): React.JSX.Element => {
   return (
@@ -26,15 +27,12 @@ const App = (): React.JSX.Element => {
       <S2Provider
         background="base"
         colorScheme="light"
-        styles={style({height: 'screen', overflow: 'auto'})}
+        styles={style({ height: "screen", overflow: "auto" })}
       >
         <Router>
           <Routes>
             <Route path="/" element={<ExtensionRegistration />} />
-            <Route
-              path="/select-template-dialog"
-              element={<TemplateViewer />}
-            />
+            <Route path={TEMPLATE_VIEWER_ROUTE} element={<TemplateViewer />} />
           </Routes>
         </Router>
       </S2Provider>
@@ -43,3 +41,4 @@ const App = (): React.JSX.Element => {
 };
 
 export default App;
+
