@@ -30,7 +30,6 @@ export default function OverallView({
         {experiences.map((experience, index) => (
           <ExperienceListItem
             key={experience.id}
-            experience={experience}
             experienceNumber={index}
             claimResults={claimsResults ? claimsResults[index] : null}
           />

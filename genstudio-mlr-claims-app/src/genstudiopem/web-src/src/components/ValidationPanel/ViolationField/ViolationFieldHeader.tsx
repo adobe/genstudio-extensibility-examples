@@ -10,9 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import { Badge } from "@react-spectrum/s2";
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
+import { style } from "@react-spectrum/s2/style" with { type: 'macro' };
 
 interface ViolationFieldHeaderProps {
   title: string;
@@ -31,17 +30,17 @@ export default function ViolationFieldHeader({
         alignItems: "center",
       }}
     >
-      <p
-        className={style({ font: "title-sm" })}
-      >
+      <p className={style({ font: "title-sm" })}>
         {title}
       </p>
       {issueCount > 0 ? (
-        <Badge variant="negative">
+        <Badge variant="negative" UNSAFE_style={{ width: "80px" }}>
           {issueCount} issue{issueCount > 1 ? "s" : ""}
         </Badge>
       ) : (
-        <Badge variant="positive">No issues</Badge>
+        <Badge variant="positive" UNSAFE_style={{ width: "80px" }}>
+          No issues
+        </Badge>
       )}
     </div>
   );

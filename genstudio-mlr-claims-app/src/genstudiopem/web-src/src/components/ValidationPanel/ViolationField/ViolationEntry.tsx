@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { Text, Button } from "@react-spectrum/s2";
+import { Button } from "@react-spectrum/s2";
 import { Violation } from "../../../types";
 import { copyToClipboard } from "../../../utils/copyToClipboard";
 import { CLAIM_VIOLATION_PREFIX } from "../../../Constants";
@@ -36,7 +36,11 @@ export default function ViolationEntry({ item }: ViolationEntryProps) {
         }}
       >
         <span
-          style={{ color: "var(--spectrum-orange-900)", fontSize: "1.25rem" }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            height: "100%"
+          }}
         >
           ⚠️
         </span>

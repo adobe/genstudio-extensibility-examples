@@ -11,21 +11,18 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { Badge, Heading } from "@react-spectrum/s2";
-import { Experience } from "@adobe/genstudio-extensibility-sdk";
 import { ClaimResults } from "../../../types";
 import { Violation } from "../../../types";
 import { VIOLATION_STATUS } from "../../../Constants";
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
+import ViolationFieldHeader from "../ViolationField/ViolationFieldHeader";
+import ViolationEntry from "../ViolationField/ViolationEntry";
 
 interface ExperienceListItemProps {
-  experience: Experience;
   experienceNumber: number;
   claimResults: ClaimResults | null;
 }
 
 export default function ExperienceListItem({
-  experience,
   experienceNumber,
   claimResults,
 }: ExperienceListItemProps) {
@@ -39,22 +36,44 @@ export default function ExperienceListItem({
         ).length
     : 0;
 
-  const hasIssues = totalIssues > 0;
+  // Get all violations with their field names
+  const violationEntries = claimResults
+    ? Object.entries(claimResults).flatMap(([fieldName, violations]) =>
+        violations
+          .filter((v) => v.status === VIOLATION_STATUS.Violated)
+          .map((violation) => ({
+            fieldName,
+            violation: {
+              status: violation.status,
+              violation: `${fieldName} - ${violation.violation}`,
+            },
+          }))
+      )
+    : [];
 
   return (
-    <div>
-      <div>
-        <p className={style({ font: "title-sm", margin: 4 })}>Email {experienceNumber + 1}</p>
-      </div>
-      <div>
-        {hasIssues ? (
-          <Badge variant="negative">
-            {totalIssues} issue{totalIssues > 1 ? "s" : ""}
-          </Badge>
-        ) : (
-          <Badge variant="positive">No issues</Badge>
-        )}
-      </div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+      <ViolationFieldHeader
+        title={`Email ${experienceNumber + 1}`}
+        issueCount={totalIssues}
+      />
+      {violationEntries.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+            paddingLeft: "1rem",
+          }}
+        >
+          {violationEntries.map((entry, index) => (
+            <ViolationEntry
+              key={`${entry.fieldName}-${index}`}
+              item={entry.violation}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
