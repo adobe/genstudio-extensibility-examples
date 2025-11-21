@@ -186,7 +186,7 @@ export default function ValidationPanel(): JSX.Element {
     flex: 1,
     gap: "1rem",
   };
-  const headingStyle = style({ font: "heading", marginTop: 0, marginBottom: 12 });
+  const headingStyle = style({ font: "heading", marginTop: 20, marginBottom: 12 });
 
   const manualClaimsCheck = () => {
     return (<>

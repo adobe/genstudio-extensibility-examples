@@ -36,8 +36,8 @@ export const APP_METADATA: AppMetadata = {
   options: {
     validation: {
       // autoOpenApp: true,
-      singleExperienceViewMode: true,
-      autoRefreshApp: true,
+      // singleExperienceViewMode: true,
+      // autoRefreshApp: true,
     },
   },
 };

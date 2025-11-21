@@ -35,7 +35,7 @@ const ScrollPanel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     className={style({
       overflow: "auto",
       height: "full",
-      paddingTop: 8,
+      paddingTop: 20,
     })}
   >
     {children}
