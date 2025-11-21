@@ -1,3 +1,18 @@
 extensions:
   dx_genstudio/genstudiopem/1:
     $include: src/genstudiopem/ext.config.yaml
+    runtimeManifest:
+      packages:
+        genstudio-mlr-claims-app:
+          license: Apache-2.0
+          actions:
+            get-claims:
+              function: src/genstudiopem/actions/claims/index.js
+              web: "yes"
+              runtime: nodejs:22
+              inputs:
+                LOG_LEVEL: info
+                actionType: getClaims
+              annotations:
+                require-adobe-auth: true
+                final: false

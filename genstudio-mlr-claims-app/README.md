@@ -1,83 +1,52 @@
-# GenStudio MLR Claims App
+# GenStudio MLR Claims App - Reference App
 
-This is an App Builder application that creates an extension point in GenStudio to add context via claims and validate experiences with claims.
+A **reference application** for building Adobe GenStudio for Performance Marketing validation extensions with Medical, Legal, and Regulatory (MLR) claims checking capabilities.
 
-Welcome to my Adobe I/O Application!
+> 📖 **[See QUICKSTART.md for setup instructions](./QUICKSTART.md)**
 
-## Setup
+## What is This?
 
-- Populate the `.env` file in the project root and fill it as shown [below](#env)
+This example demonstrates a full-featured validation extension with:
 
-## Local Dev
+- Real-time claims validation against regulatory requirements
+- Multiple claims library support
+- Integration with both validation and prompt extension points
+- Experience selection and data display
 
-- `aio app run` to start your local Dev server
-- App will run on `localhost:9080` by default
+Use this as a starting point for building compliance validation tools for medical, legal, or regulatory content approval.
 
-By default the UI will be served locally but actions will be deployed and served from Adobe I/O Runtime. To start a
-local serverless stack and also run your actions locally use the `aio app run --local` option.
-
-## Test & Coverage
-
-- Run `aio app test` to run unit tests for ui and actions
-- Run `aio app test --e2e` to run e2e tests
-
-## Deploy & Cleanup
-
-- `aio app deploy` to build and deploy all actions on Runtime and static files to CDN
-- `aio app undeploy` to undeploy the app
-
-## Config
-
-### `.env`
-
-You can generate this file using the command `aio app use`. 
+## Quick Start
 
 ```bash
-# This file must **not** be committed to source control
-
-## please provide your Adobe I/O Runtime credentials
-# AIO_RUNTIME_AUTH=
-# AIO_RUNTIME_NAMESPACE=
+npm install
+aio app run      # Run locally at https://localhost:9080
+aio app deploy   # Deploy to production
 ```
 
-### `app.config.yaml`
+**First Step:** Edit `src/genstudiopem/web-src/src/Constants.ts` to configure your extension ID, claims libraries, and validation rules.
 
-- Main configuration file that defines an application's implementation. 
-- More information on this file, application configuration, and extension configuration 
-  can be found [here](https://developer.adobe.com/app-builder/docs/guides/appbuilder-configuration/#appconfigyaml)
+## What to Modify
 
-#### Action Dependencies
+- ✅ **`Constants.ts`** - Extension configuration and claims libraries
+- ✅ **`components/`** - UI customization and validation logic
+- ✅ **`utils/claimsValidation.ts`** - Claims checking algorithms
+- ⚠️ **`app/`** - DO NOT modify (core registration logic)
 
-- You have two options to resolve your actions' dependencies:
+## Migration Note
 
-  1. **Packaged action file**: Add your action's dependencies to the root
-   `package.json` and install them using `npm install`. Then set the `function`
-   field in `app.config.yaml` to point to the **entry file** of your action
-   folder. We will use `webpack` to package your code and dependencies into a
-   single minified js file. The action will then be deployed as a single file.
-   Use this method if you want to reduce the size of your actions.
+This app has been updated to use:
 
-  2. **Zipped action folder**: In the folder containing the action code add a
-     `package.json` with the action's dependencies. Then set the `function`
-     field in `app.config.yaml` to point to the **folder** of that action. We will
-     install the required dependencies within that directory and zip the folder
-     before deploying it as a zipped action. Use this method if you want to keep
-     your action's dependencies separated.
+- **React 18** with createRoot API
+- **Spectrum S2** design system (@react-spectrum/s2)
+- **TypeScript** with proper ESLint configuration
 
-## Debugging in VS Code
+**Note:** Some complex components (RightPanel, ClaimsChecker, AdditionalContextDialog) may need manual updates to fully migrate Spectrum v3 components (View, Flex) to Spectrum S2. Replace these with standard div elements and CSS styling as needed.
 
-While running your local server (`aio app run`), both UI and actions can be debugged, to do so open the vscode debugger
-and select the debugging configuration called `WebAndActions`.
-Alternatively, there are also debug configs for only UI and each separate action.
+## Documentation
 
-## Typescript support for UI
+- **[GenStudio Extensibility Guide](https://experienceleague.adobe.com/en/docs/genstudio-for-performance-marketing/ext-guide/home)** - Complete extensibility guide
+- **[Validation Extensions](https://experienceleague.adobe.com/en/docs/genstudio-for-performance-marketing/ext-guide/apps/deploy-app)** - How validation extensions work
 
-To use typescript use `.tsx` extension for react components and add a `tsconfig.json` 
-and make sure you have the below config added
-```
- {
-  "compilerOptions": {
-      "jsx": "react"
-    }
-  } 
-```
+## License
+
+Copyright 2025 Adobe. Licensed under Apache License 2.0.

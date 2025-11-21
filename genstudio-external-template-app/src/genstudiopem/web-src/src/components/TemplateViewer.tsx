@@ -11,55 +11,49 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect, useState } from "react";
-
 import { CardView, SearchField, ProgressCircle } from "@react-spectrum/s2";
-import { TemplateCard } from "./TemplateCard";
-import { useTemplateActions } from "../hooks/useTemplateActions";
-import { extensionId, extensionLabel } from "../Constants";
-import { useGuestConnection } from "../hooks";
 import { Selection } from "@react-types/shared";
 import {
   ImportTemplateExtensionService,
   Template,
 } from "@adobe/genstudio-extensibility-sdk";
-
-interface Auth {
-  imsToken: string;
-  imsOrg: string;
-}
+import { TemplateCard } from "./TemplateCard";
+import { useAuth, useGuestConnection, useTemplateActions } from "../hooks";
+import { EXTENSION_ID, EXTENSION_LABEL } from "../Constants";
 
 export default function TemplateViewer(): JSX.Element {
+  // ==========================================================
+  //                    STATE & HOOKS
+  // ==========================================================
   const [selectedTemplateIds, setSelectedTemplateIds] = useState<Selection>(
     new Set()
   );
   const [searchTerm, setSearchTerm] = useState("");
-  const [auth, setAuth] = useState<Auth | null>(null);
-  const guestConnection = useGuestConnection(extensionId);
-  const { templates, fetchTemplates, isLoading } = useTemplateActions(
-    auth as Auth
-  );
 
+  const guestConnection = useGuestConnection(EXTENSION_ID);
+  const auth = useAuth(guestConnection);
+  const { templates, fetchTemplates, isLoading } = useTemplateActions(auth);
+
+  // ==========================================================
+  //                    EFFECTS & HOOKS
+  // ==========================================================
+
+  /**
+   * Fetch templates when auth becomes available
+   */
   useEffect(() => {
     if (auth) {
       fetchTemplates();
     }
-  }, [auth]);
+  }, [auth, fetchTemplates]);
 
-  useEffect(() => {
-    const sharedAuth = guestConnection?.sharedContext.get("auth");
-
-    if (sharedAuth) {
-      setAuth(sharedAuth);
-    }
-  }, [guestConnection]);
-
-  const filteredTemplates = !searchTerm
-    ? templates
-    : templates.filter((t) =>
-        (t.title ?? "").toLowerCase().includes(searchTerm.toLowerCase())
-      );
+  /**
+   * Update the host with the currently selected template
+   * Syncs template selection state with the GenStudio host
+   */
   useEffect(() => {
     if (!guestConnection) return;
+
     const selectedTemplateIdsList = Array.from(selectedTemplateIds);
     const selectedTemplate =
       selectedTemplateIdsList.length > 0
@@ -69,33 +63,95 @@ export default function TemplateViewer(): JSX.Element {
               (t) => t.id === selectedTemplateIdsList[0]
             ) as Template,
             {
-              source: extensionLabel,
+              source: EXTENSION_LABEL,
               additionalMetadata: { thumbnailUrl: undefined },
             }
           ) || undefined
         : undefined;
+
     ImportTemplateExtensionService.setSelectedTemplate(
       guestConnection,
       selectedTemplate
     );
-  }, [selectedTemplateIds, guestConnection]);
+  }, [selectedTemplateIds, guestConnection, templates]);
 
+  // ==========================================================
+  //                    HANDLERS & FUNCTIONS
+  // ==========================================================
+
+  /**
+   * Filters templates based on search term
+   * @returns Filtered template array
+   */
+  const getFilteredTemplates = (): Template[] => {
+    if (!searchTerm) return templates;
+
+    return templates.filter((t) =>
+      (t.title ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
+  /**
+   * Handles search term changes
+   * @param value - New search term
+   */
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+  };
+
+  // ==========================================================
+  //                        RENDER
+  // ==========================================================
+  const filteredTemplates = getFilteredTemplates();
+
+  const containerStyle: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "32px 32px",
+  };
+
+  const contentContainerStyle: React.CSSProperties = {
+    width: "100%",
+    marginTop: "24px",
+  };
+
+  const centerContentStyle: React.CSSProperties = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  };
+
+  const emptyStateStyle: React.CSSProperties = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "200px",
+    width: "100%",
+    fontSize: "1.2rem",
+    color: "#666",
+    textAlign: "center",
+  };
+
+  /**
+   * Renders the template content based on loading and data state
+   */
   const renderTemplateContent = () => {
+    if (isLoading) {
+      return (
+        <div style={centerContentStyle}>
+          <ProgressCircle aria-label="Loading templates" isIndeterminate />
+        </div>
+      );
+    }
+
     if (filteredTemplates.length === 0) {
       return (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "200px",
-            width: "100%",
-            fontSize: "1.2rem",
-            color: "#666",
-            textAlign: "center",
-          }}
-        >
-          No templates found.
+        <div style={emptyStateStyle}>
+          {templates.length === 0
+            ? "No templates available."
+            : "No templates found matching your search."}
         </div>
       );
     }
@@ -116,36 +172,14 @@ export default function TemplateViewer(): JSX.Element {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: "32px 32px",
-      }}
-    >
+    <div style={containerStyle}>
       <SearchField
         value={searchTerm}
-        onChange={setSearchTerm}
+        onChange={handleSearchChange}
         placeholder="Search templates"
-        width="400px"
+        aria-label="Search templates"
       />
-      <div style={{ width: "100%", marginTop: "24px" }}>
-        {isLoading ? (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <ProgressCircle aria-label="Loading templates" isIndeterminate />
-          </div>
-        ) : (
-          renderTemplateContent()
-        )}
-      </div>
+      <div style={contentContainerStyle}>{renderTemplateContent()}</div>
     </div>
   );
 }

@@ -16,11 +16,7 @@ import { actionWebInvoke } from "../utils/actionWebInvoke";
 import actions from "../config.json";
 import { LOAD_TEMPLATE_ACTION } from "../Constants";
 import { Template } from "@adobe/genstudio-extensibility-sdk";
-
-interface Auth {
-  imsToken: string;
-  imsOrg: string;
-}
+import { Auth } from "../types";
 
 export const useTemplateActions = (auth: Auth | null) => {
   const [templates, setTemplates] = useState<Template[]>([]);

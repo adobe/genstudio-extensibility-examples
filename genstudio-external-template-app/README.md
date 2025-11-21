@@ -1,29 +1,43 @@
 # GenStudio External Template App
 
-This is an App Builder App that creates a GS Add-On to add an external source for selecting templates for experience creation in GenStudio.
-The external source for this app is just an S3 bucket.
+**_GenStudio External Template App_** is an Adobe GenStudio web extension that enables you to import templates from external sources (like S3 buckets) into GenStudio for Performance Marketing.
 
-To run this app, you need to have the following:
-- S3 bucket
-- S3 user with access to read, list, and get objects from the bucket
+## 🚀 Quick Start
 
-Store the AWS user credentials in .env.dev and .env.prod
-```
+For detailed setup instructions and configuration guide, see [QUICKSTART.md](./QUICKSTART.md).
+
+## Overview
+
+This is an App Builder App that creates a GenStudio Add-On to add an external source for selecting templates for experience creation in GenStudio. The external source for this app is just an S3 bucket, but can be extended to support other sources.
+
+## Prerequisites
+
+To run this app, you need the following:
+
+- **S3 Bucket** - AWS S3 bucket to store templates
+- **AWS Credentials** - S3 user with access to read, list, and get objects from the bucket
+
+Store the AWS user credentials as environment variables in your `.env` file:
+
+```bash
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 AWS_REGION=
 AWS_BUCKET_NAME=
 ```
-This need to be env variables available at deploy time.
+
+These variables must be available at deploy time.
 
 ## Setup
 
 - Populate the `.env` file in the project root and fill it as shown [below](#env)
-- Populate .env.dev and .env.prod with AWS user credentials
-- Run 
+- Run:
+
+```bash
+export $(grep -v '^#' .env | xargs)
 ```
-export $(grep -v '^#' .env.dev | xargs)
-```
+
+For more detailed setup instructions, see [QUICKSTART.md](./QUICKSTART.md).
 
 ## Local Dev
 
@@ -31,7 +45,7 @@ export $(grep -v '^#' .env.dev | xargs)
 - App will run on `localhost:9080` by default
 
 By default the UI will be served locally but actions will be deployed and served from Adobe I/O Runtime. To start a
-local serverless stack and also run your actions locally use the `aio app run --local` option.
+local serverless stack and also run your actions locally use the `aio app dev` option.
 
 ## Test & Coverage
 
@@ -44,13 +58,14 @@ local serverless stack and also run your actions locally use the `aio app run --
 - `aio app undeploy` to undeploy the app
 
 ## Logging
+
 See [I/O Runtime Logging](https://developer.adobe.com/app-builder/docs/guides/runtime-logging/)
 
 ## Config
 
 ### `.env`
 
-You can generate this file using the command `aio app use`. 
+You can generate this file using the command `aio app use`.
 
 ```bash
 # This file must **not** be committed to source control
@@ -62,8 +77,8 @@ You can generate this file using the command `aio app use`.
 
 ### `app.config.yaml`
 
-- Main configuration file that defines an application's implementation. 
-- More information on this file, application configuration, and extension configuration 
+- Main configuration file that defines an application's implementation.
+- More information on this file, application configuration, and extension configuration
   can be found [here](https://developer.adobe.com/app-builder/docs/guides/appbuilder-configuration/#appconfigyaml)
 
 #### Action Dependencies
@@ -71,11 +86,11 @@ You can generate this file using the command `aio app use`.
 - You have two options to resolve your actions' dependencies:
 
   1. **Packaged action file**: Add your action's dependencies to the root
-   `package.json` and install them using `npm install`. Then set the `function`
-   field in `app.config.yaml` to point to the **entry file** of your action
-   folder. We will use `webpack` to package your code and dependencies into a
-   single minified js file. The action will then be deployed as a single file.
-   Use this method if you want to reduce the size of your actions.
+     `package.json` and install them using `npm install`. Then set the `function`
+     field in `app.config.yaml` to point to the **entry file** of your action
+     folder. We will use `webpack` to package your code and dependencies into a
+     single minified js file. The action will then be deployed as a single file.
+     Use this method if you want to reduce the size of your actions.
 
   2. **Zipped action folder**: In the folder containing the action code add a
      `package.json` with the action's dependencies. Then set the `function`
@@ -92,12 +107,19 @@ Alternatively, there are also debug configs for only UI and each separate action
 
 ## Typescript support for UI
 
-To use typescript use `.tsx` extension for react components and add a `tsconfig.json` 
+To use typescript use `.tsx` extension for react components and add a `tsconfig.json`
 and make sure you have the below config added
+
 ```
  {
   "compilerOptions": {
       "jsx": "react"
     }
-  } 
+  }
 ```
+
+## Documentation
+
+- [QUICKSTART.md](./QUICKSTART.md) - Detailed setup and configuration guide
+- [src/genstudiopem/web-src/src/app/README.md](./src/genstudiopem/web-src/src/app/README.md) - App folder documentation
+- [src/genstudiopem/web-src/src/components/README.md](./src/genstudiopem/web-src/src/components/README.md) - Components documentation
