@@ -20,13 +20,13 @@ governing permissions and limitations under the License.
 import { Experience } from "@adobe/genstudio-extensibility-sdk";
 import {
   CLAIM_VIOLATION_PREFIX,
-  TEST_CLAIMS,
   VIOLATION_PREFIX,
   VIOLATION_STATUS,
 } from "../Constants";
 import { ClaimResults, Violation } from "../types";
 import { Key } from "react";
 import { removePodPrefix } from "./stringUtils";
+import { TEST_CLAIMS } from "../claims";
 
 const maxCharacterLimits = {
   header: 80,

@@ -23,8 +23,6 @@ genstudio-create-validation/
 │       │       │   └── ExtensionRegistration.tsx  # Extension registration logic
 │       │       │
 │       │       ├── components/             # ✅ MODIFY HERE
-│       │       │   ├── RightPanel.tsx      # Main panel component
-│       │       │   └── ExperiencePanel/    # Experience panel components
 │       │       │
 │       │       ├── hooks/                  # Custom React hooks
 │       │       │
@@ -51,7 +49,7 @@ genstudio-create-validation/
 
 2. **Customize Components** (`src/genstudiopem/web-src/src/components/`)
 
-   - Modify `RightPanel.tsx` to change the main panel behavior
+   - Modify `ValidationPanel.tsx` to change the main panel behavior
    - Update `ExperiencePanel/` components to customize the experience UI
    - Add your own components as needed
 

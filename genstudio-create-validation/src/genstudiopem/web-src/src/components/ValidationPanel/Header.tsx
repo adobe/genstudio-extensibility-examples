@@ -13,18 +13,16 @@ governing permissions and limitations under the License.
 import React from "react";
 import { Heading, Button, Divider } from "@react-spectrum/s2";
 
-interface ExperienceHeaderProps {
+interface HeaderProps {
   onSync: () => void;
 }
 
 /**
- * ExperienceHeader component that displays the header of the experiences panel.
+ * Header component that displays the header of the experiences panel.
  * @param onSync - Function triggered when the Sync button is pressed.
- * @returns The ExperienceHeader component
+ * @returns The Header component
  */
-export const ExperienceHeader: React.FC<ExperienceHeaderProps> = ({
-  onSync,
-}) => {
+export default function Header({ onSync }: HeaderProps) {
   return (
     <div
       style={{
@@ -50,4 +48,4 @@ export const ExperienceHeader: React.FC<ExperienceHeaderProps> = ({
       <Divider size="S" />
     </div>
   );
-};
+}

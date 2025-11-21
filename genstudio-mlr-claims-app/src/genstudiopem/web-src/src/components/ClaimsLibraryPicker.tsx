@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Item, Picker } from "@adobe/react-spectrum";
+import { Picker, PickerItem } from "@react-spectrum/s2";
 import React, { Key } from "react";
 
-import { TEST_CLAIMS } from "../Constants";
+import { TEST_CLAIMS } from "../claims";
 
 interface ClaimsCheckerProps {
   handleSelectionChange: (library: Key | null) => void;
@@ -25,11 +25,12 @@ export const ClaimsLibraryPicker: React.FC<ClaimsCheckerProps> = ({
   return (
     <Picker
       placeholder="Select Claims Category..."
-      width="100%"
       onSelectionChange={handleSelectionChange}
     >
       {TEST_CLAIMS.map((library) => (
-        <Item key={library.id}>{library.name}</Item>
+        <PickerItem key={library.id} id={library.id}>
+          {library.name}
+        </PickerItem>
       ))}
     </Picker>
   );

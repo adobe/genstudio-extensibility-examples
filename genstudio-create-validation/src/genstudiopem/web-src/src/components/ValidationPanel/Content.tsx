@@ -14,18 +14,17 @@ import React from "react";
 import { Heading, Text, Divider } from "@react-spectrum/s2";
 import { Experience } from "@adobe/genstudio-extensibility-sdk";
 
-interface ExperienceDetailsProps {
+interface ContentProps {
   experience: Experience;
 }
 
 /**
- * ExperienceDetails component that displays the details of an experience.
+ * Content component that displays the details of an experience.
  * @param experience - The experience to display
- * @returns The ExperienceDetails component
+ * @returns The Content component
  */
-export const ExperienceDetails: React.FC<ExperienceDetailsProps> = ({
-  experience,
-}) => {
+export default function Content({ experience }: ContentProps) {
+  if (!experience) return null;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <Heading>Experience Details</Heading>
@@ -55,4 +54,4 @@ export const ExperienceDetails: React.FC<ExperienceDetailsProps> = ({
       </div>
     </div>
   );
-};
+}

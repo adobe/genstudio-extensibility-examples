@@ -12,12 +12,13 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import { Provider as S2Provider, Heading } from "@react-spectrum/s2";
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import { ErrorBoundary } from "react-error-boundary";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import ExtensionRegistration from "./ExtensionRegistration";
 import ValidationPanel from "../components/ValidationPanel";
-import { APP_ROUTE } from "../Constants";
+import AdditionalContextDialog from "../components/AdditionalContextDialog";
+import { PROMPT_APP_ROUTE, VALIDATION_APP_ROUTE } from "../Constants";
 
 const ErrorFallback = () => <Heading>Something went wrong!</Heading>;
 
@@ -32,7 +33,11 @@ const App = (): React.JSX.Element => {
         <Router>
           <Routes>
             <Route path="/" element={<ExtensionRegistration />} />
-            <Route path={APP_ROUTE} element={<ValidationPanel />} />
+            <Route path={VALIDATION_APP_ROUTE} element={<ValidationPanel />} />
+            <Route
+              path={PROMPT_APP_ROUTE}
+              element={<AdditionalContextDialog />}
+            />
           </Routes>
         </Router>
       </S2Provider>

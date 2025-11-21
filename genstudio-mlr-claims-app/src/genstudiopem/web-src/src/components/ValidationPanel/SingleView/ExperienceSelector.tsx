@@ -11,59 +11,43 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { Picker, PickerItem, Heading, Button } from "@react-spectrum/s2";
+import { Picker, PickerItem } from "@react-spectrum/s2";
 import { Experience } from "@adobe/genstudio-extensibility-sdk";
 
 interface ExperienceSelectorProps {
   experiences: Experience[];
-  selectedExperienceIndex: number | null;
   onExperienceSelect: (index: number) => void;
-  onRunClaimsCheck: () => void;
 }
 
 /**
  * ExperienceSelector component that displays the selector of the experiences panel.
  * @param experiences - The experiences to display
- * @param selectedExperienceIndex - The index of the selected experience
  * @param onExperienceSelect - Function triggered when the experience is selected
- * @param onRunClaimsCheck - Function triggered when the run claims check button is pressed
  * @returns The ExperienceSelector component
  */
-export const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
+export default function ExperienceSelector({
   experiences,
-  selectedExperienceIndex,
   onExperienceSelect,
-  onRunClaimsCheck,
-}) => {
+}: ExperienceSelectorProps) {
   const handleExperienceSelect = (key: React.Key | null) => {
     if (key === null) return;
     const index = experiences.findIndex((exp) => exp.id === key);
-    if (index !== -1) onExperienceSelect(index);
+    if (index !== -1) {
+      onExperienceSelect(index);
+    }
   };
   return (
-    <>
-      <div style={{ paddingLeft: "1rem", paddingRight: "1rem" }}>
-        <Heading>Claims Libraries</Heading>
-
-        <Picker
-          label="Select Experience to Run Claims Check"
-          onSelectionChange={handleExperienceSelect}
-        >
-          {experiences.map((experience, index) => (
-            <PickerItem key={experience.id} id={experience.id}>
-              {`Experience ${index + 1}`}
-            </PickerItem>
-          ))}
-        </Picker>
-
-        <br />
-
-        {selectedExperienceIndex !== null && (
-          <Button variant="primary" onPress={onRunClaimsCheck}>
-            Run Claims Check
-          </Button>
-        )}
-      </div>
-    </>
+    <div style={{ marginBottom: 20, marginTop: 4 }}>
+      <Picker
+        label="Select Experience"
+        onSelectionChange={handleExperienceSelect}
+      >
+        {experiences.map((experience, index) => (
+          <PickerItem key={experience.id} id={experience.id}>
+            {`Experience ${index + 1}`}
+          </PickerItem>
+        ))}
+      </Picker>
+    </div>
   );
-};
+}

@@ -16,16 +16,10 @@ import {
   Claim,
   PromptExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
-import {
-  Button,
-  ButtonGroup,
-  Checkbox,
-  Flex,
-  Grid,
-  View,
-} from "@adobe/react-spectrum";
+import { Button, ButtonGroup, Checkbox } from "@react-spectrum/s2";
 import React, { useEffect, useState } from "react";
-import { extensionId, TEST_CLAIMS } from "../Constants";
+import { EXTENSION_ID } from "../Constants";
+import { TEST_CLAIMS } from "../claims";
 import { useGuestConnection, useSelectedClaimLibrary } from "../hooks";
 import { ClaimsLibraryPicker } from "./ClaimsLibraryPicker";
 
@@ -33,7 +27,7 @@ export default function AdditionalContextDialog(): JSX.Element {
   const [filteredClaimsList, setFilteredClaimsList] = useState<Claim[]>([]);
   const [selectedClaims, setSelectedClaims] = useState<Claim[]>([]);
 
-  const guestConnection = useGuestConnection(extensionId);
+  const guestConnection = useGuestConnection(EXTENSION_ID);
   const { selectedClaimLibrary, handleClaimsLibrarySelection } =
     useSelectedClaimLibrary();
 
@@ -56,7 +50,7 @@ export default function AdditionalContextDialog(): JSX.Element {
 
   const handleClaimSelect = async () => {
     const claimsContext: AdditionalContext<Claim> = {
-      extensionId: extensionId,
+      extensionId: EXTENSION_ID,
       additionalContextType: AdditionalContextTypes.Claims,
       additionalContextValues: selectedClaims,
     };
@@ -67,43 +61,56 @@ export default function AdditionalContextDialog(): JSX.Element {
   };
 
   return (
-    <View backgroundColor="static-white" height="100vh">
-      <Grid
-        columns={["1fr"]}
-        rows={["auto", "1fr", "auto"]}
-        areas={["library", "claims", "actions"]}
-        height="100%"
-        marginX="size-200"
-        gap="size-300"
+    <div style={{ backgroundColor: "white", height: "100vh" }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr",
+          gridTemplateRows: "auto 1fr auto",
+          gridTemplateAreas: '"library" "claims" "actions"',
+          height: "100%",
+          marginLeft: "1rem",
+          marginRight: "1rem",
+          gap: "1.5rem",
+        }}
       >
-        <View gridArea="library" marginTop="size-150">
+        <div style={{ gridArea: "library", marginTop: "0.75rem" }}>
           <ClaimsLibraryPicker
             handleSelectionChange={handleClaimsLibrarySelection}
           />
-        </View>
-        <View gridArea="claims" overflow="auto">
-          <Flex direction="column" gap="size-100">
+        </div>
+        <div style={{ gridArea: "claims", overflow: "auto" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
+          >
             {filteredClaimsList.map((claim) => (
               <Checkbox
                 key={claim.id}
-                marginStart="size-50"
                 isSelected={selectedClaims?.some((c) => c.id === claim.id)}
                 onChange={() => handleClaimChange(claim)}
               >
                 {claim.description}
               </Checkbox>
             ))}
-          </Flex>
-        </View>
-        <ButtonGroup gridArea="actions" align="end">
-          <Button variant="secondary" onPress={handleCancel}>
-            Cancel
-          </Button>
-          <Button variant="primary" style="fill" onPress={handleClaimSelect}>
-            OK
-          </Button>
-        </ButtonGroup>
-      </Grid>
-    </View>
+          </div>
+        </div>
+        <div
+          style={{
+            gridArea: "actions",
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <ButtonGroup>
+            <Button variant="secondary" onPress={handleCancel}>
+              Cancel
+            </Button>
+            <Button variant="primary" onPress={handleClaimSelect}>
+              OK
+            </Button>
+          </ButtonGroup>
+        </div>
+      </div>
+    </div>
   );
 }

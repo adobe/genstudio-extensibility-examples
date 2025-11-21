@@ -10,9 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Text } from "@adobe/react-spectrum";
+// ==========================================================
+// DO NOT MODIFY THIS FILE UNLESS YOU KNOW WHAT YOU ARE DOING
+// ==========================================================
+
+import { Text } from "@react-spectrum/s2";
 import { register } from "@adobe/uix-guest";
-import { extensionId, ICON_DATA_URI, extensionLabel } from "../Constants";
+import {
+  EXTENSION_ID,
+  APP_METADATA,
+  VALIDATION_APP_ROUTE,
+  PROMPT_APP_ROUTE,
+} from "../Constants";
 import {
   App,
   AppMetadata,
@@ -24,29 +33,14 @@ import React, { Key } from "react";
 import { setSelectedExperienceId } from "../utils/experienceBridge";
 
 const getAppMetadata = (id: Key): AppMetadata => ({
+  ...APP_METADATA,
   id: id.toString(),
-  label: extensionLabel,
-  iconDataUri: ICON_DATA_URI,
-  supportedChannels: [
-    {
-      id: "email",
-      name: "Email",
-    },
-  ],
-  extensionId,
-  options: {
-    validation: {
-      singleExperienceViewMode: true,
-      // autoOpenApp: true,
-      // autoRefreshApp: true,
-    },
-  },
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
   const init = async (): Promise<void> => {
     const guestConnection = await register({
-      id: extensionId,
+      id: EXTENSION_ID,
       methods: {
         validationExtension: {
           getToggles: async (id: string): Promise<Toggle[]> => {
@@ -63,12 +57,13 @@ const ExtensionRegistration = (): React.JSX.Element => {
             return [
               {
                 metadata: getAppMetadata(id),
-                url: "#/right-panel",
+                url: `#${VALIDATION_APP_ROUTE}`,
               },
             ];
           },
           // (Optional) If handleSelectedExperienceChange is provided in ExtensionRegistration
           //            host app will render a experience selector at the top of the right panel
+          //            This is use in combined with options.validation.singleExperienceViewMode
           handleSelectedExperienceChange: async (experienceId: string) => {
             setSelectedExperienceId(experienceId);
           },
@@ -88,7 +83,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
             return [
               {
                 metadata: getAppMetadata(id),
-                url: "#/additional-context-dialog",
+                url: `#${PROMPT_APP_ROUTE}`,
               },
             ];
           },
