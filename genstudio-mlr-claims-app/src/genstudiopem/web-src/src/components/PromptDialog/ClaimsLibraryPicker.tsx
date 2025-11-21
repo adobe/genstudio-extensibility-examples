@@ -13,13 +13,14 @@ governing permissions and limitations under the License.
 import { Picker, PickerItem } from "@react-spectrum/s2";
 import React, { Key } from "react";
 
-import { TEST_CLAIMS } from "../claims";
+import { TEST_CLAIMS } from "../../claims";
 
-interface ClaimsCheckerProps {
-  handleSelectionChange: (library: Key | null) => void;
+interface ClaimsLibraryPickerProps {
+  // eslint-disable-next-line
+  handleSelectionChange: (key: Key | null) => void;
 }
 
-export const ClaimsLibraryPicker: React.FC<ClaimsCheckerProps> = ({
+export const ClaimsLibraryPicker: React.FC<ClaimsLibraryPickerProps> = ({
   handleSelectionChange,
 }) => {
   return (

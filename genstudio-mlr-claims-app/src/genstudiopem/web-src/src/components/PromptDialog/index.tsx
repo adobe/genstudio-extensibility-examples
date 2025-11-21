@@ -18,12 +18,12 @@ import {
 } from "@adobe/genstudio-extensibility-sdk";
 import { Button, ButtonGroup, Checkbox } from "@react-spectrum/s2";
 import React, { useEffect, useState } from "react";
-import { EXTENSION_ID } from "../Constants";
-import { TEST_CLAIMS } from "../claims";
-import { useGuestConnection, useSelectedClaimLibrary } from "../hooks";
+import { EXTENSION_ID } from "../../Constants";
+import { TEST_CLAIMS } from "../../claims";
+import { useGuestConnection, useSelectedClaimLibrary } from "../../hooks";
 import { ClaimsLibraryPicker } from "./ClaimsLibraryPicker";
 
-export default function AdditionalContextDialog(): JSX.Element {
+export default function PromptDialog(): React.JSX.Element {
   const [filteredClaimsList, setFilteredClaimsList] = useState<Claim[]>([]);
   const [selectedClaims, setSelectedClaims] = useState<Claim[]>([]);
 
@@ -31,6 +31,13 @@ export default function AdditionalContextDialog(): JSX.Element {
   const { selectedClaimLibrary, handleClaimsLibrarySelection } =
     useSelectedClaimLibrary();
 
+  // ==========================================================
+  //                    EFFECTS & HOOKS
+  // ==========================================================
+
+  /**
+   * Updates the filtered claims list when the selected library changes.
+   */
   useEffect(() => {
     const libraryClaims =
       TEST_CLAIMS.find((library) => library.id === selectedClaimLibrary)
@@ -38,6 +45,14 @@ export default function AdditionalContextDialog(): JSX.Element {
     setFilteredClaimsList(libraryClaims);
   }, [selectedClaimLibrary]);
 
+  // ==========================================================
+  //                    HANDLERS & FUNCTIONS
+  // ==========================================================
+
+  /**
+   * Handles the selection/deselection of a claim.
+   * @param claim - The claim to toggle
+   */
   const handleClaimChange = (claim: Claim) => {
     setSelectedClaims((prev) =>
       prev.some((c) => c.id === claim.id)
@@ -46,8 +61,14 @@ export default function AdditionalContextDialog(): JSX.Element {
     );
   };
 
+  /**
+   * Handles the cancel action by closing the prompt extension.
+   */
   const handleCancel = () => guestConnection.host.api.promptExtension.close();
 
+  /**
+   * Handles the OK action by updating the additional context with selected claims.
+   */
   const handleClaimSelect = async () => {
     const claimsContext: AdditionalContext<Claim> = {
       extensionId: EXTENSION_ID,
@@ -60,29 +81,48 @@ export default function AdditionalContextDialog(): JSX.Element {
     );
   };
 
+  // ==========================================================
+  //                        RENDER
+  // ==========================================================
+
+  const containerStyle: React.CSSProperties = {
+    backgroundColor: "white",
+    height: "100vh",
+  };
+
+  const gridContainerStyle: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    gridTemplateRows: "auto 1fr auto",
+    gridTemplateAreas: '"library" "claims" "actions"',
+    height: "100%",
+    marginLeft: "1rem",
+    marginRight: "1rem",
+    gap: "1.5rem",
+  };
+
+  const claimsListStyle: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.5rem",
+  };
+
+  const actionsStyle: React.CSSProperties = {
+    gridArea: "actions",
+    display: "flex",
+    justifyContent: "flex-end",
+  };
+
   return (
-    <div style={{ backgroundColor: "white", height: "100vh" }}>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr",
-          gridTemplateRows: "auto 1fr auto",
-          gridTemplateAreas: '"library" "claims" "actions"',
-          height: "100%",
-          marginLeft: "1rem",
-          marginRight: "1rem",
-          gap: "1.5rem",
-        }}
-      >
+    <div style={containerStyle}>
+      <div style={gridContainerStyle}>
         <div style={{ gridArea: "library", marginTop: "0.75rem" }}>
           <ClaimsLibraryPicker
             handleSelectionChange={handleClaimsLibrarySelection}
           />
         </div>
         <div style={{ gridArea: "claims", overflow: "auto" }}>
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
-          >
+          <div style={claimsListStyle}>
             {filteredClaimsList.map((claim) => (
               <Checkbox
                 key={claim.id}
@@ -94,13 +134,7 @@ export default function AdditionalContextDialog(): JSX.Element {
             ))}
           </div>
         </div>
-        <div
-          style={{
-            gridArea: "actions",
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
+        <div style={actionsStyle}>
           <ButtonGroup>
             <Button variant="secondary" onPress={handleCancel}>
               Cancel

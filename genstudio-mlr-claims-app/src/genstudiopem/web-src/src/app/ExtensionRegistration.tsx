@@ -19,8 +19,8 @@ import { register } from "@adobe/uix-guest";
 import {
   EXTENSION_ID,
   APP_METADATA,
-  VALIDATION_APP_ROUTE,
-  PROMPT_APP_ROUTE,
+  VALIDATION_PANEL_ROUTE,
+  PROMPT_DIALOG_ROUTE,
 } from "../Constants";
 import {
   App,
@@ -57,7 +57,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
             return [
               {
                 metadata: getAppMetadata(id),
-                url: `#${VALIDATION_APP_ROUTE}`,
+                url: `#${VALIDATION_PANEL_ROUTE}`,
               },
             ];
           },
@@ -83,7 +83,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
             return [
               {
                 metadata: getAppMetadata(id),
-                url: `#${PROMPT_APP_ROUTE}`,
+                url: `#${PROMPT_DIALOG_ROUTE}`,
               },
             ];
           },

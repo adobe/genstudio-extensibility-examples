@@ -16,7 +16,11 @@ governing permissions and limitations under the License.
 
 import { Text } from "@react-spectrum/s2";
 import { register } from "@adobe/uix-guest";
-import { EXTENSION_ID, APP_METADATA, APP_ROUTE } from "../Constants";
+import {
+  EXTENSION_ID,
+  APP_METADATA,
+  VALIDATION_PANEL_ROUTE,
+} from "../Constants";
 import {
   AppMetadata,
   ValidationExtensionService,
@@ -49,7 +53,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
           getApps(id: string): App[] {
             return [
               {
-                url: `#${APP_ROUTE}`,
+                url: `#${VALIDATION_PANEL_ROUTE}`,
                 metadata: getAppMetadata(id),
               },
             ];

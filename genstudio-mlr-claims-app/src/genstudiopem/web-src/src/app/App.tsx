@@ -17,8 +17,8 @@ import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import ExtensionRegistration from "./ExtensionRegistration";
 import ValidationPanel from "../components/ValidationPanel";
-import AdditionalContextDialog from "../components/AdditionalContextDialog";
-import { PROMPT_APP_ROUTE, VALIDATION_APP_ROUTE } from "../Constants";
+import PromptDialog from "../components/PromptDialog";
+import { PROMPT_DIALOG_ROUTE, VALIDATION_PANEL_ROUTE } from "../Constants";
 
 const ErrorFallback = () => <Heading>Something went wrong!</Heading>;
 
@@ -33,11 +33,8 @@ const App = (): React.JSX.Element => {
         <Router>
           <Routes>
             <Route path="/" element={<ExtensionRegistration />} />
-            <Route path={VALIDATION_APP_ROUTE} element={<ValidationPanel />} />
-            <Route
-              path={PROMPT_APP_ROUTE}
-              element={<AdditionalContextDialog />}
-            />
+            <Route path={VALIDATION_PANEL_ROUTE} element={<ValidationPanel />} />
+            <Route path={PROMPT_DIALOG_ROUTE} element={<PromptDialog />} />
           </Routes>
         </Router>
       </S2Provider>

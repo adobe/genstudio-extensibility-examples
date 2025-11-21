@@ -17,7 +17,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ExtensionRegistration from "./ExtensionRegistration";
 import ValidationPanel from "../components/ValidationPanel";
-import { APP_ROUTE } from "../Constants";
+import { VALIDATION_PANEL_ROUTE } from "../Constants";
 
 const ErrorFallback = () => <Heading>Something went wrong!</Heading>;
 
@@ -32,7 +32,7 @@ const App = (): React.JSX.Element => {
         <Router>
           <Routes>
             <Route path="/" element={<ExtensionRegistration />} />
-            <Route path={APP_ROUTE} element={<ValidationPanel />} />
+            <Route path={VALIDATION_PANEL_ROUTE} element={<ValidationPanel />} />
           </Routes>
         </Router>
       </S2Provider>
