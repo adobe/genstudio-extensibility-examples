@@ -23,7 +23,7 @@ import {
   VIOLATION_PREFIX,
   VIOLATION_STATUS,
 } from "../Constants";
-import { ClaimResults, Violation } from "../types";
+import { ClaimLibrary, ClaimResults, Violation } from "../types";
 import { Key } from "react";
 import { removePodPrefix } from "./stringUtils";
 import { TEST_CLAIMS } from "../claims";
@@ -84,20 +84,19 @@ function checkCharacterLimits(fieldName: string, text: string): Violation {
 // otherwise return n/a
 export const validateClaims = (
   experience: Experience,
-  selectedClaimLibraries: Key[]
+  claimLibraries: ClaimLibrary[]
 ) => {
-  const filteredClaims = TEST_CLAIMS.find((library) =>
-    selectedClaimLibraries.includes(library.id)
-  )?.claims;
+  const allClaims = claimLibraries.flatMap((library) => library.claims || []);
 
   const result: ClaimResults = {};
   const experienceFields = experience.experienceFields;
+  console.log(experienceFields);
 
   // Use for...of instead of forEach for better control flow
   for (const [fieldName, entry] of Object.entries(experienceFields)) {
     if (typeof entry.fieldValue === "string") {
       result[fieldName] = [];
-      filteredClaims?.forEach((claim) => {
+      allClaims?.forEach((claim) => {
         result[fieldName].push(checkClaim(entry.fieldValue, claim.description));
       });
       result[fieldName].push(checkCharacterLimits(fieldName, entry.fieldValue));

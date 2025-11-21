@@ -5,6 +5,7 @@
   "dependencies": {
     "@adobe/genstudio-extensibility-sdk": "^4.1.0",
     "@adobe/uix-guest": "^1.0.0",
+    "@adobe/aio-sdk": "^6.0.0",
     "@react-spectrum/s2": "^0.9.0",
     "core-js": "^3.6.4",
     "number-to-words": "^1.2.4",

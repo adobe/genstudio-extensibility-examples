@@ -46,13 +46,21 @@ export default function ViolationEntry({ item }: ViolationEntryProps) {
         </span>
         <p className={style({ font: "body-sm" })}>{item.violation}</p>
         {item.violation!.includes(CLAIM_VIOLATION_PREFIX) && (
-          <Button
-            variant="secondary"
-            size="S"
-            onPress={() => handleCopyPress(item.violation!)}
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              height: "100%"
+            }}
           >
-            Copy
-          </Button>
+            <Button
+              variant="secondary"
+              size="S"
+              onPress={() => handleCopyPress(item.violation!)}
+            >
+              Copy
+            </Button>
+          </span>
         )}
       </div>
     </div>

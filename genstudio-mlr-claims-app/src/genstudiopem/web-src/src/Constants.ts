@@ -43,6 +43,8 @@ export const APP_METADATA: AppMetadata = {
   },
 };
 
+export const GET_CLAIMS_ACTION = "genstudio-mlr-claims-app/get-claims";
+
 export const VIOLATION_STATUS = {
   Valid: "valid",
   Violated: "violated",

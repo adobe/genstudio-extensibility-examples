@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import React from "react";
 import { Badge } from "@react-spectrum/s2";
 import { style } from "@react-spectrum/s2/style" with { type: 'macro' };
 

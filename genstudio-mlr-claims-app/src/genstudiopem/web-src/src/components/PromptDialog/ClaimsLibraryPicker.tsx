@@ -12,23 +12,24 @@ governing permissions and limitations under the License.
 
 import { Picker, PickerItem } from "@react-spectrum/s2";
 import React, { Key } from "react";
-
-import { TEST_CLAIMS } from "../../claims";
+import { ClaimLibrary } from "../../types";
 
 interface ClaimsLibraryPickerProps {
   // eslint-disable-next-line
   handleSelectionChange: (key: Key | null) => void;
+  claimLibraries: ClaimLibrary[];
 }
 
 export const ClaimsLibraryPicker: React.FC<ClaimsLibraryPickerProps> = ({
   handleSelectionChange,
+  claimLibraries,
 }) => {
   return (
     <Picker
       placeholder="Select Claims Category..."
       onSelectionChange={handleSelectionChange}
     >
-      {TEST_CLAIMS.map((library) => (
+      {claimLibraries?.map((library: ClaimLibrary) => (
         <PickerItem key={library.id} id={library.id}>
           {library.name}
         </PickerItem>

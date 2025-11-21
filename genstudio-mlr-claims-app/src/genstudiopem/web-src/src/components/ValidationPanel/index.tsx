@@ -18,8 +18,7 @@ import {
 import { ProgressCircle, Text, Divider, Button } from "@react-spectrum/s2";
 import pRetry from "p-retry";
 import { APP_METADATA, EXTENSION_ID } from "../../Constants";
-import { TEST_CLAIMS } from "../../claims";
-import { useGuestConnection } from "../../hooks";
+import { useAuth, useClaimActions, useGuestConnection } from "../../hooks";
 import { ClaimResults } from "../../types";
 import { validateClaims } from "../../utils/claimsValidation";
 import {
@@ -41,6 +40,9 @@ export default function ValidationPanel(): JSX.Element {
   const [isValidating, setIsValidating] = useState<boolean>(false);
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const [viewMode, setViewMode] = useState<string>(APP_METADATA.options?.validation?.singleExperienceViewMode ? "single" : "all");
+
+  const auth = useAuth(guestConnection);
+  const { claimLibraries } = useClaimActions(auth);
 
   // ==========================================================
   //                    EFFECTS & HOOKS
@@ -111,10 +113,9 @@ export default function ValidationPanel(): JSX.Element {
     setIsValidating(true);
     try {
       // run all claim libraries
-      const allClaimLibraries = TEST_CLAIMS.map((library) => library.id);
       const results: ClaimResults[] = [];
       for (let experience of newExperiences) {
-        const result = validateClaims(experience, allClaimLibraries);
+        const result = validateClaims(experience, claimLibraries);
         results.push(result);
       }
       setClaimsResults(results);

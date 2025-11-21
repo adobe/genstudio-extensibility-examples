@@ -17,37 +17,41 @@ import {
   PromptExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
 import { Button, ButtonGroup, Checkbox } from "@react-spectrum/s2";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState, type Key } from "react";
 import { EXTENSION_ID } from "../../Constants";
-import { TEST_CLAIMS } from "../../claims";
-import { useGuestConnection, useSelectedClaimLibrary } from "../../hooks";
+import { useGuestConnection, useAuth, useClaimActions } from "../../hooks";
 import { ClaimsLibraryPicker } from "./ClaimsLibraryPicker";
 
 export default function PromptDialog(): React.JSX.Element {
-  const [filteredClaimsList, setFilteredClaimsList] = useState<Claim[]>([]);
+  const [selectedClaimLibraryId, setSelectedClaimLibraryId] = useState<
+    string | undefined
+  >(undefined);
   const [selectedClaims, setSelectedClaims] = useState<Claim[]>([]);
 
   const guestConnection = useGuestConnection(EXTENSION_ID);
-  const { selectedClaimLibrary, handleClaimsLibrarySelection } =
-    useSelectedClaimLibrary();
-
+  const auth = useAuth(guestConnection);
+  const { claimLibraries } = useClaimActions(auth);
   // ==========================================================
   //                    EFFECTS & HOOKS
   // ==========================================================
 
-  /**
-   * Updates the filtered claims list when the selected library changes.
-   */
-  useEffect(() => {
-    const libraryClaims =
-      TEST_CLAIMS.find((library) => library.id === selectedClaimLibrary)
-        ?.claims || [];
-    setFilteredClaimsList(libraryClaims);
-  }, [selectedClaimLibrary]);
+  const selectedClaimLibrary = claimLibraries?.find(
+    (claimLibrary) => claimLibrary.id === selectedClaimLibraryId
+  );
 
   // ==========================================================
   //                    HANDLERS & FUNCTIONS
   // ==========================================================
+
+  /**
+   * Handles the selection of a claim library.
+   * @param libraryKey - The key of the selected library
+   */
+  const handleClaimsLibrarySelection = useCallback((key: Key | null) => {
+    const libraryId = key as unknown as string;
+    if (libraryId === null) return;
+    setSelectedClaimLibraryId(libraryId);
+  }, []);
 
   /**
    * Handles the selection/deselection of a claim.
@@ -119,11 +123,12 @@ export default function PromptDialog(): React.JSX.Element {
         <div style={{ gridArea: "library", marginTop: "0.75rem" }}>
           <ClaimsLibraryPicker
             handleSelectionChange={handleClaimsLibrarySelection}
+            claimLibraries={claimLibraries}
           />
         </div>
         <div style={{ gridArea: "claims", overflow: "auto" }}>
           <div style={claimsListStyle}>
-            {filteredClaimsList.map((claim) => (
+            {selectedClaimLibrary?.claims?.map((claim) => (
               <Checkbox
                 key={claim.id}
                 isSelected={selectedClaims?.some((c) => c.id === claim.id)}
