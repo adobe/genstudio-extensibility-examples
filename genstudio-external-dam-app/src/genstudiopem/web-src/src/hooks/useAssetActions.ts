@@ -11,17 +11,13 @@ governing permissions and limitations under the License.
 */
 
 import { useState, useCallback } from "react";
-import { AssetSearchParams } from "../types";
+import { AssetSearchParams, Auth } from "../types";
 import { actionWebInvoke } from "../utils/actionWebInvoke";
 import actions from "../config.json";
 import { Asset } from "@adobe/genstudio-extensibility-sdk";
 import { SEARCH_ASSETS_ACTION } from "../Constants";
-interface Auth {
-  imsToken: string;
-  imsOrg: string;
-}
 
-export const useAssetActions = (auth: Auth) => {
+export const useAssetActions = (auth: Auth | null) => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

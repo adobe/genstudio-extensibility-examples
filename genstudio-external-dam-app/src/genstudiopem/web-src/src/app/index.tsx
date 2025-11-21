@@ -11,14 +11,15 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import { Provider as S2Provider } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import { ErrorBoundary } from "react-error-boundary";
+import { Provider as S2Provider, Heading } from "@react-spectrum/s2";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ExtensionRegistration from "./ExtensionRegistration";
-import AssetViewer from "./AssetViewer";
+import AssetViewer from "../components/AssetViewer";
+import { ASSET_VIEWER_ROUTE } from "../Constants";
 
-const ErrorFallback = () => <div>Something went wrong!</div>;
+const ErrorFallback = () => <Heading>Something went wrong!</Heading>;
 
 const App = (): React.JSX.Element => {
   return (
@@ -31,7 +32,7 @@ const App = (): React.JSX.Element => {
         <Router>
           <Routes>
             <Route path="/" element={<ExtensionRegistration />} />
-            <Route path="/select-content-dialog" element={<AssetViewer />} />
+            <Route path={ASSET_VIEWER_ROUTE} element={<AssetViewer />} />
           </Routes>
         </Router>
       </S2Provider>
@@ -40,3 +41,4 @@ const App = (): React.JSX.Element => {
 };
 
 export default App;
+
