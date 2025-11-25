@@ -11,4 +11,5 @@
  */
 
 export * from "./useGuestConnection";
-export * from "./useSelectedClaimLibrary";
+export * from "./useAuth";
+export * from "./useClaim";
