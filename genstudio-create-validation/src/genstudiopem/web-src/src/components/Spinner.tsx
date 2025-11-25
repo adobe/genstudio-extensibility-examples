@@ -9,19 +9,28 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import React from 'react';
-import { Flex, ProgressCircle } from '@adobe/react-spectrum';
+import React from "react";
+import { ProgressCircle } from "@react-spectrum/s2";
 
 interface SpinnerProps {
   message?: string;
 }
 
-const Spinner = ({ message = 'Loading...' }: SpinnerProps): React.JSX.Element => {
+const Spinner = ({
+  message = "Loading...",
+}: SpinnerProps): React.JSX.Element => {
   return (
-    <Flex alignItems="center" justifyContent="center" height="100vh">
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+      }}
+    >
       <ProgressCircle aria-label={message} isIndeterminate />
-    </Flex>
+    </div>
   );
 };
 
-export default Spinner; 
+export default Spinner;

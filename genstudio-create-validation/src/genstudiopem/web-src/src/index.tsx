@@ -10,14 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import 'core-js/stable'
-import React from 'react'
-import ReactDOM from 'react-dom'
+import "core-js/stable";
+import React from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./app";
 
-import App from './components/App'
-import './index.css'
-
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-)
+const container = document.getElementById("root");
+if (container) {
+  const root = createRoot(container);
+  root.render(<App />);
+}
