@@ -28,19 +28,9 @@ This example demonstrates how to integrate the GenStudio Experience Selector MFE
 3. **Update configuration** in `App.vue`:
    ```javascript
    const experienceSelectorProps = {
-     locale: 'en-US',
-     apiKey: 'exc_app',
      imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
-     env: 'prod',
      susiConfig: {
        clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
-       environment: 'prod',
-       scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
-       locale: 'en_US',
-       modalSettings: {
-         width: 500,
-         height: 700,
-       },
      },
      // ... other configuration
    };
@@ -78,19 +68,9 @@ function onSelectionConfirmed(experience) {
 
 // Configuration object
 const experienceSelectorProps = {
-    locale: 'en-US',
-    apiKey: 'exc_app',        
     imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
-    env: 'prod',
     susiConfig: {
         clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
-        environment: 'prod',
-        scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
-        locale: 'en_US',
-        modalSettings: {
-            width: 500,
-            height: 700,
-        },
     },
     isOpen: true,
     onDismiss: () => dialogRef.value?.close(),
@@ -125,33 +105,27 @@ function openDialog() {
 
 | Property | Description | Example |
 |----------|-------------|---------|
-| `locale` | Language locale | `'en-US'` |
-| `apiKey` | GenStudio API key | `'exc_app'` |
 | `imsOrg` | IMS Organization ID | `'your-ims-org@AdobeOrg'` |
-| `env` | Environment | `'prod'` |
+| `susiConfig` | Authentication configuration | See SUSI Config below |
+| `isOpen` | Dialog visibility state | `true` |
+| `onSelectionConfirmed` | Callback when selection is confirmed | `(selection) => {}` |
+| `onDismiss` | Callback when dialog is dismissed | `() => {}` |
 
 ### Optional Properties
 
 | Property | Description | Default |
 |----------|-------------|---------|
-| `selectionType` | Selection mode | `'single'` |
+| `locale` | Language locale | `'en-US'` |
+| `apiKey` | GenStudio API key | Defaults to clientId |
+| `env` | Environment | `'prod'` |
+| `selectionType` | Selection mode | `'multiple'` |
 | `customFilters` | Filter criteria | `[]` |
 | `dialogTitle` | Custom dialog title | Default title |
-| `isOpen` | Initial dialog state | `false` |
-
-### Authentication
 
 ### SUSI Integration
 ```javascript
 susiConfig: {
     clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
-    environment: 'prod',
-        scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
-    locale: 'en_US',
-    modalSettings: {
-        width: 500,
-        height: 700,
-    },
 }
 ```
 
@@ -159,11 +133,11 @@ susiConfig: {
 
 ### Custom Filters
 
-Add custom filtering capabilities:
+Add custom filtering capabilities (optional):
 
 ```javascript
 const experienceSelectorProps = {
-    // ... other props
+    // ... other required props
     customFilters: ['genstudio-channel:email', 'genstudio-type:template'],
     selectionType: 'multiple',
     dialogTitle: 'Select Email Templates'

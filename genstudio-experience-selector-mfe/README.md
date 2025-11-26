@@ -32,12 +32,12 @@ The `renderExperienceSelectorWithSUSI` function accepts a configuration object w
 | Property | Type | Required | Description                                                |
 |----------|------|----------|------------------------------------------------------------|
 | `locale` | `string` | Optional | Language locale (e.g., 'en-US')                            |
-| `apiKey` | `string` | Required | API key for GenStudio services                             |
+| `apiKey` | `string` | Optional | API key for GenStudio services. Defaults to the clientID in the SUSI Configuration |
 | `imsOrg` | `string` | Required | IMS Organization ID                                        |
-| `env` | `'prod'` | Required | Environment                                                |
+| `env` | `'prod'` | Optional | Environment. Defaults to 'prod'                            |
 | `susiConfig` | `object` | Required | SUSI authentication configuration (see below)              |
 | `isOpen` | `boolean` | Required | To show or hide the dialog. Should usually be true.        |
-| `selectionType` | `'single' \| 'multiple'` | Optional | Wether a ingle or multiple experiences can be selected     |
+| `selectionType` | `'single' \| 'multiple'` | Optional | Whether a single or multiple experiences can be selected. Defaults to 'multiple' |
 | `customFilters` | `string[]` | Optional | Custom filter criteria. Multiple array elements are combined with OR logic. To combine with AND, use a single string (e.g., `['genstudio-channel:email AND genstudio-externalTemplateId:two-pods']`) |
 | `dialogTitle` | `string` | Optional | Custom dialog title                                        |
 | `onSelectionConfirmed` | `(selection: Experience[]) => void` | Required | Callback when selection is confirmed                       |
@@ -50,8 +50,8 @@ The `susiConfig` object includes the following properties:
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
 | `clientId` | `string` | Required | Client ID for SUSI authentication. Format: `genstudio-<CUSTOMER_NAME>-experienceselectormfe`. Provided by your Adobe support engineer during onboarding |
-| `environment` | `'prod' \| 'stage'` | Required | SUSI environment |
-| `scope` | `string` | Required | OAuth scopes for authentication. Default: `'additional_info.projectedProductContext,read_organizations,AdobeID,openid'` |
+| `environment` | `string` | Optional | SUSI environment. Defaults to 'prod' |
+| `scope` | `string` | Optional | OAuth scopes for authentication. Default: `'additional_info.projectedProductContext,read_organizations,AdobeID,openid'` |
 | `locale` | `string` | Optional | Language locale for SUSI (e.g., 'en_US'). Falls back to dialog locale or default if not provided |
 | `modalSettings` | `{ width?: number, height?: number, top?: number, left?: number }` | Optional | Modal display configuration. Falls back to defaults if not provided |
 | `redirectUri` | `string` | Optional | Redirect URI after authentication. Falls back to `window.location.href` if not provided |
@@ -83,13 +83,9 @@ Two vanilla JavaScript implementations:
 4. **Configure and call the function** with your API keys and IMS organization (configuration can be dynamic):
    ```javascript
    renderExperienceSelectorWithSUSI(dialogElement, {
-     apiKey: 'exc_app',
      imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
-     env: 'prod',
      susiConfig: {
         clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
-        environment: 'prod',
-        scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
      },
      customFilters: [
         // Multiple array elements are combined with OR logic. Example filters:
