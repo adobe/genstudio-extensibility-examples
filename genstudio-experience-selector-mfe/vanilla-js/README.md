@@ -30,19 +30,9 @@ This directory contains two vanilla JavaScript implementations demonstrating how
 2. **Update configuration** in `app.js`:
    ```javascript
    const experienceSelectorProps = {
-     locale: 'en-US',
-     apiKey: 'exc_app',        
      imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
-     env: 'prod',
      susiConfig: {
        clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
-       environment: 'prod',
-       scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
-       locale: 'en_US',
-       modalSettings: {
-         width: 500,
-         height: 700,
-       },
      },
      // ... other configuration
    };
@@ -75,19 +65,9 @@ To run the app over HTTPS, first create self-signed certificates:
 2. **Update configuration** in `app.js`:
    ```javascript
    const experienceSelectorProps = {
-     locale: 'en-US',
-     apiKey: 'exc_app',         
      imsOrg: 'your-ims-org@AdobeOrg',  // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
-     env: 'prod',
      susiConfig: {
        clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
-       environment: 'prod',
-       scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
-       locale: 'en_US',
-       modalSettings: {
-         width: 500,
-         height: 700,
-       },
      },
      // ... other configuration
    };
@@ -127,13 +107,6 @@ To run the app over HTTPS, first create self-signed certificates:
 ```javascript
 susiConfig: {
     clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
-    environment: 'prod',
-    scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
-    locale: 'en_US',
-    modalSettings: {
-        width: 500,
-        height: 700,
-    },
 }
 ```
 
