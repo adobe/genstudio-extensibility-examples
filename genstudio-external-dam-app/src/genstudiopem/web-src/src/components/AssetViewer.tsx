@@ -25,6 +25,7 @@ export default function AssetViewer(): JSX.Element {
   const [selectedAssetIds, setSelectedAssets] = useState<Selection>(new Set());
   const [isMaxSelection, setIsMaxSelection] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [allowedFileTypes, setAllowedFileTypes] = useState<string[]>([]);
 
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const auth = useAuth(guestConnection);
@@ -62,10 +63,8 @@ export default function AssetViewer(): JSX.Element {
   const syncHostAssets = async () => {
     if (!guestConnection) return;
 
-    const { selectedAssets } = await SelectContentExtensionService.sync(
-      guestConnection,
-      EXTENSION_ID
-    );
+    const { selectedAssets, allowedFileTypes } =
+      await SelectContentExtensionService.sync(guestConnection, EXTENSION_ID);
 
     if (selectedAssets) {
       setSelectedAssets(
@@ -76,6 +75,7 @@ export default function AssetViewer(): JSX.Element {
         )
       );
     }
+    if (allowedFileTypes) setAllowedFileTypes(allowedFileTypes);
   };
 
   /**
@@ -137,10 +137,12 @@ export default function AssetViewer(): JSX.Element {
    * @returns Filtered asset array
    */
   const getFilteredAssets = () => {
-    if (!searchTerm) return assets;
-
-    return assets.filter((a) =>
-      (a.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+    if (!allowedFileTypes.length) return assets;
+    return assets.filter(
+      (a) =>
+        (!searchTerm ||
+          (a.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())) &&
+        allowedFileTypes.includes(a.mimeType ?? "")
     );
   };
 
