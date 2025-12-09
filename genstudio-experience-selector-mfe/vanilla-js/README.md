@@ -37,23 +37,17 @@ This directory contains two vanilla JavaScript implementations demonstrating how
      // ... other configuration
    };
    ```
-3. **Creating Self-Signed Certificates (Needed for HTTPS)**:
-To run the app over HTTPS, first create self-signed certificates:
-    ```bash
-    # Generate private key
-    openssl genrsa -out key.pem 2048
 
-    # Generate certificate for localhost
-    openssl req -new -x509 -key key.pem -out cert.pem -days 365 -subj "/CN=localhost"
-    ```
-
-4. **Start a local server**:
+3. **Start a local server**:
    ```bash
-   # HTTPS (with self-signed certificates): (recommended)
-   npx http-server -S -C "$(pwd)/cert.pem" -K "$(pwd)/key.pem" -p 8080
+   # with HTTPS
+   npx browser-sync start --server --files "**/*" --port 8080 --https --no-open --host localhost.corp.adobe.com
    ```
 
-5. **Open browser** and navigate to `https://localhost.corp.adobe.com:8080` to view the app
+Note: localhost.corp.adobe.com has to be added to your /etc/hosts file. Or you can use any other domain and ask your Adobe support engineer to allowlist it.
+
+
+4. **Open browser** and navigate to `https://localhost.corp.adobe.com:8080` to view the app
 
 ### UMD Version Setup
 
@@ -73,7 +67,15 @@ To run the app over HTTPS, first create self-signed certificates:
    };
    ```
 
-3. **Open HTML file directly** in your browser or serve via local server
+3. **Start a local server**:
+   ```bash
+   # with HTTPS
+   npx browser-sync start --server --files "**/*" --port 8080 --https --no-open --host localhost.corp.adobe.com
+   ```
+
+Note: localhost.corp.adobe.com has to be added to your /etc/hosts file. Or you can use any other domain and ask your Adobe support engineer to allowlist it. 
+
+4. **Open browser** and navigate to `https://localhost.corp.adobe.com:8080` to view the app
 
 
 ## Code Structure
