@@ -13,14 +13,9 @@ export function createSelectionResultsComponent(experiences) {
     Object.assign(container.style, {
         backgroundColor: '#f8f8f8',
         borderRadius: '16px',
-        margin: '20px',
+        margin: '20px 0',
         padding: '20px'
     });
-
-    // Create title
-    const title = document.createElement('strong');
-    title.textContent = 'Selection';
-    container.appendChild(title);
 
     // Create experiences wrapper
     const experiencesWrapper = document.createElement('div');

@@ -39,7 +39,7 @@
         .logo-icon {
             width: 32px;
             height: 32px;
-            background: linear-gradient(135deg, #fa0f00 0%, #ff4d00 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -78,33 +78,196 @@
         .app-main {
             flex: 1;
             display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 32px;
+            gap: 24px;
+            overflow-y: auto;
         }
 
-        .content-card {
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
             background-color: #ffffff;
             border-radius: 12px;
-            padding: 48px;
+            padding: 24px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            max-width: 600px;
-            width: 100%;
+            height: fit-content;
         }
 
-        .content-card h1 {
-            font-size: 28px;
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: 600;
             color: #2c2c2c;
             margin-bottom: 16px;
-            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .content-card p {
+        .step-list {
+            list-style: none;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .step-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .step-item.completed {
+            opacity: 0.6;
+        }
+
+        .step-item.active {
+            background-color: #e8f3ff;
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #e1e1e1;
+            color: #6e6e6e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .step-item.completed .step-number {
+            background-color: #2d9d78;
+            color: white;
+        }
+
+        .step-item.active .step-number {
+            background-color: #1473e6;
+            color: white;
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: #2c2c2c;
+            font-weight: 500;
+        }
+
+        /* Main Panel */
+        .main-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .campaign-header {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .campaign-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 8px;
+        }
+
+        .campaign-meta {
+            font-size: 13px;
+            color: #6e6e6e;
+        }
+
+        .panel-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .panel-header {
+            margin-bottom: 24px;
+        }
+
+        .panel-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 8px;
+        }
+
+        .panel-description {
             font-size: 14px;
             color: #6e6e6e;
-            margin-bottom: 32px;
             line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1473e6;
+            box-shadow: 0 0 0 3px rgba(20, 115, 230, 0.1);
+        }
+
+        .experience-selector-section {
+            border: 2px dashed #d0d0d0;
+            border-radius: 8px;
+            padding: 32px;
+            text-align: center;
+            background-color: #fafafa;
+        }
+
+        .experience-selector-section.has-selection {
+            border-style: solid;
+            border-color: #2d9d78;
+            background-color: #f0f9f6;
+        }
+
+        .selector-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .selector-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 8px;
+        }
+
+        .selector-description {
+            font-size: 13px;
+            color: #6e6e6e;
+            margin-bottom: 20px;
         }
 
         .primary-button {
@@ -127,6 +290,143 @@
         .primary-button:active {
             background-color: #095aba;
             transform: translateY(1px);
+        }
+
+        .secondary-button {
+            background-color: #ffffff;
+            color: #2c2c2c;
+            border: 1px solid #d0d0d0;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-left: 12px;
+        }
+
+        .secondary-button:hover {
+            border-color: #b0b0b0;
+            background-color: #f5f5f5;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 24px;
+            border-top: 1px solid #e1e1e1;
+            margin-top: 24px;
+        }
+
+        /* Info Panel */
+        .info-panel {
+            width: 320px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+        }
+
+        .info-section {
+            margin-bottom: 24px;
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .info-section.collapsible .info-section-header:hover {
+            opacity: 0.7;
+        }
+
+        .info-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 12px;
+        }
+
+        .info-section.collapsible .info-title {
+            margin-bottom: 0;
+        }
+
+        .collapse-icon {
+            font-size: 12px;
+            color: #6e6e6e;
+            transition: transform 0.2s;
+        }
+
+        .info-section.collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+
+        .info-content {
+            margin-top: 12px;
+        }
+
+        .info-section.collapsed .info-content {
+            display: none;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: #6e6e6e;
+        }
+
+        .info-value {
+            font-size: 13px;
+            color: #2c2c2c;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.draft {
+            background-color: #fff4e6;
+            color: #cc7a00;
+        }
+
+        .json-content {
+            background-color: #f5f5f5;
+            border-radius: 6px;
+            padding: 12px;
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        .json-content pre {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #2c2c2c;
+            margin: 0;
+            white-space: pre;
+            overflow-x: auto;
         }
 
         /* Dialog */
@@ -193,7 +493,7 @@
     <!-- Header -->
     <header class="app-header">
         <div class="app-logo">
-            <div class="logo-icon">A</div>
+            <div class="logo-icon">T</div>
             <span class="app-title">Enterprise Marketing Platform</span>
         </div>
         <div class="user-menu">
@@ -203,29 +503,109 @@
 
     <!-- Main Content -->
     <main class="app-main">
-        <div class="content-card">
-            <h1>Welcome to Your Campaign Manager</h1>
-            <p>
-                Create compelling marketing campaigns by selecting pre-approved experiences
-                from your GenStudio content library. Start by choosing an experience below.
-            </p>
-            <button id="experience-selector-button" class="primary-button">
-                Select GenStudio Experience
-            </button>
+        <!-- Left Sidebar - Progress Steps -->
+        <aside class="sidebar">
+            <div class="sidebar-title">Campaign Setup</div>
+            <ul class="step-list">
+                <li class="step-item completed">
+                    <div class="step-number">✓</div>
+                    <div class="step-text">Basic Info</div>
+                </li>
+                <li class="step-item completed">
+                    <div class="step-number">✓</div>
+                    <div class="step-text">Target Audience</div>
+                </li>
+                <li class="step-item active">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Content Selection</div>
+                </li>
+                <li class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-text">Schedule</div>
+                </li>
+                <li class="step-item">
+                    <div class="step-number">5</div>
+                    <div class="step-text">Review & Launch</div>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Panel -->
+        <div class="main-panel">
+            <!-- Campaign Header -->
+            <div class="campaign-header">
+                <div class="campaign-name">Summer Product Launch 2024</div>
+                <div class="campaign-meta">Created on Dec 9, 2024 • Last edited 5 minutes ago</div>
+            </div>
+
+            <!-- Content Selection Panel -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div class="panel-title">Step 3: Content Selection</div>
+                    <div class="panel-description">
+                        Choose the GenStudio experience that will be used in this campaign.
+                        Select from pre-approved, brand-compliant content from your library.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Experience *</label>
+                    <div class="experience-selector-section" id="selector-section">
+                        <div class="selector-icon">📄</div>
+                        <div class="selector-title">No experience selected</div>
+                        <div class="selector-description">
+                            Browse and select a GenStudio experience from your content library
+                        </div>
+                        <button id="experience-selector-button" class="primary-button">
+                            Browse Experiences
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Selected Experience Display -->
+                <div id="experience-selector-result"></div>
+
+                <!-- Action Bar -->
+                <div class="action-bar">
+                    <button class="primary-button" id="continue-button" disabled>Continue to Schedule</button>
+                </div>
+            </div>
         </div>
+
+        <!-- Right Info Panel -->
+        <aside class="info-panel">
+
+
+            <div class="info-section">
+                <div class="info-title">Timeline</div>
+                <div class="info-content">
+                    <div class="info-item">
+                        <span class="info-label">Start Date</span>
+                        <span class="info-value">Dec 15, 2024</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">End Date</span>
+                        <span class="info-value">Jan 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section collapsible" id="json-response-section" style="display: none;">
+                <div class="info-section-header">
+                    <div class="info-title">API Response</div>
+                    <span class="collapse-icon">▼</span>
+                </div>
+                <div class="info-content">
+                    <div class="json-content">
+                        <pre id="experience-selector-result-json"></pre>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </main>
 
     <!-- Dialog -->
     <dialog id="experience-selector-root"></dialog>
-
-    <!-- Results Section -->
-    <div class="results-section">
-        <div id="experience-selector-result"></div>
-        <div class="json-viewer" style="display: none;">
-            <div class="json-viewer-title">JSON Response</div>
-            <pre id="experience-selector-result-json"></pre>
-        </div>
-    </div>
 
     <script type="module" src="app.js"></script>
 </body>
