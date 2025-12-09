@@ -4,106 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GenStudio Experience Selector - Vanilla JS</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #2c2c2c;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .button-container {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        button {
-            background-color: #1473e6;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        button:hover {
-            background-color: #0d66d0;
-        }
-
-        #experience-selector-root {
-            width: 80%;
-            height: 80%;
-            margin: auto;
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-
-        #experience-selector-root::backdrop {
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        #experience-selector-result {
-            margin-bottom: 20px;
-        }
-
-        .json-viewer {
-            background-color: #ffffff;
-            border: 1px solid #e1e1e1;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 20px;
-        }
-
-        .json-viewer h3 {
-            margin-top: 0;
-            font-size: 14px;
-            color: #6e6e6e;
-            text-transform: uppercase;
-        }
-
-        .json-viewer pre {
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            color: #2c2c2c;
-            background-color: #f5f5f5;
-            padding: 12px;
-            border-radius: 4px;
-            overflow-x: auto;
-            margin: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <div class="container">
-        <h1>GenStudio Experience Selector</h1>
+<body class="simple-layout">
+    <h1>Genstudio Experience Selector Demo</h1>
 
-        <div class="button-container">
-            <button id="experience-selector-button">Select GenStudio Experience</button>
-        </div>
+    <div class="button-container">
+        <button id="experience-selector-button" class="primary-button">Select GenStudio Experience</button>
+    </div>
 
-        <dialog id="experience-selector-root"></dialog>
+    <dialog id="experience-selector-root"></dialog>
 
-        <div id="experience-selector-result"></div>
+    <div id="experience-selector-result"></div>
 
-        <div class="json-viewer">
-            <h3>API Response</h3>
-            <pre id="experience-selector-result-json"></pre>
-        </div>
+    <div class="json-viewer">
+        <h3>API Response</h3>
+        <pre id="experience-selector-result-json"></pre>
     </div>
 
     <script type="module" src="app.js"></script>

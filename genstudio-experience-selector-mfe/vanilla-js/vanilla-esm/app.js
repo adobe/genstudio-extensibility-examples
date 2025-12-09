@@ -2,34 +2,36 @@ import {
     renderExperienceSelectorWithSUSI
 } from "https://experience.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js"
 import { createSelectionResultsComponent } from "./result-view.js";
-import { initializeMockup, updateMockupUI } from "./mockup.js";
 
 // DOM element references
 const dialogRef = document.getElementById('experience-selector-root');
 const resultRef = document.getElementById('experience-selector-result');
 const resultJsonRef = document.getElementById('experience-selector-result-json');
-
-// Initialize mockup UI elements
-let mockupElements;
+const selectorSection = document.getElementById('selector-section');
 
 // Wait for DOM to load
 document.addEventListener('DOMContentLoaded', () => {
     const button = document.getElementById('experience-selector-button');
     button.addEventListener('click', openDialog);
-
-    // Initialize mockup UI
-    mockupElements = initializeMockup();
 });
 
+/**
+ * Handles the experience selection confirmation
+ * @param {import('./types.js').ExperienceSelection[]} experiences - Array of selected experiences
+ */
 function onSelectionConfirmed(experiences) {
     dialogRef?.close();
 
-    // Update mockup UI state
-    updateMockupUI(mockupElements, experiences, resultRef, resultJsonRef);
-
-    // Show selected experiences
     if (experiences.length > 0) {
-        resultRef.appendChild(createSelectionResultsComponent(experiences));
+        resultRef.replaceChildren(createSelectionResultsComponent(experiences));
+        resultJsonRef.textContent = JSON.stringify(experiences, null, 2);
+    } else {
+        resultRef.replaceChildren();
+    }
+
+    // update selector placeholder
+    if (selectorSection) {
+        selectorSection.style.display = experiences.length > 0 ? 'none' : 'block';
     }
 }
 
