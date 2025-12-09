@@ -1,6 +1,7 @@
 import {
     renderExperienceSelectorWithSUSI
 } from "https://experience.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js"
+import {createSelectionResultsComponent} from "./result-view.js";
 
 
 // Wait for DOM to load
@@ -11,10 +12,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const dialogRef = document.getElementById('experience-selector-root');
 const resultRef = document.getElementById('experience-selector-result');
+const resultJsonRef = document.getElementById('experience-selector-result-json');
 
-function onSelectionConfirmed(experience) {
+function onSelectionConfirmed(experiences) {
     dialogRef?.close();
-    resultRef.textContent = JSON.stringify(experience, null, 2);
+
+    resultRef.textContent = '';
+    resultRef.appendChild(createSelectionResultsComponent(experiences));
+
+    resultJsonRef.textContent = JSON.stringify(experiences, null, 2);
 }
 
 function openDialog() {
