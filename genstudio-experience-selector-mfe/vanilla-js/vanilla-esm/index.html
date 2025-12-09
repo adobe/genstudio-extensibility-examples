@@ -3,60 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vanilla JS GenStudio Experience Selector</title>
+    <title>Enterprise Marketing Platform</title>
     <style>
-        body {
-            font-family: sans-serif;
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        h1 {
-            color: #42b883;
-            /* Vue's brand green */
-            font-family: sans-serif;
+        body {
+            font-family: 'Adobe Clean', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .app-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e1e1e1;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #fa0f00 0%, #ff4d00 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c2c2c;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #e1e1e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6e6e6e;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .app-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+        }
+
+        .content-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 48px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             text-align: center;
+            max-width: 600px;
+            width: 100%;
         }
 
-        p {
-            text-align: center;
+        .content-card h1 {
+            font-size: 28px;
+            color: #2c2c2c;
+            margin-bottom: 16px;
+            font-weight: 600;
         }
 
-        button {
+        .content-card p {
+            font-size: 14px;
+            color: #6e6e6e;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .primary-button {
             background-color: #1473e6;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
+            padding: 12px 24px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            box-shadow: 0 1px 3px rgba(20, 115, 230, 0.3);
         }
 
-        button:hover {
+        .primary-button:hover {
             background-color: #0d66d0;
         }
 
+        .primary-button:active {
+            background-color: #095aba;
+            transform: translateY(1px);
+        }
+
+        /* Dialog */
         #experience-selector-root {
             width: 80%;
             height: 80%;
             margin: auto;
             border-radius: 12px;
             border: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        #experience-selector-root::backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Results Section */
+        .results-section {
+            margin-top: 32px;
+            padding: 0 32px 32px;
+        }
+
+        .results-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 16px;
         }
 
         #experience-selector-result {
-            font-family: monospace;
+            margin-bottom: 24px;
+        }
+
+        .json-viewer {
+            background-color: #ffffff;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .json-viewer-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6e6e6e;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #experience-selector-result-json {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #2c2c2c;
+            background-color: #f5f5f5;
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 0;
         }
     </style>
-    </head>
+</head>
 <body>
-    <h1>Hello, this is Vanilla JS with GenStudio Experience Selector!</h1>
-    <p>
-        <button id="experience-selector-button">Select a GenStudio Experience</button>
-    </p>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="app-logo">
+            <div class="logo-icon">A</div>
+            <span class="app-title">Enterprise Marketing Platform</span>
+        </div>
+        <div class="user-menu">
+            <div class="user-avatar">JS</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        <div class="content-card">
+            <h1>Welcome to Your Campaign Manager</h1>
+            <p>
+                Create compelling marketing campaigns by selecting pre-approved experiences
+                from your GenStudio content library. Start by choosing an experience below.
+            </p>
+            <button id="experience-selector-button" class="primary-button">
+                Select GenStudio Experience
+            </button>
+        </div>
+    </main>
+
+    <!-- Dialog -->
     <dialog id="experience-selector-root"></dialog>
-    <div id="experience-selector-result"></div>
-    <pre id="experience-selector-result-json"></pre>
+
+    <!-- Results Section -->
+    <div class="results-section">
+        <div id="experience-selector-result"></div>
+        <div class="json-viewer" style="display: none;">
+            <div class="json-viewer-title">JSON Response</div>
+            <pre id="experience-selector-result-json"></pre>
+        </div>
+    </div>
 
     <script type="module" src="app.js"></script>
 </body>
