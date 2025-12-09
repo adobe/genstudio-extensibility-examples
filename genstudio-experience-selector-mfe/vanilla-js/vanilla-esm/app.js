@@ -39,13 +39,9 @@ function openDialog() {
     renderExperienceSelectorWithSUSI(
         dialogRef,
         {
-            apiKey: 'exc_app',
-            imsOrg: '36031A56669DEACD0A49402F@AdobeOrg', // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
-            env: 'stage',
+            imsOrg: 'your-ims-org@AdobeOrg', // Replace with your IMS Organization ID (press Ctrl+i in GenStudio to open User Data Debugger, then copy Current Org ID)
             susiConfig: {
-                clientId: 'genstudio', // Provided by your Adobe support engineer during onboarding
-                environment: 'stg1',
-                scope: 'additional_info.projectedProductContext,read_organizations,AdobeID,openid',
+                clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
             },
             customFilters: [
                 // Multiple array elements are combined with OR logic. Example filters:
