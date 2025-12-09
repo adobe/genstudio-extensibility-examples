@@ -7,7 +7,7 @@ import { createSelectionResultsComponent } from "./result-view.js";
 const dialogRef = document.getElementById('experience-selector-root');
 const resultRef = document.getElementById('experience-selector-result');
 const resultJsonRef = document.getElementById('experience-selector-result-json');
-const selectorSection = document.getElementById('selector-section');
+
 
 // Wait for DOM to load
 document.addEventListener('DOMContentLoaded', () => {
@@ -30,8 +30,8 @@ function onSelectionConfirmed(experiences) {
     }
 
     // update selector placeholder
-    if (selectorSection) {
-        selectorSection.style.display = experiences.length > 0 ? 'none' : 'block';
+    if (document.getElementById('selector-section')) {
+        document.getElementById('selector-section').style.display = experiences.length > 0 ? 'none' : 'block';
     }
 }
 
