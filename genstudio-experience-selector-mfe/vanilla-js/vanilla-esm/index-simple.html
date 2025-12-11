@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenStudio Experience Selector - Vanilla JS</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="simple-layout">
+    <h1>Genstudio Experience Selector Demo</h1>
+
+    <div class="button-container">
+        <button id="experience-selector-button" class="primary-button">Select GenStudio Experience</button>
+    </div>
+
+    <dialog id="experience-selector-root"></dialog>
+
+    <div id="experience-selector-result"></div>
+
+    <div class="json-viewer">
+        <h3>API Response</h3>
+        <pre id="experience-selector-result-json"></pre>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

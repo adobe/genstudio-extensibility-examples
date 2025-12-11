@@ -1,6 +1,12 @@
 import {
     renderExperienceSelectorWithSUSI
 } from "https://experience.adobe.com/solutions/GenStudio-experience-selector-mfe/static-assets/resources/@genstudio/experience-selector/esm/standalone.js"
+import { createSelectionResultsComponent } from "./result-view.js";
+
+// DOM element references
+const dialogRef = document.getElementById('experience-selector-root');
+const resultRef = document.getElementById('experience-selector-result');
+const resultJsonRef = document.getElementById('experience-selector-result-json');
 
 
 // Wait for DOM to load
@@ -9,12 +15,24 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', openDialog);
 });
 
-const dialogRef = document.getElementById('experience-selector-root');
-const resultRef = document.getElementById('experience-selector-result');
-
-function onSelectionConfirmed(experience) {
+/**
+ * Handles the experience selection confirmation
+ * @param {import('./types.js').ExperienceSelection[]} experiences - Array of selected experiences
+ */
+function onSelectionConfirmed(experiences) {
     dialogRef?.close();
-    resultRef.textContent = JSON.stringify(experience, null, 2);
+
+    if (experiences.length > 0) {
+        resultRef.replaceChildren(createSelectionResultsComponent(experiences));
+        resultJsonRef.textContent = JSON.stringify(experiences, null, 2);
+    } else {
+        resultRef.replaceChildren();
+    }
+
+    // update selector placeholder
+    if (document.getElementById('selector-section')) {
+        document.getElementById('selector-section').style.display = experiences.length > 0 ? 'none' : 'block';
+    }
 }
 
 function openDialog() {
