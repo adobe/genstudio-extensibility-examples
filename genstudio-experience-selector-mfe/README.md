@@ -164,7 +164,11 @@ Each variant in `aspectVariants` contains:
 - `aspectMetadata`: Metadata including `channel` and `aspectRatio`
 - `content`: Base64-encoded HTML string for this specific aspect ratio
 
-### Sample JSON
+### Example JSON
+
+See [sample-experiences.json](sample-experiences.json) for a real-world output including `externalTemplateId` and `externalAssetMetadata` metadata. 
+
+### Simplified example JSON
 
 ```json
 {
