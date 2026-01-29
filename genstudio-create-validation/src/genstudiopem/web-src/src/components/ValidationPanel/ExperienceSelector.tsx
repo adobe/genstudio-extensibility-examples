@@ -41,29 +41,27 @@ export default function ExperienceSelector({
     if (index !== -1) onExperienceSelect(index);
   };
   return (
-    <>
-      <div style={{ paddingLeft: "1rem", paddingRight: "1rem" }}>
-        <Heading>Claims Libraries</Heading>
+    <div style={{ paddingLeft: "1rem", paddingRight: "1rem" }}>
+      <Heading>Claims Libraries</Heading>
 
-        <Picker
-          label="Select Experience to Run Claims Check"
-          onSelectionChange={handleExperienceSelect}
-        >
-          {experiences.map((experience, index) => (
-            <PickerItem key={experience.id} id={experience.id}>
-              {`Experience ${index + 1}`}
-            </PickerItem>
-          ))}
-        </Picker>
+      <Picker
+        label="Select Experience to Run Claims Check"
+        onSelectionChange={handleExperienceSelect}
+      >
+        {experiences.map((experience, index) => (
+          <PickerItem key={experience.id} id={experience.id}>
+            {`Experience ${index + 1}`}
+          </PickerItem>
+        ))}
+      </Picker>
 
-        <br />
+      <br />
 
-        {selectedExperienceIndex !== null && (
-          <Button variant="primary" onPress={onRunClaimsCheck}>
-            Run Claims Check
-          </Button>
-        )}
-      </div>
-    </>
+      {selectedExperienceIndex !== null && (
+        <Button variant="primary" onPress={onRunClaimsCheck}>
+          Run Claims Check
+        </Button>
+      )}
+    </div>
   );
 }

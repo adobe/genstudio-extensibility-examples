@@ -16,12 +16,14 @@ import { Divider } from "@react-spectrum/s2";
 import {
   Experience,
   ValidationExtensionService,
+  GenerationContext,
 } from "@adobe/genstudio-extensibility-sdk";
 import { useGuestConnection } from "../../hooks";
 import Spinner from "../Spinner";
 import Header from "./Header";
 import ExperienceSelector from "./ExperienceSelector";
 import Content from "./Content";
+import GenerationContextView from "./GenerationContextView";
 import pRetry from "p-retry";
 
 export default function ValidationPanel(): JSX.Element {
@@ -32,6 +34,8 @@ export default function ValidationPanel(): JSX.Element {
   >(null);
   const [selectedExperience, setSelectedExperience] =
     useState<Experience | null>(null);
+  const [generationContext, setGenerationContext] =
+    useState<GenerationContext | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   /**
@@ -51,14 +55,17 @@ export default function ValidationPanel(): JSX.Element {
             retries: 10,
             minTimeout: 2000,
             maxTimeout: 2000,
-          }
+          },
         );
       } catch (e) {
         console.error("Failed to fetch experiences after retries:", e);
       }
     };
     setIsLoading(true);
-    if (guestConnection) pollForExperiences();
+    if (guestConnection) {
+      pollForExperiences();
+      fetchGenerationContext();
+    }
     setIsLoading(false);
   }, [guestConnection]);
 
@@ -69,14 +76,20 @@ export default function ValidationPanel(): JSX.Element {
    */
   const syncExperiences = async (): Promise<Experience[] | null> => {
     if (!guestConnection) return null;
-    const remoteExperiences = await ValidationExtensionService.getExperiences(
-      guestConnection
-    );
+    const remoteExperiences =
+      await ValidationExtensionService.getExperiences(guestConnection);
     if (remoteExperiences && remoteExperiences.length > 0) {
       setExperiences(remoteExperiences);
       return remoteExperiences;
     }
     return null;
+  };
+
+  const fetchGenerationContext = async () => {
+    if (!guestConnection) return;
+    const context =
+      await ValidationExtensionService.getGenerationContext(guestConnection);
+    setGenerationContext(context);
   };
 
   /**
@@ -109,6 +122,10 @@ export default function ValidationPanel(): JSX.Element {
             onExperienceSelect={setSelectedExperienceIndex}
             onRunClaimsCheck={handleRunClaimsCheck}
           />
+
+          <div style={{ paddingLeft: "1rem", paddingRight: "1rem" }}>
+            <GenerationContextView generationContext={generationContext} />
+          </div>
 
           {selectedExperience && (
             <div
