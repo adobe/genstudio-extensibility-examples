@@ -17,7 +17,7 @@ import {
   PromptExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
 import { Button, ButtonGroup, Checkbox } from "@react-spectrum/s2";
-import React, { useCallback, useState, type Key, useEffect } from "react";
+import React, { useCallback, useState, type Key } from "react";
 import { EXTENSION_ID } from "../../Constants";
 import { useGuestConnection, useAuth, useClaimActions } from "../../hooks";
 import { ClaimsLibraryPicker } from "./ClaimsLibraryPicker";
@@ -36,19 +36,8 @@ export default function PromptDialog(): React.JSX.Element {
   // ==========================================================
 
   const selectedClaimLibrary = claimLibraries?.find(
-    (claimLibrary) => claimLibrary.id === selectedClaimLibraryId,
+    (claimLibrary) => claimLibrary.id === selectedClaimLibraryId
   );
-
-  useEffect(() => {
-    if (!guestConnection) return;
-    const generationContext = async () => {
-      const context = await PromptExtensionService.getGenerationContext(
-        guestConnection,
-      );
-      console.log("context", context);
-    };
-    generationContext();
-  }, [guestConnection]);
 
   // ==========================================================
   //                    HANDLERS & FUNCTIONS
@@ -72,7 +61,7 @@ export default function PromptDialog(): React.JSX.Element {
     setSelectedClaims((prev) =>
       prev.some((c) => c.id === claim.id)
         ? prev.filter((c) => c.id !== claim.id)
-        : [...prev, claim],
+        : [...prev, claim]
     );
   };
 
@@ -92,7 +81,7 @@ export default function PromptDialog(): React.JSX.Element {
     };
     PromptExtensionService.updateAdditionalContext(
       guestConnection,
-      claimsContext,
+      claimsContext
     );
   };
 
