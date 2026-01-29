@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Accordion,
   AccordionItem,
@@ -18,10 +18,7 @@ import {
   AccordionItemPanel,
   Text,
 } from "@react-spectrum/s2";
-import {
-  ValidationExtensionService,
-  GenerationContext as GenerationContextType,
-} from "@adobe/genstudio-extensibility-sdk";
+import { GenerationContext } from "@adobe/genstudio-extensibility-sdk";
 
 /**
  * GenerationContext component that displays the generation context in an accordion.
@@ -32,7 +29,7 @@ import {
 export default function GenerationContextView({
   generationContext,
 }: {
-  generationContext: GenerationContextType | null;
+  generationContext: GenerationContext | null;
 }) {
   const renderContextContent = () => {
     if (!generationContext) {
