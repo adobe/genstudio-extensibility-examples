@@ -34,4 +34,9 @@ export const APP_METADATA: AppMetadata = {
     },
   ],
   extensionId: EXTENSION_ID,
+  options: {
+    selectContent: {
+      cors: true,
+    },
+  },
 };
