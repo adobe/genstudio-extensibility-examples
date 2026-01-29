@@ -66,18 +66,13 @@ export default function AssetViewer(): JSX.Element {
     const { selectedAssets, allowedFileTypes } =
       await SelectContentExtensionService.sync(guestConnection, EXTENSION_ID);
 
-    console.log(
-      "===x DAM Ext selectedAssets",
-      selectedAssets,
-      allowedFileTypes,
-    );
     if (selectedAssets) {
       setSelectedAssets(
         new Set(
           selectedAssets
             .filter((asset) => asset.extensionInfo.id === EXTENSION_ID)
-            .map((asset) => asset.id),
-        ),
+            .map((asset) => asset.id)
+        )
       );
     }
     if (allowedFileTypes) setAllowedFileTypes(allowedFileTypes);
@@ -93,7 +88,7 @@ export default function AssetViewer(): JSX.Element {
 
     const { selectionLimit } = await SelectContentExtensionService.sync(
       guestConnection,
-      EXTENSION_ID,
+      EXTENSION_ID
     );
 
     const selectedAssetIdsList = Array.from(selection);
@@ -104,7 +99,7 @@ export default function AssetViewer(): JSX.Element {
     if (selectedAssetIdsList.length > selectionLimit) return;
 
     const selectedAssets = assets.filter((asset) =>
-      selectedAssetIdsList.includes(asset.id),
+      selectedAssetIdsList.includes(asset.id)
     );
 
     try {
@@ -120,7 +115,7 @@ export default function AssetViewer(): JSX.Element {
       SelectContentExtensionService.setSelectedAssets(
         guestConnection,
         EXTENSION_ID,
-        newSelectedAssets,
+        newSelectedAssets
       );
 
       syncHostAssets();
@@ -147,7 +142,7 @@ export default function AssetViewer(): JSX.Element {
       (a) =>
         (!searchTerm ||
           (a.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())) &&
-        allowedFileTypes.includes(a.mimeType ?? ""),
+        allowedFileTypes.includes(a.mimeType ?? "")
     );
   };
 

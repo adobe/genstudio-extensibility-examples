@@ -29,12 +29,3 @@ extensions:
               annotations:
                 require-adobe-auth: true
                 final: false
-            asset-query-proxy:
-              function: src/genstudiopem/actions/asset-query-proxy.js
-              web: "raw"
-              runtime: nodejs:22
-              inputs:
-                LOG_LEVEL: debug
-              annotations:
-                require-adobe-auth: false
-                final: false

@@ -31,7 +31,7 @@ exports.main = async (params) => {
         return errorResponse(
           400,
           `Unsupported action type: ${actionType}`,
-          logger,
+          logger
         );
     }
   } catch (err) {
