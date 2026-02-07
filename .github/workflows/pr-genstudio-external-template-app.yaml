@@ -1,4 +1,4 @@
-name: External Template App PR
+name: External Template PR
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ jobs:
       app: genstudio-external-template-app
       environment: |
         [
-          "Genstudio Engineering 01 - genstudio-external-template-app - workspace Stage", 
+          "Genstudio Engineering 01 - genstudio-external-template-app - workspace Stage",
           "GenStudio GA PAT04 - genstudio-external-template-app - workspace Stage",
           "GenStudio Internal - E2E Tests - genstudio-external-template-app - workspace Stage",
           "Genstudio - Engineering - genstudio-external-template-app - workspace Stage"

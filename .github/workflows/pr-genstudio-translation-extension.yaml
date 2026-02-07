@@ -1,4 +1,4 @@
-name: Translation PR
+name: Translation Extension PR
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ jobs:
       app: genstudio-translation-extension
       environment: |
         [
-          "Genstudio Engineering 01 - genstudio-translation-extension - workspace Stage", 
+          "Genstudio Engineering 01 - genstudio-translation-extension - workspace Stage",
           "GenStudio GA PAT04 - genstudio-translation-extension - workspace Stage",
           "Genstudio - Engineering - genstudio-translation-extension - workspace Stage"
         ]

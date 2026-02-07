@@ -1,4 +1,4 @@
-name: External Template App Main
+name: External Template Main
 
 on:
   push:
