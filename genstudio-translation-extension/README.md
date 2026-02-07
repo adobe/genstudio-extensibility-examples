@@ -1,4 +1,4 @@
-# GenStudio Translation Extension App dummy
+# GenStudio Translation Extension App
 
 This is a sample extension for the Translation extension point in Adobe GenStudio for Performance Marketing. It uses Azure OpenAI models to provide translations for experiences within GenStudio. If you have an Azure OpenAI subscription, you can plug in the below parameters into your .env to use it directly.
 

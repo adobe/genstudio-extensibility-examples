@@ -1,4 +1,4 @@
-# GenStudio External DAM App dummy
+# GenStudio External DAM App
 
 **_GenStudio External DAM App_** is an Adobe GenStudio web extension that enables you to select assets from external DAM (Digital Asset Management) systems, such as S3 buckets, for use in GenStudio for Performance Marketing.
 

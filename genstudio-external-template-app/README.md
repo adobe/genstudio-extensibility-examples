@@ -1,4 +1,4 @@
-# GenStudio External Template App dummy
+# GenStudio External Template App
 
 **_GenStudio External Template App_** is an Adobe GenStudio web extension that enables you to import templates from external sources (like S3 buckets) into GenStudio for Performance Marketing.
 
