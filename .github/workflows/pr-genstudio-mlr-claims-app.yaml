@@ -1,4 +1,4 @@
-name: MLR Claims
+name: MLR Claims PR
 
 on:
   pull_request:

@@ -1,0 +1,20 @@
+name: Translation PR
+
+on:
+  pull_request:
+    paths:
+      - "genstudio-translation-extension/**"
+  workflow_dispatch:
+
+jobs:
+  pr:
+    uses: ./.github/workflows/aio-app-template.yml
+    with:
+      app: genstudio-translation-extension
+      environment: |
+        [
+          "Genstudio Engineering 01 - genstudio-translation-extension - workspace Stage", 
+          "GenStudio GA PAT04 - genstudio-translation-extension - workspace Stage",
+          "Genstudio - Engineering - genstudio-translation-extension - workspace Stage"
+        ]
+    secrets: inherit

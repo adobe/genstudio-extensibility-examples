@@ -13,5 +13,10 @@ jobs:
     uses: ./.github/workflows/aio-app-template.yml
     with:
       app: genstudio-translation-extension
-      environment: '["Genstudio Engineering 01 - genstudio-translation-extension - workspace Production", "GenStudio GA PAT04 - genstudio-translation-extension - workspace Production"]'
+      environment: |
+        [
+          "Genstudio Engineering 01 - genstudio-translation-extension - workspace Production", 
+          "GenStudio GA PAT04 - genstudio-translation-extension - workspace Production",
+          "Genstudio - Engineering - genstudio-translation-extension - workspace Production"
+        ]
     secrets: inherit
