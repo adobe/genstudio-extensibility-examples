@@ -19,6 +19,7 @@ const DEFAULT_CONFIG = {
   repo: "genstudio-uix-examples",
   environment_name: "Test Environment",
   secret_file: "./console.json",
+  env_file: "./.env.local",
   github_token: process.env.GITHUB_TOKEN,
   aio_env: "prod",
 };
@@ -39,6 +40,8 @@ function parseArgs() {
       config.owner = args[++i];
     } else if (args[i] === "--repo" && i + 1 < args.length) {
       config.repo = args[++i];
+    } else if (args[i] === "--env-file" && i + 1 < args.length) {
+      config.env_file = args[++i];
     } else if (args[i] === "--aio-env" && i + 1 < args.length) {
       const provided = String(args[++i]).toLowerCase();
       if (provided !== "stage" && provided !== "prod") {
@@ -56,6 +59,9 @@ function parseArgs() {
   if (!path.isAbsolute(config.secret_file)) {
     config.secret_file = path.resolve(process.cwd(), config.secret_file);
   }
+  if (!path.isAbsolute(config.env_file)) {
+    config.env_file = path.resolve(process.cwd(), config.env_file);
+  }
 
   return config;
 }
@@ -70,6 +76,7 @@ Usage: node create-env.js [options]
 Options:
   --env <name>       Name of the GitHub environment (default: "Test Environment")
   --file <path>      Path to the secrets JSON file (default: "./console.json")
+  --env-file <path>  Path to the env file (default: "./.env.local")
   --token <token>    GitHub token (default: uses GITHUB_TOKEN env variable)
   --owner <owner>    Repository owner (default: "adobe")
   --repo <repo>      Repository name (default: "genstudio-uix-examples")
@@ -129,6 +136,53 @@ function loadSecretFile(filePath) {
 }
 
 /**
+ * Load secrets from a local .env file
+ * @param {string} filePath - Path to the .env file
+ * @returns {Array} - Array of {key, value} pairs
+ */
+function loadEnvSecrets(filePath) {
+  if (!fs.existsSync(filePath)) {
+    return [];
+  }
+
+  const fileContent = fs.readFileSync(filePath, "utf8");
+  const lines = fileContent.split(/\r?\n/);
+  const secrets = [];
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) {
+      continue;
+    }
+
+    const cleaned = trimmed.startsWith("export ")
+      ? trimmed.slice("export ".length)
+      : trimmed;
+    const splitIndex = cleaned.indexOf("=");
+    if (splitIndex === -1) {
+      continue;
+    }
+
+    const key = cleaned.slice(0, splitIndex).trim();
+    let value = cleaned.slice(splitIndex + 1).trim();
+    if (!key || !value) {
+      continue;
+    }
+
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    secrets.push({ key, value });
+  }
+
+  return secrets;
+}
+
+/**
  * Extract secrets from JSON using mappings
  * @param {Object} json - Parsed JSON object
  * @returns {Array} - Array of {key, value} pairs
@@ -149,6 +203,20 @@ function extractSecrets(json) {
       }
     })
     .filter((item) => item.value !== null);
+}
+
+/**
+ * Merge secret lists with .env taking precedence
+ * @param {Array} baseSecrets - Array of {key, value} pairs
+ * @param {Array} envSecrets - Array of {key, value} pairs
+ * @returns {Array} - Array of {key, value} pairs
+ */
+function mergeSecrets(baseSecrets, envSecrets) {
+  const map = new Map(baseSecrets.map(({ key, value }) => [key, value]));
+  envSecrets.forEach(({ key, value }) => {
+    map.set(key, value);
+  });
+  return Array.from(map.entries()).map(([key, value]) => ({ key, value }));
 }
 
 /**
@@ -340,7 +408,9 @@ async function main() {
     const secretJson = loadSecretFile(config.secret_file);
 
     // Extract secrets using mappings
-    const secrets = extractSecrets(secretJson);
+    const baseSecrets = extractSecrets(secretJson);
+    const envSecrets = loadEnvSecrets(config.env_file);
+    const secrets = mergeSecrets(baseSecrets, envSecrets);
 
     // Display extracted secrets
     displaySecrets(secrets);
