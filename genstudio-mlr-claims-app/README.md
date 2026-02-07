@@ -1,4 +1,4 @@
-# GenStudio MLR Claims App - Reference App
+# GenStudio MLR Claims App - Reference App dummy
 
 A **reference application** for building Adobe GenStudio for Performance Marketing validation extensions with Medical, Legal, and Regulatory (MLR) claims checking capabilities.
 
