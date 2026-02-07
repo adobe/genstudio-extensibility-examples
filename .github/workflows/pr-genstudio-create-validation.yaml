@@ -15,7 +15,6 @@ jobs:
         [
           "Genstudio Engineering 01 - genstudio-create-validation - workspace Stage",
           "GenStudio GA PAT04 - genstudio-create-validation - workspace Stage",
-          "Genstudio - Engineering - genstudio-create-validation - workspace Stage",
           "Genstudio - Engineering - genstudio-create-validation - workspace Production"
         ]
     secrets: inherit
