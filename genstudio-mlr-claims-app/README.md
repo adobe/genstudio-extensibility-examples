@@ -19,8 +19,8 @@ Use this as a starting point for building compliance validation tools for medica
 
 ```bash
 npm install
-aio app run      # Run locally at https://localhost:9080
-aio app deploy   # Deploy to production
+aio app run     # Run locally at https://localhost:9080
+aio app deploy  # Deploy to production
 ```
 
 **First Step:** Edit `src/genstudiopem/web-src/src/Constants.ts` to configure your extension ID, claims libraries, and validation rules.
