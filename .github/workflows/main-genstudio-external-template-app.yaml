@@ -1,4 +1,4 @@
-name: External Template App Main
+name: External Template Main
 
 on:
   push:
@@ -13,5 +13,11 @@ jobs:
     uses: ./.github/workflows/aio-app-template.yml
     with:
       app: genstudio-external-template-app
-      environment: '["Genstudio Engineering 01 - genstudio-external-template-app - workspace Production", "GenStudio GA PAT04 - genstudio-external-template-app - workspace Production", "GenStudio Internal - E2E Tests - genstudio-external-template-app - workspace Production"]'
+      environment: |
+        [
+          "Genstudio Engineering 01 - genstudio-external-template-app - workspace Production",
+          "GenStudio GA PAT04 - genstudio-external-template-app - workspace Production",
+          "GenStudio Internal - E2E Tests - genstudio-external-template-app - workspace Production",
+          "Genstudio - Engineering - genstudio-external-template-app - workspace Production"
+        ]
     secrets: inherit

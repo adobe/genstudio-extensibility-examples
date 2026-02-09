@@ -1,5 +1,7 @@
 # GenStudio Create Validation - Reference App
 
+dummy
+
 A basic reference application for building **Adobe GenStudio for Performance Marketing validation extensions** without IO Actions.
 
 > 📖 **[See QUICKSTART.md for setup instructions](./QUICKSTART.md)**

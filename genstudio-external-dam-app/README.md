@@ -78,7 +78,6 @@ You can generate this file using the command `aio app use`.
 #### Action Dependencies
 
 - You have two options to resolve your actions' dependencies:
-
   1. **Packaged action file**: Add your action's dependencies to the root
      `package.json` and install them using `npm install`. Then set the `function`
      field in `app.config.yaml` to point to the **entry file** of your action
