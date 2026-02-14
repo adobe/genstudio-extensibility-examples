@@ -1,0 +1,33 @@
+orgs:
+  EXAMPLE_ORG_1:
+    name: Example Org 1
+    aioEnv: stage
+    id: EXAMPLE_ORG_1_ID@AdobeOrg
+  EXAMPLE_ORG_2:
+    name: Example Org 2
+    aioEnv: prod
+    id: EXAMPLE_ORG_2_ID@AdobeOrg
+
+extensions:
+  EXAMPLE_EXTENSION_1:
+    - org: EXAMPLE_ORG_1
+      published: true # this does not affect the workflow generation, only for printing in the table
+      workspace:
+        Production: https://developer.adobe.com/console/projects/PROJECT_ID/WORKSPACE_GROUP/workspaces/WORKSPACE_PROD/details
+        Stage: https://developer.adobe.com/console/projects/PROJECT_ID/WORKSPACE_GROUP/workspaces/WORKSPACE_STAGE/details
+    - org: EXAMPLE_ORG_2
+      published: true # this does not affect the workflow generation, only for printing in the table
+      workspace:
+        Production: https://developer.adobe.com/console/projects/PROJECT_ID/WORKSPACE_GROUP/workspaces/WORKSPACE_PROD/details
+        Stage: https://developer.adobe.com/console/projects/PROJECT_ID/WORKSPACE_GROUP/workspaces/WORKSPACE_STAGE/details
+  EXAMPLE_EXTENSION_2:
+    - org: EXAMPLE_ORG_1
+      published: true # this does not affect the workflow generation, only for printing in the table
+      workspace:
+        Production: https://developer.adobe.com/console/projects/PROJECT_ID/WORKSPACE_GROUP/workspaces/WORKSPACE_PROD/details
+        Stage: https://developer.adobe.com/console/projects/PROJECT_ID/WORKSPACE_GROUP/workspaces/WORKSPACE_STAGE/details
+    - org: EXAMPLE_ORG_2
+      published: true # this does not affect the workflow generation, only for printing in the table
+      workspace:
+        Production: https://developer.adobe.com/console/projects/PROJECT_ID/WORKSPACE_GROUP/workspaces/WORKSPACE_PROD/details
+        Stage: https://developer.adobe.com/console/projects/PROJECT_ID/WORKSPACE_GROUP/workspaces/WORKSPACE_STAGE/details

@@ -46,3 +46,6 @@ logs
 
 # internal
 internal/
+
+# local CLI context config
+genstudio-extensibility-cli/config/context.yaml
