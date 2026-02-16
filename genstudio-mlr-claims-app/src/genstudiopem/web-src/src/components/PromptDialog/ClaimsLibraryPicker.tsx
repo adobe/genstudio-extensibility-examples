@@ -18,15 +18,18 @@ interface ClaimsLibraryPickerProps {
   // eslint-disable-next-line
   handleSelectionChange: (key: Key | null) => void;
   claimLibraries: ClaimLibrary[];
+  selectedKey?: string;
 }
 
 export const ClaimsLibraryPicker: React.FC<ClaimsLibraryPickerProps> = ({
   handleSelectionChange,
   claimLibraries,
+  selectedKey,
 }) => {
   return (
     <Picker
       placeholder="Select Claims Category..."
+      selectedKey={selectedKey ?? null}
       onSelectionChange={handleSelectionChange}
     >
       {claimLibraries?.map((library: ClaimLibrary) => (
