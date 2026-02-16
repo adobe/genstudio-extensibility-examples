@@ -17,7 +17,7 @@ import {
   PromptExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
 import { Button, ButtonGroup, Checkbox } from "@react-spectrum/s2";
-import React, { useCallback, useState, type Key } from "react";
+import React, { useCallback, useEffect, useState, type Key } from "react";
 import { EXTENSION_ID } from "../../Constants";
 import { useGuestConnection, useAuth, useClaimActions } from "../../hooks";
 import { ClaimsLibraryPicker } from "./ClaimsLibraryPicker";
@@ -34,6 +34,44 @@ export default function PromptDialog(): React.JSX.Element {
   // ==========================================================
   //                    EFFECTS & HOOKS
   // ==========================================================
+
+  /**
+   * Fetches the generation context and preselects claims from AdditionalContext.
+   * Waits until both the guest connection and claim libraries are available.
+   */
+  useEffect(() => {
+    if (!guestConnection || !claimLibraries?.length) return;
+
+    const fetchAndPreselectClaims = async () => {
+      try {
+        const context =
+          await PromptExtensionService.getGenerationContext(guestConnection);
+        const claimsContext = context.additionalContexts?.find(
+          (ctx) =>
+            ctx.extensionId === EXTENSION_ID &&
+            ctx.additionalContextType === AdditionalContextTypes.Claims
+        );
+        if (claimsContext?.additionalContextValues?.length) {
+          const preselectedClaims =
+            claimsContext.additionalContextValues as Claim[];
+          setSelectedClaims(preselectedClaims);
+
+          const matchingLibrary = claimLibraries.find((library) =>
+            library.claims.some((claim) =>
+              preselectedClaims.some((sc) => sc.id === claim.id)
+            )
+          );
+          if (matchingLibrary) {
+            setSelectedClaimLibraryId(matchingLibrary.id);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch generation context:", error);
+      }
+    };
+
+    fetchAndPreselectClaims();
+  }, [guestConnection, claimLibraries]);
 
   const selectedClaimLibrary = claimLibraries?.find(
     (claimLibrary) => claimLibrary.id === selectedClaimLibraryId
@@ -124,6 +162,7 @@ export default function PromptDialog(): React.JSX.Element {
           <ClaimsLibraryPicker
             handleSelectionChange={handleClaimsLibrarySelection}
             claimLibraries={claimLibraries}
+            selectedKey={selectedClaimLibraryId}
           />
         </div>
         <div style={{ gridArea: "claims", overflow: "auto" }}>
