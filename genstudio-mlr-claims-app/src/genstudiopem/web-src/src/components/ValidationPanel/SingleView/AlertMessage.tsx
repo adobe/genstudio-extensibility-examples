@@ -27,12 +27,12 @@ export default function AlertMessage({
   let message = "";
 
   if (totalIssues === 0) {
-    message = `No issues found on Email ${emailNumber}`;
+    message = `No issues found on Variant ${emailNumber}`;
   } else {
     const numIssues = convertNumberToWords(totalIssues);
     message = `${numIssues} issue${totalIssues === 1 ? "" : "s"} need${
       totalIssues === 1 ? "s" : ""
-    } attention on Email ${emailNumber}`;
+    } attention on Variant ${emailNumber}`;
   }
 
   return (

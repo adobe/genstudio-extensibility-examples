@@ -16,7 +16,7 @@ import { Experience } from "@adobe/genstudio-extensibility-sdk";
 import { ClaimResults } from "../../types";
 import SingleView from "./SingleView";
 import OverallView from "./OverallView";
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 import { APP_METADATA } from "../../Constants";
 import ExperienceSelector from "./SingleView/ExperienceSelector";
 
@@ -80,10 +80,12 @@ export default function ResultsView({
       </TabPanel>
       <TabPanel id="all">
         <ScrollPanel>
-          <OverallView experiences={experiences} claimsResults={claimsResults} />
+          <OverallView
+            experiences={experiences}
+            claimsResults={claimsResults}
+          />
         </ScrollPanel>
       </TabPanel>
     </Tabs>
   );
 }
-
