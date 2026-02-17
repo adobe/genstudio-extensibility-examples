@@ -24,14 +24,13 @@ import {
   VIOLATION_STATUS,
 } from "../Constants";
 import { ClaimLibrary, ClaimResults, Violation } from "../types";
-import { Key } from "react";
 import { removePodPrefix } from "./stringUtils";
-import { TEST_CLAIMS } from "../claims";
 
 const maxCharacterLimits = {
   header: 80,
   pre_header: 100,
   body: 300,
+  default: 500,
 };
 
 function checkClaim(text: string, claim: string): Violation {
@@ -68,7 +67,8 @@ function checkCharacterLimits(fieldName: string, text: string): Violation {
   // Check if field has a character limit and if text exceeds it
   const extractedFieldName = removePodPrefix(fieldName);
   const limit =
-    maxCharacterLimits[extractedFieldName as keyof typeof maxCharacterLimits];
+    maxCharacterLimits[extractedFieldName as keyof typeof maxCharacterLimits] ||
+    maxCharacterLimits.default;
   if (limit && text.length > limit) {
     return {
       status: VIOLATION_STATUS.Violated,
@@ -84,7 +84,7 @@ function checkCharacterLimits(fieldName: string, text: string): Violation {
 // otherwise return n/a
 export const validateClaims = (
   experience: Experience,
-  claimLibraries: ClaimLibrary[]
+  claimLibraries: ClaimLibrary[],
 ) => {
   const allClaims = claimLibraries.flatMap((library) => library.claims || []);
 
