@@ -41,8 +41,8 @@ export const useClaimActions = (auth: Auth | null) => {
       auth.imsToken,
       auth.imsOrg
     );
-    console.log("Claims fetched:", response);
-    setClaimLibraries(response as ClaimLibrary[]);
+    console.debug("Claims fetched:", response);
+    setClaimLibraries(response as unknown as ClaimLibrary[]);
     setIsLoadingClaims(false);
   }, [auth]);
 
