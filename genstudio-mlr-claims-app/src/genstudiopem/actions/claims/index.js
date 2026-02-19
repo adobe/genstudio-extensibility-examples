@@ -13,11 +13,25 @@ governing permissions and limitations under the License.
 const { Core } = require("@adobe/aio-sdk");
 const { errorResponse, ValidationError } = require("../utils");
 const LocalClaimProvider = require("./provider/local/LocalClaimProvider");
+const AEMClaimProvider = require("./provider/aem/AEMClaimProvider");
 
 exports.main = async (params) => {
   const logger = Core.Logger("main", { level: params.LOG_LEVEL || "info" });
   const actionType = params.actionType || "getClaims";
-  const claimProvider = new LocalClaimProvider(params, logger);
+  
+  // Choose provider based on parameters
+  console.info("Action parameters:", JSON.stringify(params, null, 2));
+  console.info("AEM host parameter:", params.aemHost);
+  console.info("Provider type parameter:", params.providerType);
+  
+  const providerType = params.providerType || (params.aemHost ? "aem" : "local");
+  console.info(`Determined provider type: ${providerType}`);
+  
+  const claimProvider = providerType === "aem" 
+    ? new AEMClaimProvider(params, logger)
+    : new LocalClaimProvider(params, logger);
+    
+  console.info(`Using ${providerType} claim provider`);
 
   try {
     switch (actionType) {

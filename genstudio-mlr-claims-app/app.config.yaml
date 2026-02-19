@@ -13,6 +13,8 @@ extensions:
               inputs:
                 LOG_LEVEL: info
                 actionType: getClaims
+                aemHost: $AEM_HOST
+                cfFolderPath: $CF_FOLDER_PATH
               annotations:
                 require-adobe-auth: true
                 final: false

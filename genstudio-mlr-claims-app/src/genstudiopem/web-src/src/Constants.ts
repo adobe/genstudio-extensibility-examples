@@ -17,7 +17,7 @@ export const ICON_DATA_URI: string =
 
 export const VALIDATION_PANEL_ROUTE: string = "/validation-panel";
 export const PROMPT_DIALOG_ROUTE: string = "/prompt-dialog";
-
+export const AEM_HOST = process.env.AEM_HOST;
 /**
  * App metadata object
  * Configure this object as per your needs. Ex. specific options for validation.
