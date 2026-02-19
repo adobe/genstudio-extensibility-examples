@@ -25,10 +25,6 @@ governing permissions and limitations under the License.
  * @returns {Array} Claims in the expected format
  */
 function transformFragmentsToClaims(fragments, libraryId, logger) {
-    console.log("Transforming fragments to claims with libraryId filter:", libraryId);
-  logger.info(`Starting transformation of ${fragments.length} fragments to claims format`);
-  logger.debug(`Library filter: ${libraryId || 'none'}`);
-
   const claimLibraries = [];
 
   fragments.forEach((fragment, index) => {
@@ -45,11 +41,6 @@ function transformFragmentsToClaims(fragments, libraryId, logger) {
 
       // Use fragment name/title as category
       const categoryId = generateCategoryId(claimData.title);
-      
-      // Filter by library ID if specified
-      if (libraryId && categoryId !== libraryId) {
-        return;
-      }
 
       // Each content fragment becomes its own category
       const claimCategory = {
@@ -57,16 +48,13 @@ function transformFragmentsToClaims(fragments, libraryId, logger) {
         name: claimData.title,
         claims: claimData.claims || []
       };
-
       claimLibraries.push(claimCategory);
 
     } catch (error) {
       logger.error(`Error processing fragment ${fragment.id}:`, error);
     }
   });
-  
-  const totalClaims = claimLibraries.reduce((sum, lib) => sum + lib.claims.length, 0);
-  
+    
   // If filtering by libraryId, return just the claims for that library
   if (libraryId) {
     const library = claimLibraries.find(lib => lib.id === libraryId);
@@ -86,16 +74,6 @@ function transformFragmentsToClaims(fragments, libraryId, logger) {
  */
 function extractClaimFromFragment(fragment, logger) {
   try {
-    
-    // Log the fragment structure to understand what fields are available
-    logger.debug(`Fragment structure:`, {
-      fragmentId: fragment.id,
-      hasFields: !!fragment.fields,
-      fieldsCount: fragment.fields ? fragment.fields.length : 0,
-      fieldNames: fragment.fields ? fragment.fields.map(f => f.name) : [],
-      fragmentKeys: Object.keys(fragment)
-    });
-    
     // Extract fragment title/name to use as category
     const title = fragment.title || fragment.name || `Fragment-${fragment.id}`;
     
@@ -124,7 +102,6 @@ function extractClaimFromFragment(fragment, logger) {
       };
     }
 
-    logger.debug(`Successfully extracted ${claimsInFragment.length} claims from fragment ${fragment.id}`);
     return {
       title: title,
       claims: claimsInFragment
@@ -175,7 +152,7 @@ function isValidClaimFragment(fragment, logger = console) {
   const hasClaimsField = !!claimsField;
   
   // Accept fragments with title and fields structure (even if no claims yet)
-  return !!(hasTitle && hasFields);
+  return !!(hasTitle && hasFields && hasClaimsField);
 }
 
 /**

@@ -27,10 +27,6 @@ class AEMClaimProvider extends ClaimProvider {
     super(params, logger);
     this.aemHost = params.aemHost;
     this.cfFolderPath = params.cfFolderPath || "";
-    
-    logger.info(`AEMClaimProvider initialized with:`);
-    logger.info(`  - aemHost: ${this.aemHost}`);
-    logger.info(`  - cfFolderPath: ${this.cfFolderPath}`);
   }
 
   /**
@@ -51,9 +47,7 @@ class AEMClaimProvider extends ClaimProvider {
       // Filter to only valid claim fragments
       const validFragments = filterValidClaimFragments(fragments, this.logger);
       
-      
       // Transform fragments to claims format using external extractor
-      this.logger.info("Starting claims transformation...");
       const claims = transformFragmentsToClaims(validFragments, params.libraryId, this.logger);
       
       return {
@@ -91,10 +85,8 @@ class AEMClaimProvider extends ClaimProvider {
    */
   async fetchContentFragments(params) {
     const imsToken = getBearerToken(params);
-    console.log("imsToken", imsToken ? imsToken.substring(0, 20) + '...' : 'MISSING');
-
     const authHeaders = {
-      Authorization: `Bearer ${imsToken ? imsToken.substring(0, 20) + '...' : 'MISSING'}`,
+      Authorization: `Bearer ${imsToken}`,
       "Content-Type": "application/json",
     };
 
@@ -106,24 +98,18 @@ class AEMClaimProvider extends ClaimProvider {
     try {
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${imsToken}`,
-          "Content-Type": "application/json",
-        },
+        headers: authHeaders,
       });
      
       if (!response.ok) {
         const errorText = await response.text();
-      
         throw new Error(`AEM API request failed: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const data = await response.json();
-
       const fragments = data.items || [];
-      console.debug("AEMClaimProvider fetched fragments:", fragments);
-
       return fragments;
+
     } catch (error) {
       this.logger.error("Error during AEM API request:", error.message);
       throw error;

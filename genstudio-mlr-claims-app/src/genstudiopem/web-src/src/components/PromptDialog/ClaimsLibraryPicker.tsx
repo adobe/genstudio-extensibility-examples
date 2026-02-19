@@ -26,6 +26,7 @@ export const ClaimsLibraryPicker: React.FC<ClaimsLibraryPickerProps> = ({
   claimLibraries,
   selectedKey,
 }) => {
+   
   return (
     <Picker
       placeholder="Select Claims Category..."
