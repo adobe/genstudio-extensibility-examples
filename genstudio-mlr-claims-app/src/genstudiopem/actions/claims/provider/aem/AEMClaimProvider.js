@@ -1,5 +1,5 @@
 /*
-Copyright 2025 Adobe. All rights reserved.
+Copyright 2026 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,14 +13,12 @@ governing permissions and limitations under the License.
 const ClaimProvider = require("../ClaimProvider");
 const { ValidationError, getBearerToken } = require("../../../utils");
 const fetch = require("node-fetch");
-const { transformFragmentsToClaims, filterValidClaimFragments } = require("./ClaimsExtractor");
 
 /**
  * @class AEMClaimProvider
  * @description
- *   AEM Content Fragment implementation of ClaimProvider that fetches content fragments from AEM.
- *   Claims extraction and transformation logic is handled by the ClaimsExtractor utility following 
- *   the pattern from genstudio-aem-cf-claims-app.
+ *   AEM Content Fragment implementation of ClaimProvider that fetches raw content fragments from AEM.
+ *   Claims extraction and transformation logic is handled client-side in React components.
  */
 class AEMClaimProvider extends ClaimProvider {
   constructor(params, logger) {
@@ -30,12 +28,11 @@ class AEMClaimProvider extends ClaimProvider {
   }
 
   /**
-   * Gets claims from AEM content fragments.
+   * Gets raw content fragments from AEM.
    * @param {Object} params
    * @param {string} params.aemHost - AEM host URL
    * @param {string} [params.cfFolderPath] - Content fragment folder path
-   * @param {string} [params.libraryId] - Optional library ID to filter claims
-   * @returns {Promise<{statusCode: number, body: {claims: Array}}>}
+   * @returns {Promise<{statusCode: number, body: {fragments: Array}}>}
    */
   async getClaims(params) {
     try {
@@ -44,22 +41,16 @@ class AEMClaimProvider extends ClaimProvider {
       // Fetch content fragments from AEM
       const fragments = await this.fetchContentFragments(params);
       
-      // Filter to only valid claim fragments
-      const validFragments = filterValidClaimFragments(fragments, this.logger);
-      
-      // Transform fragments to claims format using external extractor
-      const claims = transformFragmentsToClaims(validFragments, params.libraryId, this.logger);
-      
       return {
         statusCode: 200,
-        body: claims,
+        body: { fragments: fragments || [] },
       };
     } catch (error) {
-      this.logger.error("Error getting claims from AEM:", error);
+      this.logger.error("Error fetching fragments from AEM:", error);
       if (error instanceof ValidationError) {
         throw error;
       }
-      throw new Error(`Failed to fetch claims from AEM: ${error.message}`);
+      throw new Error(`Failed to fetch fragments from AEM: ${error.message}`);
     }
   }
 
@@ -105,14 +96,16 @@ class AEMClaimProvider extends ClaimProvider {
         const errorText = await response.text();
         throw new Error(`AEM API request failed: ${response.status} ${response.statusText} - ${errorText}`);
       }
-
-      const data = await response.json();
-      const fragments = data.items || [];
-      return fragments;
-
+      if(response && typeof response === "object") {
+        const data = await response.json();
+        return data.items;
+      } else {
+        this.logger.warn("Received no fragments from AEM or unexpected response format");
+        return [];
+      }
     } catch (error) {
       this.logger.error("Error during AEM API request:", error.message);
-      throw error;
+      throw new Error(`Failed to fetch content fragments from AEM: ${error.message}`);
     }
   }
 }

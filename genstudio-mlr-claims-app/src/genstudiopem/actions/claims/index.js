@@ -20,19 +20,16 @@ exports.main = async (params) => {
   const actionType = params.actionType || "getClaims";
   
   // Choose provider based on parameters
-  console.info("Action parameters:", JSON.stringify(params, null, 2));
-  console.info("AEM host parameter:", params.aemHost);
-  console.info("Provider type parameter:", params.providerType);
+  logger.debug("Action parameters:", JSON.stringify(params, null, 2));
+  logger.debug("AEM host parameter:", params.aemHost);
+  logger.debug("Provider type parameter:", params.providerType);
   
   const providerType = params.providerType || (params.aemHost ? "aem" : "local");
-  console.info(`Determined provider type: ${providerType}`);
   
   const claimProvider = providerType === "aem" 
     ? new AEMClaimProvider(params, logger)
     : new LocalClaimProvider(params, logger);
     
-  console.info(`Using ${providerType} claim provider`);
-
   try {
     switch (actionType) {
       case "getClaims":

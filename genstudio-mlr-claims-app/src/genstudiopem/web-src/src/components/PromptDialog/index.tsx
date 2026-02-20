@@ -30,7 +30,7 @@ export default function PromptDialog(): React.JSX.Element {
 
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const auth = useAuth(guestConnection);
-  const { claimLibraries } = useClaimActions(auth);
+  const { claimLibraries, isLoadingClaims, error, hasAttemptedFetch } = useClaimActions(auth);
   // ==========================================================
   //                    EFFECTS & HOOKS
   // ==========================================================
@@ -163,6 +163,9 @@ export default function PromptDialog(): React.JSX.Element {
             handleSelectionChange={handleClaimsLibrarySelection}
             claimLibraries={claimLibraries}
             selectedKey={selectedClaimLibraryId}
+            isLoading={isLoadingClaims}
+            error={error}
+            hasAttemptedFetch={hasAttemptedFetch}
           />
         </div>
         <div style={{ gridArea: "claims", overflow: "auto" }}>
