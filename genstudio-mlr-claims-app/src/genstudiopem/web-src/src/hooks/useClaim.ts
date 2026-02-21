@@ -13,9 +13,9 @@ governing permissions and limitations under the License.
 import { useState, useCallback, useEffect } from "react";
 import { actionWebInvoke } from "../utils/actionWebInvoke";
 import actions from "../config.json";
-import { GET_CLAIMS_ACTION } from "../Constants";
+import { GET_CLAIMS_ACTION, CLAIM_PROVIDER_TYPE } from "../Constants";
 import { Auth, ClaimLibrary } from "../types";
-import { detectProviderType, processAEMResponse, processLocalResponse } from "../utils/responseProcessors";
+import { processAEMResponse, processLocalResponse } from "../utils/responseProcessors";
 
 /**
  * Hook to fetch claims from the backend action (supports both AEM and Local providers)
@@ -51,10 +51,7 @@ export const useClaimActions = (auth: Auth | null) => {
       );
 
       if (response && typeof response === "object") {
-        // Detect provider type and process accordingly
-        const providerType = detectProviderType(response);
-
-        if (providerType === 'aem') {
+        if (CLAIM_PROVIDER_TYPE === 'aem') {
           processAEMResponse(response, setError, setClaimLibraries);
         } else {
           processLocalResponse(response, setError, setClaimLibraries);

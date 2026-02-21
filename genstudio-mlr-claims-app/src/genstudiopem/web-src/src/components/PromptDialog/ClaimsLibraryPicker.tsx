@@ -16,7 +16,7 @@ import { ClaimLibrary } from "../../types";
 
 interface ClaimsLibraryPickerProps {
   // eslint-disable-next-line
-  handleSelectionChange: (library: Key | null) => void;
+  handleSelectionChange: (key: Key | null) => void;
   claimLibraries: any;
   selectedKey?: string;
   isLoading?: boolean;
@@ -109,8 +109,8 @@ export const ClaimsLibraryPicker: React.FC<ClaimsLibraryPickerProps> = ({
       selectedKey={selectedKey ?? null}
       onSelectionChange={handleSelectionChange}
     >
-      {claimLibraries?.map((library: ClaimLibrary) => (
-        <PickerItem key={library.id} id={library.id}>
+      {claimLibraries?.map((library: ClaimLibrary, index: number) => (
+        <PickerItem key={library.id || `library-${index}`} id={library.id}>
           {library.name}
         </PickerItem>
       ))}

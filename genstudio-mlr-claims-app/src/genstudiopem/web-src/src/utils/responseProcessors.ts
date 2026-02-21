@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { ClaimLibrary } from "../../types";
+import { ClaimLibrary } from "../types";
 import { processAEMFragments, AEMFragment } from "../components/PromptDialog/ClaimsProcessor";
 
 /**
@@ -60,16 +60,4 @@ export function processLocalResponse(
     setError("No claims available from local provider");
     setClaimLibraries([]);
   }
-}
-
-/**
- * Determines the provider type based on response structure
- */
-export function detectProviderType(response: any): 'aem' | 'local' {
-  // AEM provider returns response with 'fragments' property
-  if (response && typeof response === "object" && response.fragments) {
-    return 'aem';
-  }
-  // Local provider returns array or object with 'claims' property
-  return 'local';
 }

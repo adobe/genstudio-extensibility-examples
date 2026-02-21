@@ -15,6 +15,7 @@ extensions:
                 actionType: getClaims
                 aemHost: $AEM_HOST
                 cfFolderPath: $CF_FOLDER_PATH
+                providerType: $CLAIM_PROVIDER_TYPE
               annotations:
                 require-adobe-auth: true
                 final: false

@@ -14,6 +14,7 @@ governing permissions and limitations under the License.
  * @fileoverview Client-side claims processor for AEM Content Fragments.
  * This module handles validation and transformation of raw AEM fragments into claims format.
  */
+import { CF_DISCRIPTION_FIELD } from "../../Constants";
 export interface AEMFragment {
   id: string;
   title?: string;
@@ -48,8 +49,8 @@ export function isValidClaimFragment(fragment: AEMFragment): boolean {
 
   const hasTitle = fragment.title || fragment.name;
   
-  // Check if textAssetMatchText field exists
-  const claimsField = fragment.fields.find(field => field.name === "textAssetMatchText");
+  // Check if CF_DISCRIPTION_FIELD field exists
+  const claimsField = fragment.fields.find(field => field.name === CF_DISCRIPTION_FIELD);
   
   const isValid = !!(hasTitle && claimsField);
   return isValid;
@@ -78,9 +79,9 @@ export function extractClaimFromFragment(fragment: AEMFragment): { title: string
   try {
     // Extract fragment title/name to use as category
     const title = fragment.title || fragment.name || `Fragment-${fragment.id}`;
-    // Find the textAssetMatchText field in the fields array
+    // Find the CF_DISCRIPTION_FIELD field in the fields array
     const claimsField = fragment.fields.find(
-      field => field.name === "textAssetMatchText"
+      field => field.name === CF_DISCRIPTION_FIELD
     );
     const claimsInFragment = claimsField
       ? claimsField.values.map((claimText, index) => ({
@@ -129,7 +130,7 @@ export function generateCategoryId(title: string): string {
 
 /**
  * Transforms AEM content fragments into claims format.
- * Each content fragment becomes a category with its textAssetMatchText as claims.
+ * Each content fragment becomes a category with its CF_DISCRIPTION_FIELD as claims.
  */
 export function transformFragmentsToClaims(
   fragments: AEMFragment[], 

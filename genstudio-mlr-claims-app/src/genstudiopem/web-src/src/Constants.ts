@@ -43,6 +43,8 @@ export const APP_METADATA: AppMetadata = {
 };
 
 export const GET_CLAIMS_ACTION = "genstudio-mlr-claims-app/get-claims";
+export const CF_DISCRIPTION_FIELD = "textAssetMatchText";
+export const CLAIM_PROVIDER_TYPE = process.env.CLAIM_PROVIDER_TYPE;
 
 export const VIOLATION_STATUS = {
   Valid: "valid",
