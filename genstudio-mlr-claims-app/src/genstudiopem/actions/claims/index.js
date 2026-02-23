@@ -24,8 +24,11 @@ exports.main = async (params) => {
   logger.debug("AEM host parameter:", params.aemHost);
   logger.debug("Provider type parameter:", params.providerType);
   
-  const providerType = params.providerType || (params.aemHost ? "aem" : "local");
-  
+  const providerType = params.providerType || "local";
+  if (providerType === "aem" && !params.aemHost) {
+    return errorResponse(400, "AEM host parameter is required when providerType is 'aem'", logger);
+  }
+
   const claimProvider = providerType === "aem" 
     ? new AEMClaimProvider(params, logger)
     : new LocalClaimProvider(params, logger);
