@@ -42,16 +42,20 @@ export interface ClaimCategory {
 /**
  * Validates that a fragment has the required structure for claims extraction.
  */
-export function isValidClaimFragment(fragment: AEMFragment): boolean { 
+export function isValidClaimFragment(fragment: AEMFragment): boolean {
   if (!fragment || !fragment.id) {
     return false;
   }
 
   const hasTitle = fragment.title || fragment.name;
+
+  // Check if fields array exists and CF_DISCRIPTION_FIELD field exists
+  if (!fragment.fields || !Array.isArray(fragment.fields)) {
+    return false;
+  }
   
-  // Check if CF_DISCRIPTION_FIELD field exists
   const claimsField = fragment.fields.find(field => field.name === CF_DISCRIPTION_FIELD);
-  
+
   const isValid = !!(hasTitle && claimsField);
   return isValid;
 }
@@ -63,12 +67,11 @@ export function filterValidClaimFragments(fragments: AEMFragment[]): AEMFragment
   if (!Array.isArray(fragments)) {
     return [];
   }
-
+  //Return no fragments 
   if (fragments.length === 0) {
-    console.warn('No fragments received from AEM');
     return [];
   }
-  
+
   return fragments;
 }
 
@@ -85,9 +88,9 @@ export function extractClaimFromFragment(fragment: AEMFragment): { title: string
     );
     const claimsInFragment = claimsField
       ? claimsField.values.map((claimText, index) => ({
-          id: `${fragment.id}-claim-${index}`,
-          description: claimText.replace(/<[^>]*>/g, ""), 
-        }))
+        id: `${fragment.id}-claim-${index}`,
+        description: claimText.replace(/<[^>]*>/g, ""),
+      }))
       : [];
     if (claimsInFragment.length === 0) {
       return {
@@ -133,7 +136,7 @@ export function generateCategoryId(title: string): string {
  * Each content fragment becomes a category with its CF_DISCRIPTION_FIELD as claims.
  */
 export function transformFragmentsToClaims(
-  fragments: AEMFragment[], 
+  fragments: AEMFragment[],
   libraryId?: string
 ): ClaimCategory[] | { claims: ClaimItem[] } {
   const claimLibraries: ClaimCategory[] = [];
@@ -141,9 +144,8 @@ export function transformFragmentsToClaims(
   fragments.forEach((fragment) => {
     try {
       const claimData = extractClaimFromFragment(fragment);
-      
+
       if (!claimData) {
-        console.warn(`Skipping fragment ${fragment.id}: could not extract claim data`);
         return;
       }
 
@@ -162,14 +164,13 @@ export function transformFragmentsToClaims(
       console.error(`Error processing fragment ${fragment.id}:`, error);
     }
   });
-    
+
   // If filtering by libraryId, return just the claims for that library
   if (libraryId) {
     const library = claimLibraries.find(lib => lib.id === libraryId);
     const result = library ? { claims: library.claims } : { claims: [] };
     return result;
   }
-
   return claimLibraries;
 }
 
@@ -180,8 +181,8 @@ export function processAEMFragments(
   rawFragments: AEMFragment[],
   libraryId?: string
 ): { claimLibraries: ClaimCategory[] | { claims: ClaimItem[] }, hasValidFragments: boolean, totalFragments: number } {
-  
-  
+
+
   if (!rawFragments || rawFragments.length === 0) {
     return {
       claimLibraries: libraryId ? { claims: [] } : [],
@@ -192,10 +193,10 @@ export function processAEMFragments(
 
   // Filter to valid claim fragments
   const validFragments = filterValidClaimFragments(rawFragments);
-  
+
   // Transform to claims format
   const claimLibraries = transformFragmentsToClaims(validFragments, libraryId);
-  
+
   return {
     claimLibraries,
     hasValidFragments: validFragments.length > 0,
