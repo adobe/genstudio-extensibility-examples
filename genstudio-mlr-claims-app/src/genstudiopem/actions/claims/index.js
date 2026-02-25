@@ -14,6 +14,8 @@ const { Core } = require("@adobe/aio-sdk");
 const { errorResponse, ValidationError } = require("../utils");
 const LocalClaimProvider = require("./provider/local/LocalClaimProvider");
 const AEMClaimProvider = require("./provider/aem/AEMClaimProvider");
+const AEM = "aem";
+const LOCAL = "local";
 
 exports.main = async (params) => {
   const logger = Core.Logger("main", { level: params.LOG_LEVEL || "info" });
@@ -24,9 +26,9 @@ exports.main = async (params) => {
   logger.debug("AEM host parameter:", params.aemHost);
   logger.debug("Provider type parameter:", params.providerType);
   
-  const providerType = params.providerType || (params.providerType === "aem" && params.aemHost ? "aem" : "local");
+  const providerType = params.providerType || (params.providerType === AEM && params.aemHost ? AEM : LOCAL);
 
-  const claimProvider = providerType === "aem" 
+  const claimProvider = providerType === AEM 
     ? new AEMClaimProvider(params, logger)
     : new LocalClaimProvider(params, logger);
     
