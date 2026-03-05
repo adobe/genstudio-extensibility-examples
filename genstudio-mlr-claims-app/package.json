@@ -8,6 +8,7 @@
     "@adobe/aio-sdk": "^6.0.0",
     "@react-spectrum/s2": "^0.9.0",
     "core-js": "^3.6.4",
+    "node-fetch": "^2.6.0",
     "number-to-words": "^1.2.4",
     "p-retry": "^6.2.1",
     "react": "^18.3.1",
