@@ -13,20 +13,24 @@ governing permissions and limitations under the License.
 import { useState, useCallback, useEffect } from "react";
 import { actionWebInvoke } from "../utils/actionWebInvoke";
 import actions from "../config.json";
-import { GET_CLAIMS_ACTION } from "../Constants";
+import { GET_CLAIMS_ACTION, CLAIM_PROVIDER_TYPE } from "../Constants";
 import { Auth, ClaimLibrary } from "../types";
+import { processAEMResponse, processLocalResponse } from "../utils/responseProcessors";
 
 /**
- * Hook to fetch claims from the backend action
+ * Hook to fetch claims from the backend action (supports both AEM and Local providers)
  * @param auth - The authentication object
  * @returns {Object} - The claim libraries object
  * - claimLibraries: ClaimLibrary[] - The claim libraries
  * - isLoadingClaims: boolean - Whether the claims are loading
+ * - error: string | null - Error message if claims fetch failed
  * - fetchClaims: function - The function to fetch the claims
  */
 export const useClaimActions = (auth: Auth | null) => {
   const [claimLibraries, setClaimLibraries] = useState<ClaimLibrary[]>([]);
   const [isLoadingClaims, setIsLoadingClaims] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false);
 
   useEffect(() => {
     if (auth) fetchClaims();
@@ -34,19 +38,43 @@ export const useClaimActions = (auth: Auth | null) => {
 
   const fetchClaims = useCallback(async () => {
     if (!auth) return;
+    
     setIsLoadingClaims(true);
+    setError(null); // Clear previous errors
 
-    const response = await actionWebInvoke<{ claimLibraries: ClaimLibrary[] }>(
-      actions[GET_CLAIMS_ACTION],
-      auth.imsToken,
-      auth.imsOrg
-    );
-    setClaimLibraries(response as unknown as ClaimLibrary[]);
-    setIsLoadingClaims(false);
+    try {
+      // Fetch data from backend (could be AEM fragments or local claims)
+      const response = await actionWebInvoke<any>(
+        actions[GET_CLAIMS_ACTION],
+        auth.imsToken,
+        auth.imsOrg
+      );
+
+      if (response && typeof response === "object") {
+        if (CLAIM_PROVIDER_TYPE === 'aem') {
+          processAEMResponse(response, setError, setClaimLibraries);
+        } else {
+          processLocalResponse(response, setError, setClaimLibraries);
+        }
+      } else {
+        setError("Invalid response from backend");
+        setClaimLibraries([]);
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to fetch claims. Please check your connection and try again.";
+      setError(errorMessage);
+      setClaimLibraries([]); 
+    } finally {
+      setIsLoadingClaims(false);
+      setHasAttemptedFetch(true); // Mark that we've attempted at least one fetch
+    }
   }, [auth]);
 
   return {
     claimLibraries,
     isLoadingClaims,
+    error,
+    hasAttemptedFetch,
+    fetchClaims,
   };
 };

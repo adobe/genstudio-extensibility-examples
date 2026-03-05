@@ -32,6 +32,23 @@ aio app deploy  # Deploy to production
 - ✅ **`utils/claimsValidation.ts`** - Claims checking algorithms
 - ⚠️ **`app/`** - DO NOT modify (core registration logic)
 
+## Claims Data Sources
+
+This app supports multiple claims data sources:
+
+### Local Claims Provider (Default)
+Uses static claims data from `src/genstudiopem/actions/claims/provider/local/claims.js`. Perfect for development and testing.
+
+### AEM Content Fragment Claims Provider (New!)
+Fetches claims dynamically from AEM Content Fragments. Ideal for production content management workflows.
+
+
+#### Edit .env with your AEM instance details and provider flag
+
+    AEM_HOST=  # author-pxxxx-exxxx.adobeaemcloud.com
+    CF_FOLDER_PATH= # e.g. /content/dam/us/en/claims
+    CLAIM_PROVIDER_TYPE= # <aem | local> ## this is required filed with AEM_HOST configuration 
+
 ## Migration Note
 
 This app has been updated to use:
