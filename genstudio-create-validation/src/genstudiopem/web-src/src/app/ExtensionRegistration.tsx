@@ -67,7 +67,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
 
   return (
     <Text>
-      IFrame for integration with Host (GenStudio for Performance Marketing
+    VINEET KAUSHIK HEllo world -  IFrame for integration with Host (GenStudio for Performance Marketing
       App)...
     </Text>
   );

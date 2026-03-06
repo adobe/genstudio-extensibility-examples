@@ -19,7 +19,7 @@ import ExtensionRegistration from "./ExtensionRegistration";
 import ValidationPanel from "../components/ValidationPanel";
 import { VALIDATION_PANEL_ROUTE } from "../Constants";
 
-const ErrorFallback = () => <Heading>Something went wrong!</Heading>;
+const ErrorFallback = () => <Heading>VINEET KAUSHIK HEllo world - Something went wrong!</Heading>;
 
 const App = (): React.JSX.Element => {
   return (
