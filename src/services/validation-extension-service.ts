@@ -113,29 +113,6 @@ export class ValidationExtensionService {
   }
 
   /**
-   * Gets the canvas type from the connection
-   * @param connection - The guest connection to the host
-   * @returns The canvas type string
-   * @throws Error if connection is missing
-   */
-  static async getCanvasType(connection: any): Promise<string> {
-    if (!connection) {
-      throw new ValidationExtensionServiceError(
-        "Connection is required to get canvas type",
-      );
-    }
-
-    try {
-      // @ts-ignore Remote API is handled through postMessage
-      return await connection.host.api.validationExtension.getCanvasType();
-    } catch (error) {
-      throw new ValidationExtensionServiceError(
-        "Failed to get canvas type",
-      );
-    }
-  }
-
-  /**
    * Updates a field value on the canvas.
    * @param connection - The guest connection to the host
    * @param fieldUpdate - The field update payload describing which field to change and the new value

@@ -325,36 +325,4 @@ describe("ValidationExtensionService", () => {
       });
     });
   });
-
-  describe("getCanvasType", () => {
-    it("should return the canvas type", async () => {
-      const mockGetCanvasType = jest.fn().mockResolvedValue("email");
-      const mockConnection = createMockConnection({ getCanvasTypeMock: mockGetCanvasType });
-
-      const result = await ValidationExtensionService.getCanvasType(mockConnection);
-
-      expect(result).toBe("email");
-      expect(mockGetCanvasType).toHaveBeenCalled();
-    });
-
-    it("should throw ValidationExtensionServiceError if connection is missing", async () => {
-      await expect(
-        // @ts-ignore Testing null case explicitly
-        ValidationExtensionService.getCanvasType(null),
-      ).rejects.toThrow(
-        new ValidationExtensionServiceError("Connection is required to get canvas type"),
-      );
-    });
-
-    it("should throw ValidationExtensionServiceError on API failure", async () => {
-      const mockGetCanvasType = jest.fn().mockRejectedValue(new Error("API Error"));
-      const mockConnection = createMockConnection({ getCanvasTypeMock: mockGetCanvasType });
-
-      await expect(
-        ValidationExtensionService.getCanvasType(mockConnection),
-      ).rejects.toThrow(
-        new ValidationExtensionServiceError("Failed to get canvas type"),
-      );
-    });
-  });
 });
