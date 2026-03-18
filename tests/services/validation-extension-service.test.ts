@@ -17,12 +17,15 @@ import {
 } from "../../src/services";
 import { GuestUI } from "@adobe/uix-guest";
 import { GenerationContext } from "../../src/types/generationContext/GenerationContext";
+import { FieldUpdate } from "../../src/types/experience/Experience";
 
 type ConnectionMocks = {
   getExperiencesMock?: jest.Mock;
   getExperiencesWithVariantsMock?: jest.Mock;
   getGenerationContextMock?: jest.Mock;
   openMock?: jest.Mock;
+  updateFieldMock?: jest.Mock;
+  getCanvasTypeMock?: jest.Mock;
 };
 
 const createMockConnection = ({
@@ -30,6 +33,8 @@ const createMockConnection = ({
   getExperiencesWithVariantsMock,
   getGenerationContextMock,
   openMock,
+  updateFieldMock,
+  getCanvasTypeMock,
 }: ConnectionMocks = {}) =>
   ({
     host: {
@@ -40,6 +45,8 @@ const createMockConnection = ({
             getExperiencesWithVariantsMock || jest.fn(),
           getGenerationContext: getGenerationContextMock || jest.fn(),
           open: openMock || jest.fn(),
+          updateField: updateFieldMock || jest.fn(),
+          getCanvasType: getCanvasTypeMock || jest.fn(),
         },
       },
     },
@@ -242,6 +249,112 @@ describe("ValidationExtensionService", () => {
       ValidationExtensionService.open(mockConnection, extensionId);
 
       expect(mockOpen).toHaveBeenCalledWith(extensionId);
+    });
+  });
+
+  describe("updateField", () => {
+    const mockFieldUpdateNonHtml: FieldUpdate = {
+      experienceId: "exp123",
+      fieldName: "headline",
+      value: "New headline text",
+    };
+
+    const mockFieldUpdateHtml: FieldUpdate = {
+      experienceId: "exp123",
+      fieldName: "headline",
+      value: "New headline text",
+      variantId: "default",
+    };
+
+    it("should call updateField with non-HTML canvas payload (no variantId)", () => {
+      const mockUpdateField = jest.fn();
+      const mockConnection = createMockConnection({ updateFieldMock: mockUpdateField });
+
+      ValidationExtensionService.updateField(mockConnection, mockFieldUpdateNonHtml);
+
+      expect(mockUpdateField).toHaveBeenCalledWith(mockFieldUpdateNonHtml);
+      expect(mockUpdateField).toHaveBeenCalledTimes(1);
+    });
+
+    it("should call updateField with HTML canvas payload (with variantId)", () => {
+      const mockUpdateField = jest.fn();
+      const mockConnection = createMockConnection({ updateFieldMock: mockUpdateField });
+
+      ValidationExtensionService.updateField(mockConnection, mockFieldUpdateHtml);
+
+      expect(mockUpdateField).toHaveBeenCalledWith(mockFieldUpdateHtml);
+      expect(mockUpdateField.mock.calls[0][0].variantId).toBe("default");
+    });
+
+    it("should throw ValidationExtensionServiceError if connection is missing", () => {
+      // @ts-ignore Testing null case explicitly
+      expect(() => ValidationExtensionService.updateField(null, mockFieldUpdateNonHtml)).toThrow(
+        ValidationExtensionServiceError,
+      );
+      // @ts-ignore Testing null case explicitly
+      expect(() => ValidationExtensionService.updateField(null, mockFieldUpdateNonHtml)).toThrow(
+        "Connection is required to update field",
+      );
+    });
+
+    it("should throw ValidationExtensionServiceError on API failure", () => {
+      const mockUpdateField = jest.fn().mockImplementation(() => {
+        throw new Error("API Error");
+      });
+      const mockConnection = createMockConnection({ updateFieldMock: mockUpdateField });
+
+      expect(() =>
+        ValidationExtensionService.updateField(mockConnection, mockFieldUpdateNonHtml),
+      ).toThrow(ValidationExtensionServiceError);
+      expect(() =>
+        ValidationExtensionService.updateField(mockConnection, mockFieldUpdateNonHtml),
+      ).toThrow("Failed to update field");
+    });
+
+    it("should pass the full FieldUpdate payload to the host API", () => {
+      const mockUpdateField = jest.fn();
+      const mockConnection = createMockConnection({ updateFieldMock: mockUpdateField });
+
+      ValidationExtensionService.updateField(mockConnection, mockFieldUpdateNonHtml);
+
+      expect(mockUpdateField).toHaveBeenCalledTimes(1);
+      expect(mockUpdateField).toHaveBeenCalledWith({
+        experienceId: "exp123",
+        fieldName: "headline",
+        value: "New headline text",
+      });
+    });
+  });
+
+  describe("getCanvasType", () => {
+    it("should return the canvas type", async () => {
+      const mockGetCanvasType = jest.fn().mockResolvedValue("email");
+      const mockConnection = createMockConnection({ getCanvasTypeMock: mockGetCanvasType });
+
+      const result = await ValidationExtensionService.getCanvasType(mockConnection);
+
+      expect(result).toBe("email");
+      expect(mockGetCanvasType).toHaveBeenCalled();
+    });
+
+    it("should throw ValidationExtensionServiceError if connection is missing", async () => {
+      await expect(
+        // @ts-ignore Testing null case explicitly
+        ValidationExtensionService.getCanvasType(null),
+      ).rejects.toThrow(
+        new ValidationExtensionServiceError("Connection is required to get canvas type"),
+      );
+    });
+
+    it("should throw ValidationExtensionServiceError on API failure", async () => {
+      const mockGetCanvasType = jest.fn().mockRejectedValue(new Error("API Error"));
+      const mockConnection = createMockConnection({ getCanvasTypeMock: mockGetCanvasType });
+
+      await expect(
+        ValidationExtensionService.getCanvasType(mockConnection),
+      ).rejects.toThrow(
+        new ValidationExtensionServiceError("Failed to get canvas type"),
+      );
     });
   });
 });
