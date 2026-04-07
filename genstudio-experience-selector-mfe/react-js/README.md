@@ -115,7 +115,7 @@ function App() {
 | `apiKey` | GenStudio API key | Defaults to clientId |
 | `env` | Environment | `'prod'` |
 | `selectionType` | Selection mode | `'multiple'` |
-| `customFilters` | Filter criteria | `[]` |
+| `customFilters` | Filter criteria ([semantics](../README.md#custom-filters)) | `[]` |
 | `dialogTitle` | Custom dialog title | Default title |
 
 ### SUSI Configuration
@@ -125,6 +125,21 @@ susiConfig: {
     clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
 }
 ```
+
+### Custom filters
+
+`customFilters` is a string array. Channel keys (`genstudio-channel:…`) are OR’d together; all other keys are OR’d in a second group; the two groups are AND’d. You cannot AND two non-channel filters via this API. Use one array entry per criterion (do not use a single string with `AND` inside it).
+
+Example — meta channel and a specific product:
+
+```javascript
+customFilters: [
+  'genstudio-channel:meta',
+  'genstudio-product:Rc6903ef2eb2eda20a53d2b4be',
+],
+```
+
+See the [parent README](../README.md#custom-filters) for the full combined example and query shape.
 
 ## Troubleshooting
 

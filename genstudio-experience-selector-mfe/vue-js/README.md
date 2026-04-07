@@ -119,7 +119,7 @@ function openDialog() {
 | `apiKey` | GenStudio API key | Defaults to clientId |
 | `env` | Environment | `'prod'` |
 | `selectionType` | Selection mode | `'multiple'` |
-| `customFilters` | Filter criteria | `[]` |
+| `customFilters` | Filter criteria ([semantics](../README.md#custom-filters)) | `[]` |
 | `dialogTitle` | Custom dialog title | Default title |
 
 ### SUSI Integration
@@ -131,18 +131,25 @@ susiConfig: {
 
 
 
-### Custom Filters
+### Custom filters
 
-Add custom filtering capabilities (optional):
+`customFilters` is a string array. Channel keys (`genstudio-channel:…`) are OR’d together; all other keys are OR’d in a second group; the two groups are AND’d. You cannot AND two non-channel filters via this API. Use one array entry per criterion (do not use a single string with `AND` inside it).
+
+Example — meta channel and a specific product:
 
 ```javascript
 const experienceSelectorProps = {
     // ... other required props
-    customFilters: ['genstudio-channel:email', 'genstudio-type:template'],
+    customFilters: [
+        'genstudio-channel:meta',
+        'genstudio-product:Rc6903ef2eb2eda20a53d2b4be',
+    ],
     selectionType: 'multiple',
-    dialogTitle: 'Select Email Templates'
+    dialogTitle: 'Select experiences',
 };
 ```
+
+See the [parent README](../README.md#custom-filters) for the full combined example (multiple channels, multiple external template IDs) and the resulting query.
 
 
 ## Troubleshooting

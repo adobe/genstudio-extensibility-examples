@@ -41,7 +41,7 @@ The `renderExperienceSelectorWithSUSI` function accepts a configuration object w
 | `susiConfig`           | `object`                            | Required | SUSI authentication configuration (see below)                                                                                                                                                        |
 | `isOpen`               | `boolean`                           | Required | To show or hide the dialog. Should usually be true.                                                                                                                                                  |
 | `selectionType`        | `'single' \| 'multiple'`            | Optional | Whether a single or multiple experiences can be selected. Defaults to 'multiple'                                                                                                                     |
-| `customFilters`        | `string[]`                          | Optional | Custom filter criteria. Multiple array elements are combined with OR logic. To combine with AND, use a single string (e.g., `['genstudio-channel:email AND genstudio-externalTemplateId:two-pods']`) |
+| `customFilters`        | `string[]`                          | Optional | Custom filter criteria. Channel and non-channel tokens are grouped; see [Custom filters](#custom-filters) |
 | `dialogTitle`          | `string`                            | Optional | Custom dialog title                                                                                                                                                                                  |
 | `onSelectionConfirmed` | `(selection: Experience[]) => void` | Required | Callback when selection is confirmed                                                                                                                                                                 |
 | `onDismiss`            | `() => void`                        | Required | Callback when dialog is dismissed                                                                                                                                                                    |
@@ -58,6 +58,32 @@ The `susiConfig` object includes the following properties:
 | `locale`        | `string`                                                           | Optional | Language locale for SUSI (e.g., 'en_US'). Falls back to dialog locale or default if not provided                                                        |
 | `modalSettings` | `{ width?: number, height?: number, top?: number, left?: number }` | Optional | Modal display configuration. Falls back to defaults if not provided                                                                                     |
 | `redirectUri`   | `string`                                                           | Optional | Redirect URI after authentication. Falls back to `window.location.href` if not provided                                                                 |
+
+## Custom filters
+
+The `customFilters` property is a string array. Each entry is one criterion (for example `genstudio-channel:email`, `genstudio-product:<id>`, `genstudio-externalTemplateId:<id>`).
+
+The backend combines them like this:
+
+1. **Channel filters** (prefix `genstudio-channel:`) are **OR**’d together.
+2. **All other filters** (such as `genstudio-product`, `genstudio-externalTemplateId`, `genstudio-type`) are **OR**’d together in a separate group.
+3. Those two groups are **AND**’d.
+
+
+**Combined example**
+
+```javascript
+customFilters: [
+  'genstudio-channel:email',
+  'genstudio-channel:web',
+  'genstudio-externalTemplateId:abc123',
+  'genstudio-externalTemplateId:def456',
+];
+```
+
+Final query:
+
+`(genstudio-externalTemplateId:abc123 OR genstudio-externalTemplateId:def456) AND (genstudio-channel:email OR genstudio-channel:web)`
 
 ## Example Implementations
 
@@ -96,11 +122,10 @@ Two vanilla JavaScript implementations:
        clientId: "genstudio-<CUSTOMER_NAME>-experienceselectormfe", // Provided by your Adobe support engineer during onboarding
      },
      customFilters: [
-       // Multiple array elements are combined with OR logic. Example filters:
-       // 'genstudio-channel:email',
-       // 'genstudio-externalTemplateId:two-pods',
-       // To combine with AND, use a single string:
-       // 'genstudio-channel:email AND genstudio-externalTemplateId:two-pods',
+       // See "Custom filters" section: channels OR'd, non-channels OR'd, groups AND'd.
+       // Example — meta channel and a specific product:
+       // 'genstudio-channel:meta',
+       // 'genstudio-product:Rc6903ef2eb2eda20a53d2b4be',
      ],
      isOpen: true,
      onSelectionConfirmed: (selection) => {

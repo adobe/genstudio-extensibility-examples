@@ -100,7 +100,7 @@ Note: localhost.corp.adobe.com has to be added to your /etc/hosts file. Or you c
 | Property | Description | Default |
 |----------|-------------|---------|
 | `selectionType` | Selection mode | `'single'` |
-| `customFilters` | Filter criteria | `[]` |
+| `customFilters` | Filter criteria ([semantics](../README.md#custom-filters)) | `[]` |
 | `dialogTitle` | Custom dialog title | Default title |
 | `isOpen` | Initial dialog state | `false` |
 
@@ -174,16 +174,25 @@ Both examples use the same HTML structure:
 
 ## Advanced Usage
 
-### Custom Filters
+### Custom filters
+
+`customFilters` is a string array. Channel keys (`genstudio-channel:…`) are OR’d together; all other keys are OR’d in a second group; the two groups are AND’d. You cannot AND two non-channel filters via this API. Use one array entry per criterion (do not use a single string with `AND` inside it).
+
+Example — meta channel and a specific product:
 
 ```javascript
 const experienceSelectorProps = {
     // ... other props
-    customFilters: ['genstudio-channel:email', 'genstudio-type:template'],
+    customFilters: [
+        'genstudio-channel:meta',
+        'genstudio-product:Rc6903ef2eb2eda20a53d2b4be',
+    ],
     selectionType: 'multiple',
-    dialogTitle: 'Select Email Templates'
+    dialogTitle: 'Select experiences',
 };
 ```
+
+See the [parent README](../README.md#custom-filters) for the full combined example and query shape.
 
 ### Multiple Selection Handling
 
