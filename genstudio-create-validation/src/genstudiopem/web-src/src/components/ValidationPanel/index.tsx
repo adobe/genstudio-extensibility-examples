@@ -37,6 +37,7 @@ export default function ValidationPanel(): JSX.Element {
   const [generationContext, setGenerationContext] =
     useState<GenerationContext | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [flaggedFieldName, setFlaggedFieldName] = useState<string | null>(null);
 
   /**
    * Polls for experiences from the host.
@@ -98,8 +99,34 @@ export default function ValidationPanel(): JSX.Element {
    * @returns void
    */
   const handleRunClaimsCheck = (): void => {
-    if (experiences && selectedExperienceIndex !== null)
-      setSelectedExperience(experiences[selectedExperienceIndex]);
+    if (experiences && selectedExperienceIndex !== null) {
+      const experience = experiences[selectedExperienceIndex];
+      setSelectedExperience(experience);
+      const fieldNames = Object.keys(experience.experienceFields);
+      if (fieldNames.length > 0) {
+        // Filter out image fields from the fieldNames array before selecting one to flag
+        const nonImageFieldNames = fieldNames.filter(
+          (name) => !/image/i.test(name)
+        );
+        if (nonImageFieldNames.length > 0) {
+          const randomFieldName = nonImageFieldNames[Math.floor(Math.random() * nonImageFieldNames.length)];
+          setFlaggedFieldName(randomFieldName);
+        } else {
+          // No non-image field found; do not flag any field
+          setFlaggedFieldName(null);
+        }
+      }
+    }
+  };
+
+  const handleApplySuggestion = (field: string): void => {
+    if (!guestConnection || !selectedExperience) return;
+    ValidationExtensionService.updateField(guestConnection, {
+      experienceId: selectedExperience.id,
+      field,
+      value: "This is a suggested field value from the Validation App!",
+    });
+    setFlaggedFieldName(null);
   };
 
   if (isLoading) return <Spinner message="Loading experiences..." />;
@@ -144,7 +171,11 @@ export default function ValidationPanel(): JSX.Element {
                   width: "100%",
                 }}
               >
-                <Content experience={selectedExperience} />
+                <Content
+                  experience={selectedExperience}
+                  flaggedFieldName={flaggedFieldName ?? undefined}
+                  onApplySuggestion={handleApplySuggestion}
+                />
               </div>
             </div>
           )}
