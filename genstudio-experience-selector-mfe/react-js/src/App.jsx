@@ -19,11 +19,10 @@ function App() {
                 clientId: 'genstudio-<CUSTOMER_NAME>-experienceselectormfe', // Provided by your Adobe support engineer during onboarding
             },
             customFilters: [
-                // Multiple array elements are combined with OR logic. Example filters:
-                // 'genstudio-channel:email',
-                // 'genstudio-externalTemplateId:two-pods',
-                // To combine with AND, use a single string:
-                // 'genstudio-channel:email AND genstudio-externalTemplateId:no-pod-duplicate-fields',
+                // Channels OR'd, other filters OR'd; the two groups AND'd. See repo README.
+                // Example — meta + product:
+                // 'genstudio-channel:meta',
+                // 'genstudio-product:Rc6903ef2eb2eda20a53d2b4be',
             ],
             isOpen: true,
             onDismiss: () => dialogRef.current?.close(),
