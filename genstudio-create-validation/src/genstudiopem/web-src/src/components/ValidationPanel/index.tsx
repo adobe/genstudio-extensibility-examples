@@ -119,11 +119,11 @@ export default function ValidationPanel(): JSX.Element {
     }
   };
 
-  const handleApplySuggestion = (fieldName: string): void => {
+  const handleApplySuggestion = (field: string): void => {
     if (!guestConnection || !selectedExperience) return;
     ValidationExtensionService.updateField(guestConnection, {
       experienceId: selectedExperience.id,
-      fieldName,
+      field,
       value: "This is a suggested field value from the Validation App!",
     });
     setFlaggedFieldName(null);

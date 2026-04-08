@@ -17,7 +17,7 @@ import { Experience } from "@adobe/genstudio-extensibility-sdk";
 interface ContentProps {
   experience: Experience;
   flaggedFieldName?: string;
-  onApplySuggestion?: (fieldName: string) => void;
+  onApplySuggestion?: (field: string) => void;
 }
 
 /**
