@@ -20,7 +20,7 @@ import pRetry from "p-retry";
 import { APP_METADATA, EXTENSION_ID } from "../../Constants";
 import { useAuth, useClaimActions, useGuestConnection } from "../../hooks";
 import { ClaimResults } from "../../types";
-import { validateClaims } from "../../utils/claimsValidation";
+import { validateClaims, replaceViolatedClaim } from "../../utils/claimsValidation";
 import {
   getSelectedExperienceId,
   SELECTED_EXPERIENCE_ID_STORAGE_KEY,
@@ -74,11 +74,11 @@ export default function ValidationPanel(): JSX.Element {
   }, [guestConnection]);
 
   /**
-   * If the selected experience index is changed, re-run the claims check with the new experience.
+   * Re-run claims check when the selected experience changes or when claim libraries finish loading.
    */
   useEffect(() => {
-    if (selectedExperienceIndex !== null) handleRunClaimsCheck();
-  }, [selectedExperienceIndex]);
+    if (selectedExperienceIndex !== null && claimLibraries.length > 0) handleRunClaimsCheck();
+  }, [selectedExperienceIndex, claimLibraries]);
 
   /**
    * If the selected experience id is changed, set the selected experience index.
@@ -152,6 +152,37 @@ export default function ValidationPanel(): JSX.Element {
       return remoteExperiences;
     }
     return null;
+  };
+
+  /**
+   * Applies an approved claim to a field, replacing the violated text with the correct claim.
+   * Uses the SDK's updateField to directly modify the experience, then re-validates.
+   */
+  const handleApplyApprovedClaim = async (rawFieldName: string, approvedClaimText: string) => {
+    if (!guestConnection || selectedExperienceIndex === null || !experiences?.length) return;
+
+    const experience = experiences[selectedExperienceIndex];
+    const fieldEntry = experience.experienceFields[rawFieldName];
+    if (!fieldEntry || typeof fieldEntry.fieldValue !== "string") return;
+
+    const currentValue = fieldEntry.fieldValue;
+    const newValue = replaceViolatedClaim(currentValue, approvedClaimText);
+
+    if (newValue === currentValue) {
+      console.warn("Apply approved claim: no matching text found to replace");
+      return;
+    }
+
+    try {
+      await ValidationExtensionService.updateField(guestConnection, {
+        experienceId: experience.id,
+        name: rawFieldName,
+        value: newValue,
+      });
+      await handleRunClaimsCheck();
+    } catch (error) {
+      console.error("Error applying approved claim:", error);
+    }
   };
 
   /**
@@ -234,6 +265,7 @@ export default function ValidationPanel(): JSX.Element {
                 onExperienceSelect={handleExperienceSelect}
                 selectedExperienceIndex={selectedExperienceIndex}
                 experiences={experiences!}
+                onApplyApprovedClaim={handleApplyApprovedClaim}
               />
             )
           )}

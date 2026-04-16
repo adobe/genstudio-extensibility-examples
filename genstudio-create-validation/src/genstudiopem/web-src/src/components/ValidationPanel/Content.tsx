@@ -11,23 +11,19 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { Button, Heading, Text, Divider } from "@react-spectrum/s2";
+import { Heading, Text, Divider } from "@react-spectrum/s2";
 import { Experience } from "@adobe/genstudio-extensibility-sdk";
 
 interface ContentProps {
   experience: Experience;
-  flaggedFieldName?: string;
-  onApplySuggestion?: (field: string) => void;
 }
 
 /**
  * Content component that displays the details of an experience.
  * @param experience - The experience to display
- * @param flaggedFieldName - The field name that has been flagged
- * @param onApplySuggestion - Callback to apply the suggestion for a flagged field
  * @returns The Content component
  */
-export default function Content({ experience, flaggedFieldName, onApplySuggestion }: ContentProps) {
+export default function Content({ experience }: ContentProps) {
   if (!experience) return null;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -36,55 +32,25 @@ export default function Content({ experience, flaggedFieldName, onApplySuggestio
         <Text>ID: {experience.id}</Text>
         <Divider size="S" />
         <Heading>Fields</Heading>
-        {Object.entries(experience.experienceFields).map(([key, field]) => {
-          const isFlagged = field.fieldName === flaggedFieldName;
-          return (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.25rem",
-                padding: isFlagged ? "0.5rem" : undefined,
-                border: isFlagged ? "1px solid #e04a0e" : undefined,
-                borderRadius: isFlagged ? "4px" : undefined,
-                backgroundColor: isFlagged ? "#fff3f0" : undefined,
-              }}
-              key={key}
-            >
+        {Object.entries(experience.experienceFields).map(([key, field]) => (
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}
+            key={key}
+          >
+            <Text>
+              <strong>{field.fieldName}</strong>
+            </Text>
+            <Text>{field.fieldValue}</Text>
+            {field.keywords && (
+              <Text>keywords: {field.keywords.join(", ")}</Text>
+            )}
+            {field.additionalMetadata && (
               <Text>
-                <strong>{field.fieldName}</strong>
-                {isFlagged && (
-                  <span style={{ color: "#e04a0e", marginLeft: "0.5rem" }}>
-                    ⚠ Needs review
-                  </span>
-                )}
+                additionalMetadata: {JSON.stringify(field.additionalMetadata)}
               </Text>
-              <Text>{field.fieldValue}</Text>
-              {field.keywords && (
-                <Text>keywords: {field.keywords.join(", ")}</Text>
-              )}
-              {field.additionalMetadata && (
-                <Text>
-                  additionalMetadata: {JSON.stringify(field.additionalMetadata)}
-                </Text>
-              )}
-              {isFlagged && onApplySuggestion && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", marginTop: "0.25rem" }}>
-                  <Text>
-                    <em>Suggestion: "This is a suggested field value from the Validation App!"</em>
-                  </Text>
-                  <Button
-                    variant="accent"
-                    size="S"
-                    onPress={() => onApplySuggestion(field.fieldName)}
-                  >
-                    Apply suggestion
-                  </Button>
-                </div>
-              )}
-            </div>
-          );
-        })}
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
