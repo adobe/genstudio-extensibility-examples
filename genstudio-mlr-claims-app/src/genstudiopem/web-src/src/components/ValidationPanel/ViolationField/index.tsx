@@ -19,9 +19,11 @@ import ViolationEntry from "./ViolationEntry";
 interface ViolationFieldProps {
   title: string;
   items: Violation[];
+  rawFieldName?: string;
+  onApplyApprovedClaim?: (rawFieldName: string, approvedClaimText: string) => void;
 }
 
-export default function ViolationField({ title, items }: ViolationFieldProps) {
+export default function ViolationField({ title, items, rawFieldName, onApplyApprovedClaim }: ViolationFieldProps) {
   const issueCount = items?.filter(
     (item) => item.status === VIOLATION_STATUS.Violated
   ).length;
@@ -44,7 +46,12 @@ export default function ViolationField({ title, items }: ViolationFieldProps) {
             {items.map(
               (item) =>
                 hasViolations(item) && (
-                  <ViolationEntry key={item.violation} item={item} />
+                  <ViolationEntry
+                    key={item.violation}
+                    item={item}
+                    rawFieldName={rawFieldName}
+                    onApplyApprovedClaim={onApplyApprovedClaim}
+                  />
                 )
             )}
           </div>
