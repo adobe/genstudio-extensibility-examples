@@ -51,7 +51,7 @@ export default function FragmentSwapDialog(): React.JSX.Element {
   const handleClaimSelect = (claimId: string, description: string): void => {
     setSelectedClaimId(claimId);
     if (guestConnection) {
-      FragmentSwapExtensionService.setSelectedValue(guestConnection, description);
+      FragmentSwapExtensionService.setSwapValue(guestConnection, description);
     }
   };
 
