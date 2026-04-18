@@ -16,6 +16,7 @@ import { VIOLATION_STATUS } from "./Constants";
 export type Violation = {
   status: ViolationStatus;
   violation?: string;
+  approvedClaimText?: string;
 };
 
 export type ClaimResults = {
