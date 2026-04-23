@@ -17,6 +17,7 @@ export const ICON_DATA_URI: string =
 
 export const VALIDATION_PANEL_ROUTE: string = "/validation-panel";
 export const PROMPT_DIALOG_ROUTE: string = "/prompt-dialog";
+export const FRAGMENT_SWAP_DIALOG_ROUTE: string = "/fragment-swap-dialog";
 
 /**
  * App metadata object

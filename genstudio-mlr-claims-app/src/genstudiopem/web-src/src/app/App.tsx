@@ -18,7 +18,12 @@ import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import ExtensionRegistration from "./ExtensionRegistration";
 import ValidationPanel from "../components/ValidationPanel";
 import PromptDialog from "../components/PromptDialog";
-import { PROMPT_DIALOG_ROUTE, VALIDATION_PANEL_ROUTE } from "../Constants";
+import FragmentSwapDialog from "../components/FragmentSwapDialog";
+import {
+  FRAGMENT_SWAP_DIALOG_ROUTE,
+  PROMPT_DIALOG_ROUTE,
+  VALIDATION_PANEL_ROUTE,
+} from "../Constants";
 
 const ErrorFallback = () => <Heading>Something went wrong!</Heading>;
 
@@ -35,6 +40,10 @@ const App = (): React.JSX.Element => {
             <Route path="/" element={<ExtensionRegistration />} />
             <Route path={VALIDATION_PANEL_ROUTE} element={<ValidationPanel />} />
             <Route path={PROMPT_DIALOG_ROUTE} element={<PromptDialog />} />
+            <Route
+              path={FRAGMENT_SWAP_DIALOG_ROUTE}
+              element={<FragmentSwapDialog />}
+            />
           </Routes>
         </Router>
       </S2Provider>
