@@ -20,9 +20,11 @@ import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
 interface PodProps {
   podNumber: string;
   violations: ClaimResults;
+  rawFieldNameMap?: Record<string, string>;
+  onApplyApprovedClaim?: (rawFieldName: string, approvedClaimText: string) => void;
 }
 
-export default function Pod({ podNumber, violations }: PodProps) {
+export default function Pod({ podNumber, violations, rawFieldNameMap, onApplyApprovedClaim }: PodProps) {
   return (
     <div>
       {podNumber !== "0" && (
@@ -33,6 +35,8 @@ export default function Pod({ podNumber, violations }: PodProps) {
           <ViolationField
             title={convertSnakeCaseToCamelCase(fieldName)}
             items={violations[fieldName]}
+            rawFieldName={rawFieldNameMap?.[fieldName]}
+            onApplyApprovedClaim={onApplyApprovedClaim}
           />
         </div>
       ))}
