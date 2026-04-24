@@ -26,7 +26,6 @@ import {
 import {
   App,
   AppMetadata,
-  FragmentSwapExtensionService,
   PromptExtensionService,
   ValidationExtensionService,
   Toggle,
@@ -95,9 +94,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
             return [
               {
                 metadata: getAppMetadata(id),
-                onClick: async () => {
-                  FragmentSwapExtensionService.open(guestConnection as any, id);
-                },
+                onClick: async () => {},
               },
             ];
           },
