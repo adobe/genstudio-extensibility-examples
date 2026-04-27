@@ -1,4 +1,4 @@
-name: MLR Claims Main
+name: genstudio mlr claims app Main
 
 on:
   push:

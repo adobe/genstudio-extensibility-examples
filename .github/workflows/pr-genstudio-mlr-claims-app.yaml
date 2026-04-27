@@ -1,4 +1,4 @@
-name: MLR Claims PR
+name: genstudio mlr claims app PR
 
 on:
   pull_request:

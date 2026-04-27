@@ -1,4 +1,4 @@
-name: External Template Main
+name: genstudio external template app Main
 
 on:
   push:

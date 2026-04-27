@@ -1,4 +1,4 @@
-name: External DAM PR
+name: genstudio external dam app PR
 
 on:
   pull_request:

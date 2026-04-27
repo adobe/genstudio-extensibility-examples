@@ -1,0 +1,6 @@
+{
+  "name": "GS-E2E-Test-App",
+  "id": "gs-e2e-test-app",
+  "description": "GenStudio E2E Test App registering all extension points",
+  "version": "0.1.0"
+}

@@ -2,17 +2,49 @@
   "name": "genstudio-extensibility-cli",
   "version": "0.1.0",
   "private": true,
-  "description": "CLI utilities for GenStudio extensibility workflows",
+  "description": "CLI utilities and E2E test app for GenStudio extensibility workflows",
   "main": "src/index.js",
   "bin": {
     "gs-ext": "src/index.js"
   },
   "scripts": {
-    "start": "node src/index.js --help"
+    "start": "node src/index.js --help",
+    "test": "jest --passWithNoTests ./test",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "lint": "eslint --ignore-pattern web-src --no-error-on-unmatched-pattern test src",
+    "lint:fix": "npm run lint -- --fix",
+    "type-check": "tsc --noEmit",
+    "build": "tsc"
   },
   "dependencies": {
+    "@adobe/aio-sdk": "^6.0.0",
+    "@adobe/genstudio-extensibility-sdk": "^4.1.0",
+    "@adobe/uix-guest": "^1.0.0",
     "@octokit/core": "^6.1.4",
+    "@react-spectrum/s2": "^0.9.0",
+    "core-js": "^3.6.4",
     "js-yaml": "^4.1.0",
-    "libsodium-wrappers": "^0.7.15"
+    "libsodium-wrappers": "^0.7.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-error-boundary": "^4.0.13",
+    "react-router-dom": "^6.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.7",
+    "@babel/plugin-transform-react-jsx": "^7.8.3",
+    "@playwright/test": "^1.44.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "chalk": "^4",
+    "eslint": "^8",
+    "eslint-plugin-jest": "^27.2.3",
+    "jest": "^27.2.4",
+    "typescript": "^4.9.0"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

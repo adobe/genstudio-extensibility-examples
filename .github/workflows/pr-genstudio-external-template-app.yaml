@@ -1,4 +1,4 @@
-name: External Template PR
+name: genstudio external template app PR
 
 on:
   pull_request:

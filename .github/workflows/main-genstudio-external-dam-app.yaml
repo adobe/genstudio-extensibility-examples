@@ -1,4 +1,4 @@
-name: External DAM Main
+name: genstudio external dam app Main
 
 on:
   push:
