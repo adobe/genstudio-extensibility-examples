@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "dependencies": {
-    "@adobe/genstudio-extensibility-sdk": "^4.5.0",
+    "@adobe/genstudio-extensibility-sdk": "^4.6.0",
     "@adobe/uix-guest": "^1.0.0",
     "@adobe/aio-sdk": "^6.0.0",
     "@react-spectrum/s2": "^0.9.0",
@@ -39,7 +39,7 @@
     "type-check:watch": "tsc --noEmit --watch",
     "build": "tsc"
   },
-  "description": "GenStudio MLR Claims App - Validation Extension",
+  "description": "GenStudio MLR Claims App - Prompt, Fragment Swap, and Validation Extension",
   "engines": {
     "node": ">=22"
   }
