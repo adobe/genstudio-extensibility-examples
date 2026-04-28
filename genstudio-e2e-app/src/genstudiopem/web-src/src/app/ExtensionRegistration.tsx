@@ -23,6 +23,7 @@ import {
   PROMPT_DIALOG_ROUTE,
   ASSET_VIEWER_ROUTE,
   TEMPLATE_VIEWER_ROUTE,
+  FRAGMENT_SWAP_ROUTE,
 } from "../Constants";
 import {
   App,
@@ -34,10 +35,29 @@ import {
   ValidationExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
 import React, { Key } from "react";
+import {
+  publishSelectedExperience,
+  publishValidationPanelMode,
+} from "../utils/validationBridge";
 
 const getAppMetadata = (id: Key): AppMetadata => ({
   ...APP_METADATA,
   id: id.toString(),
+});
+
+const getCreateValidationMetadata = (id: Key): AppMetadata => ({
+  ...APP_METADATA,
+  id: `${id.toString()}-create-validation`,
+  label: "E2E - Create Validation",
+  options: {
+    validation: {},
+  },
+});
+
+const getSecondaryMetadata = (id: Key, labelSuffix: string): AppMetadata => ({
+  ...APP_METADATA,
+  id: `${id.toString()}-${labelSuffix.toLowerCase().replace(/\s+/g, "-")}`,
+  label: `${APP_METADATA.label} - ${labelSuffix}`,
 });
 
 const ExtensionRegistration = (): React.JSX.Element => {
@@ -50,18 +70,35 @@ const ExtensionRegistration = (): React.JSX.Element => {
             {
               metadata: getAppMetadata(id),
               onClick: async () => {
+                // Must open with the registered extension ID (EXTENSION_ID).
+                // host.guests is keyed by the manifest-registered ID only.
+                // Using any other ID causes host.guests.get() to return
+                // undefined → crash in GuestUIFrame.
+                publishValidationPanelMode("mlr");
+                ValidationExtensionService.open(guestConnection, id);
+              },
+            },
+            {
+              metadata: getCreateValidationMetadata(id),
+              onClick: async () => {
+                // Also opens with EXTENSION_ID (same as toggle 1) so the
+                // guest connection resolves. The mode bridge switches the
+                // panel content to create-validation view.
+                publishValidationPanelMode("create-validation");
                 ValidationExtensionService.open(guestConnection, id);
               },
             },
           ],
-          getApps: (id: string): App[] => [
+          getApps: async (id: string): Promise<App[]> => [
             {
+              // Single app — both toggles load this URL.
+              // Content is switched via the mode bridge.
               url: `#${VALIDATION_PANEL_ROUTE}`,
               metadata: getAppMetadata(id),
             },
           ],
           handleSelectedExperienceChange: async (experienceId: string) => {
-            // Exposed for host to drive single-experience view mode
+            publishSelectedExperience(experienceId);
             console.log("[e2e] handleSelectedExperienceChange:", experienceId);
           },
         },
@@ -74,11 +111,21 @@ const ExtensionRegistration = (): React.JSX.Element => {
                 PromptExtensionService.open(guestConnection as any, id);
               },
             },
+            {
+              metadata: getSecondaryMetadata(id, "Prompt B"),
+              onClick: async () => {
+                PromptExtensionService.open(guestConnection as any, id);
+              },
+            },
           ],
-          getApps: (id: string): App[] => [
+          getApps: async (id: string): Promise<App[]> => [
             {
               url: `#${PROMPT_DIALOG_ROUTE}`,
               metadata: getAppMetadata(id),
+            },
+            {
+              url: `#${PROMPT_DIALOG_ROUTE}`,
+              metadata: getSecondaryMetadata(id, "Prompt B"),
             },
           ],
         },
@@ -89,11 +136,19 @@ const ExtensionRegistration = (): React.JSX.Element => {
               metadata: getAppMetadata(id),
               onClick: async () => {},
             },
+            {
+              metadata: getSecondaryMetadata(id, "Assets B"),
+              onClick: async () => {},
+            },
           ],
-          getApps: (id: string): App[] => [
+          getApps: async (id: string): Promise<App[]> => [
             {
               url: `#${ASSET_VIEWER_ROUTE}`,
               metadata: getAppMetadata(id),
+            },
+            {
+              url: `#${ASSET_VIEWER_ROUTE}`,
+              metadata: getSecondaryMetadata(id, "Assets B"),
             },
           ],
           uploadAndGetUrl: async (
@@ -121,11 +176,42 @@ const ExtensionRegistration = (): React.JSX.Element => {
               metadata: getAppMetadata(id),
               onClick: async () => {},
             },
+            {
+              metadata: getSecondaryMetadata(id, "Template B"),
+              onClick: async () => {},
+            },
           ],
-          getApps: (id: string): App[] => [
+          getApps: async (id: string): Promise<App[]> => [
             {
               url: `#${TEMPLATE_VIEWER_ROUTE}`,
               metadata: getAppMetadata(id),
+            },
+            {
+              url: `#${TEMPLATE_VIEWER_ROUTE}`,
+              metadata: getSecondaryMetadata(id, "Template B"),
+            },
+          ],
+        },
+
+        fragmentSwapExtension: {
+          getToggles: async (id: string): Promise<Toggle[]> => [
+            {
+              metadata: getAppMetadata(id),
+              onClick: async () => {},
+            },
+            {
+              metadata: getSecondaryMetadata(id, "Swap B"),
+              onClick: async () => {},
+            },
+          ],
+          getApps: async (id: string): Promise<App[]> => [
+            {
+              url: `#${FRAGMENT_SWAP_ROUTE}`,
+              metadata: getAppMetadata(id),
+            },
+            {
+              url: `#${FRAGMENT_SWAP_ROUTE}`,
+              metadata: getSecondaryMetadata(id, "Swap B"),
             },
           ],
         },
@@ -136,11 +222,19 @@ const ExtensionRegistration = (): React.JSX.Element => {
               metadata: getAppMetadata(id),
               onClick: async () => {},
             },
+            {
+              metadata: getSecondaryMetadata(id, "DAM B"),
+              onClick: async () => {},
+            },
           ],
-          getApps: (id: string): App[] => [
+          getApps: async (id: string): Promise<App[]> => [
             {
               url: `#${ASSET_VIEWER_ROUTE}`,
               metadata: getAppMetadata(id),
+            },
+            {
+              url: `#${ASSET_VIEWER_ROUTE}`,
+              metadata: getSecondaryMetadata(id, "DAM B"),
             },
           ],
         },

@@ -11,20 +11,23 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import { ErrorBoundary } from "react-error-boundary";
-import { Provider as S2Provider, Heading } from "@react-spectrum/s2";
+import { Heading } from "@react-spectrum/s2";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ExtensionRegistration from "./ExtensionRegistration";
 import ValidationPanel from "../components/ValidationPanel";
+import CreateValidationPanel from "../components/CreateValidationPanel";
 import PromptDialog from "../components/PromptDialog";
 import AssetViewer from "../components/AssetViewer";
 import TemplateViewer from "../components/TemplateViewer";
+import FragmentSwapDialog from "../components/FragmentSwapDialog";
 import {
   VALIDATION_PANEL_ROUTE,
+  CREATE_VALIDATION_PANEL_ROUTE,
   PROMPT_DIALOG_ROUTE,
   ASSET_VIEWER_ROUTE,
   TEMPLATE_VIEWER_ROUTE,
+  FRAGMENT_SWAP_ROUTE,
 } from "../Constants";
 
 const ErrorFallback = () => <Heading>Something went wrong!</Heading>;
@@ -32,21 +35,19 @@ const ErrorFallback = () => <Heading>Something went wrong!</Heading>;
 const App = (): React.JSX.Element => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <S2Provider
-        background="base"
-        colorScheme="light"
-        styles={style({ height: "screen", overflow: "auto" })}
-      >
+      <div style={{ height: "100vh", overflow: "auto", background: "#f5f5f5" }}>
         <Router>
           <Routes>
             <Route path="/" element={<ExtensionRegistration />} />
             <Route path={VALIDATION_PANEL_ROUTE} element={<ValidationPanel />} />
+            <Route path={CREATE_VALIDATION_PANEL_ROUTE} element={<CreateValidationPanel />} />
             <Route path={PROMPT_DIALOG_ROUTE} element={<PromptDialog />} />
             <Route path={ASSET_VIEWER_ROUTE} element={<AssetViewer />} />
             <Route path={TEMPLATE_VIEWER_ROUTE} element={<TemplateViewer />} />
+            <Route path={FRAGMENT_SWAP_ROUTE} element={<FragmentSwapDialog />} />
           </Routes>
         </Router>
-      </S2Provider>
+      </div>
     </ErrorBoundary>
   );
 };

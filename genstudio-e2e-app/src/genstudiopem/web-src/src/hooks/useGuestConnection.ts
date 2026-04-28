@@ -13,9 +13,10 @@ governing permissions and limitations under the License.
 import { attach } from "@adobe/uix-guest";
 import { useState, useEffect } from "react";
 
-export const useGuestConnection = (extensionId: string) => {
+export const useGuestConnection = (extensionId: string | null) => {
   const [guestConnection, setGuestConnection] = useState<any>(null);
   useEffect(() => {
+    if (!extensionId) return;
     (async () => {
       const connection = await attach({ id: extensionId });
       setGuestConnection(connection);

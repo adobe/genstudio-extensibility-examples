@@ -8,3 +8,4 @@ Stub UI panels for each extension point. Each component renders at its registere
 | `PromptDialog` | `#/prompt-dialog` | `promptExtension` |
 | `AssetViewer` | `#/select-content-dialog` | `selectContentExtension` |
 | `TemplateViewer` | `#/select-template-dialog` | `importTemplateExtension` |
+| `FragmentSwapDialog` | `#/fragment-swap-dialog` | `fragmentSwapExtension` |

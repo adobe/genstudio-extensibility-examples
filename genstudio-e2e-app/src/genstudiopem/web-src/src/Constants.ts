@@ -13,15 +13,19 @@ governing permissions and limitations under the License.
 import { AppMetadata } from "@adobe/genstudio-extensibility-sdk";
 
 export const EXTENSION_ID: string = "extension-e2e:e2e-test-app";
+export const CREATE_VALIDATION_EXTENSION_ID: string =
+  "extension-e2e:e2e-create-validation-app";
 export const EXTENSION_LABEL: string = "ExtensionE2E - Test App";
 export const ICON_DATA_URI: string =
   "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHJ4PSI0IiBmaWxsPSIjMTQ3M0U2Ii8+PHRleHQgeD0iMTIiIHk9IjE2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxMiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkUyRTwvdGV4dD48L3N2Zz4=";
 
 // Routes
 export const VALIDATION_PANEL_ROUTE: string = "/validation-panel";
+export const CREATE_VALIDATION_PANEL_ROUTE: string = "/create-validation-panel";
 export const PROMPT_DIALOG_ROUTE: string = "/prompt-dialog";
 export const ASSET_VIEWER_ROUTE: string = "/select-content-dialog";
 export const TEMPLATE_VIEWER_ROUTE: string = "/select-template-dialog";
+export const FRAGMENT_SWAP_ROUTE: string = "/fragment-swap-dialog";
 
 export const SUPPORTED_CHANNELS = [
   { id: "email", name: "Email" },
@@ -40,4 +44,17 @@ export const APP_METADATA: AppMetadata = {
       autoRefreshApp: true,
     },
   },
+};
+
+// S3 Configuration for Asset Viewer
+// Update these values to point to your S3 bucket
+// The bucket should have the following structure:
+// - /assets/        : original asset files
+// - /thumbnails/    : thumbnail versions of assets
+export const S3_CONFIG = {
+  BUCKET_NAME: "your-s3-bucket",
+  REGION: "us-east-1",
+  // Use this URL template to generate asset URLs:
+  // https://{BUCKET_NAME}.s3.{REGION}.amazonaws.com/assets/{assetName}
+  // For presigned URLs, use the format returned from your backend action
 };
