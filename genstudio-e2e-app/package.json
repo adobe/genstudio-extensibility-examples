@@ -5,7 +5,7 @@
   "description": "GenStudio E2E Test App - registers all extension points for end-to-end testing",
   "dependencies": {
     "@adobe/aio-sdk": "^6.0.0",
-    "@adobe/genstudio-extensibility-sdk": "^4.1.0",
+    "@adobe/genstudio-extensibility-sdk": "^4.6.0",
     "@adobe/uix-guest": "^1.0.0",
     "@aws-sdk/client-s3": "^3.0.0",
     "@aws-sdk/s3-request-presigner": "^3.0.0",

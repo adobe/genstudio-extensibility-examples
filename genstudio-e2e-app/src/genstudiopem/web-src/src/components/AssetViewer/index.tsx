@@ -11,8 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState, useEffect } from "react";
-import { Heading } from "@react-spectrum/s2";
-import { Selection } from "@react-types/shared";
 import {
   SelectContentExtensionService,
   Asset,
@@ -21,92 +19,78 @@ import { useGuestConnection, useExternalDamAssets, useAuth } from "../../hooks";
 import { EXTENSION_ID, EXTENSION_LABEL, ICON_DATA_URI } from "../../Constants";
 
 export default function AssetViewer(): React.JSX.Element {
-  const [selectedAssetIds, setSelectedAssets] = useState<Selection>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const auth = useAuth(guestConnection);
   const { assets, isLoading, error, fetchAssets } = useExternalDamAssets(auth);
 
-  // Fetch assets on component mount
   useEffect(() => {
     fetchAssets();
   }, [fetchAssets]);
 
-  const handleAssetSelect = (assetId: string) => {
-    const newSelection = new Set(selectedAssetIds instanceof Set ? selectedAssetIds : []);
-    if (newSelection.has(assetId)) {
-      newSelection.delete(assetId);
+  const toggleAsset = (asset: Asset) => {
+    const next = new Set(selectedIds);
+    if (next.has(asset.id)) {
+      next.delete(asset.id);
     } else {
-      newSelection.add(assetId);
+      next.add(asset.id);
     }
-    setSelectedAssets(newSelection);
+    setSelectedIds(next);
 
-    // Update host with selected assets
-    if (guestConnection && newSelection.size > 0) {
-      const selectedIds = Array.from(newSelection);
-      const assetsToSend = assets.filter((asset) =>
-        selectedIds.includes(asset.id)
-      ).map((asset) => ({
-        ...asset,
-        extensionInfo: {
-          id: EXTENSION_ID,
-          name: EXTENSION_LABEL,
-          iconUrl: ICON_DATA_URI,
-        },
-      }));
-      try {
-        SelectContentExtensionService.setSelectedAssets(
-          guestConnection,
-          EXTENSION_ID,
-          assetsToSend
-        );
-      } catch (error) {
-        console.warn("Error updating host:", error);
-      }
+    if (guestConnection) {
+      const selected = assets
+        .filter((a) => next.has(a.id))
+        .map((a) => ({
+          ...a,
+          extensionInfo: {
+            id: EXTENSION_ID,
+            name: EXTENSION_LABEL,
+            iconUrl: ICON_DATA_URI,
+          },
+        }));
+      SelectContentExtensionService.setSelectedAssets(
+        guestConnection,
+        EXTENSION_ID,
+        selected
+      );
     }
   };
 
+  if (isLoading) return <div style={{ padding: 20 }}>Loading...</div>;
+  if (error) return <div style={{ padding: 20, color: "red" }}>{error}</div>;
+
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      <Heading level={2}>Select Assets from S3</Heading>
-
-      <div style={{ marginTop: "20px" }}>
-        {isLoading && (
-          <div style={{ color: "#666", fontStyle: "italic" }}>Loading assets...</div>
-        )}
-
-        {error && (
-          <div style={{ color: "#d32f2f", padding: "12px", backgroundColor: "#ffebee", borderRadius: "4px" }}>
-            Error: {error}
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
+        gap: 12,
+        padding: 20,
+      }}
+    >
+      {assets.map((asset) => {
+        const selected = selectedIds.has(asset.id);
+        return (
+          <div
+            key={asset.id}
+            onClick={() => toggleAsset(asset)}
+            style={{
+              border: selected ? "2px solid #0078d4" : "1px solid #ddd",
+              borderRadius: 6,
+              cursor: "pointer",
+              overflow: "hidden",
+              background: selected ? "#e7f3ff" : "#fff",
+            }}
+          >
+            <img
+              src={asset.externalAssetInfo?.signedThumbnailUrl}
+              alt={asset.name}
+              style={{ width: "100%", height: 120, objectFit: "cover" }}
+            />
+            <div style={{ padding: "6px 8px", fontSize: 12 }}>{asset.name}</div>
           </div>
-        )}
-
-        {!isLoading && !error && assets.length === 0 && (
-          <div style={{ color: "#666", fontStyle: "italic" }}>No assets found</div>
-        )}
-
-        {!isLoading && assets.map((asset) => {
-          const isSelected = selectedAssetIds instanceof Set && selectedAssetIds.has(asset.id);
-          return (
-            <div
-              key={asset.id}
-              onClick={() => handleAssetSelect(asset.id)}
-              style={{
-                padding: "12px",
-                marginBottom: "8px",
-                border: isSelected ? "2px solid #0078d4" : "1px solid #ccc",
-                backgroundColor: isSelected ? "#e7f3ff" : "#fff",
-                cursor: "pointer",
-                borderRadius: "4px",
-              }}
-            >
-              <div style={{ fontWeight: "bold" }}>{asset.name}</div>
-              <div style={{ fontSize: "12px", color: "#666" }}>
-                {asset.mimeType} • {(asset.size / 1024).toFixed(0)} KB
-              </div>
-            </div>
-          );
-        })}
-      </div>
+        );
+      })}
     </div>
   );
 }

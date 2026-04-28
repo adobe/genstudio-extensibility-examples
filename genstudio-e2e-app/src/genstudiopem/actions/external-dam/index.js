@@ -18,7 +18,7 @@ const {
   GetObjectCommand,
 } = require("@aws-sdk/client-s3");
 
-async function searchAssets(params) {
+async function main(params) {
   const client = new S3Client({
     credentials: {
       accessKeyId: params.AWS_ACCESS_KEY_ID,
@@ -27,105 +27,36 @@ async function searchAssets(params) {
     region: params.AWS_REGION,
   });
 
-  const bucketName = params.S3_BUCKET_NAME;
+  const bucket = params.S3_BUCKET_NAME;
+  const { Contents = [] } = await client.send(
+    new ListObjectsV2Command({ Bucket: bucket, Prefix: "e2e/dam/" })
+  );
 
-  const getS3PresignedUrl = async (key) => {
-    const getObjCmd = new GetObjectCommand({
-      Bucket: bucketName,
-      Key: key,
-    });
-    return await getSignedUrl(client, getObjCmd, { expiresIn: 3600 });
-  };
-
-  const getThumbnailUrl = async (key) => {
-    const thumbnailKey =
-      "thumbnails/" + key.replace("assets/", "").replace(/\.[^/.]+$/, ".jpg");
-    return await getS3PresignedUrl(thumbnailKey);
-  };
-
-  const listObjectsCmd = new ListObjectsV2Command({
-    Bucket: bucketName,
-    Prefix: "assets/",
-    MaxKeys: 100,
-  });
-
-  const listResult = await client.send(listObjectsCmd);
-
-  const assets = (
-    await Promise.all(
-      listResult?.Contents?.map(async (item) => {
-        if (item.Key.endsWith("/")) return null;
-        const headObjCmd = new HeadObjectCommand({
-          Bucket: bucketName,
-          Key: item.Key,
-        });
-        try {
-          const metadata = await client.send(headObjCmd);
-          const originalUrl = await getS3PresignedUrl(item.Key);
-          const thumbnailUrl = await getThumbnailUrl(item.Key);
-
-          return {
-            id: item.Key,
-            mimeType: metadata.ContentType,
-            name: item.Key.split("/").pop() || "Unknown",
-            size: item.Size,
-            externalAssetInfo: {
-              sourceUrl: originalUrl,
-              signedUrl: originalUrl,
-              signedThumbnailUrl: thumbnailUrl,
-            },
-            keywords: ["S3Asset"],
-          };
-        } catch (error) {
-          console.error(`Error getting metadata for asset ${item.Key}:`, error);
-          return null;
-        }
-      }) || []
-    )
-  ).filter((asset) => asset !== null);
-
-  return {
-    statusCode: 200,
-    body: {
-      assets: assets,
-    },
-  };
-}
-
-async function main(params) {
-  try {
-    // Get AWS credentials from environment or params
-    const awsAccessKeyId = params.AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
-    const awsSecretAccessKey = params.AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
-    const awsRegion = params.AWS_REGION || process.env.AWS_REGION;
-    const s3BucketName = params.S3_BUCKET_NAME || process.env.S3_BUCKET_NAME;
-
-    if (!awsAccessKeyId || !awsSecretAccessKey || !awsRegion || !s3BucketName) {
+  const assets = await Promise.all(
+    Contents.filter((item) => !item.Key.endsWith("/")).map(async (item) => {
+      const [presignedUrl, head] = await Promise.all([
+        getSignedUrl(
+          client,
+          new GetObjectCommand({ Bucket: bucket, Key: item.Key }),
+          { expiresIn: 3600 }
+        ),
+        client.send(new HeadObjectCommand({ Bucket: bucket, Key: item.Key })),
+      ]);
       return {
-        statusCode: 400,
-        body: {
-          error: "Missing AWS credentials (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET_NAME)",
+        id: item.Key,
+        name: item.Key.split("/").pop(),
+        mimeType: head.ContentType,
+        size: item.Size,
+        externalAssetInfo: {
+          sourceUrl: presignedUrl,
+          signedUrl: presignedUrl,
+          signedThumbnailUrl: presignedUrl,
         },
       };
-    }
+    })
+  );
 
-    const result = await searchAssets({
-      AWS_ACCESS_KEY_ID: awsAccessKeyId,
-      AWS_SECRET_ACCESS_KEY: awsSecretAccessKey,
-      AWS_REGION: awsRegion,
-      S3_BUCKET_NAME: s3BucketName,
-    });
-
-    return result;
-  } catch (error) {
-    console.error("Error in search action:", error);
-    return {
-      statusCode: 500,
-      body: {
-        error: error.message || "Internal server error",
-      },
-    };
-  }
+  return { statusCode: 200, body: { assets } };
 }
 
 exports.main = main;

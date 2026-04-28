@@ -46,15 +46,3 @@ export const APP_METADATA: AppMetadata = {
   },
 };
 
-// S3 Configuration for Asset Viewer
-// Update these values to point to your S3 bucket
-// The bucket should have the following structure:
-// - /assets/        : original asset files
-// - /thumbnails/    : thumbnail versions of assets
-export const S3_CONFIG = {
-  BUCKET_NAME: "your-s3-bucket",
-  REGION: "us-east-1",
-  // Use this URL template to generate asset URLs:
-  // https://{BUCKET_NAME}.s3.{REGION}.amazonaws.com/assets/{assetName}
-  // For presigned URLs, use the format returned from your backend action
-};

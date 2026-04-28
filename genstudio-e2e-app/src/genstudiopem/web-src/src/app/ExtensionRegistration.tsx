@@ -35,10 +35,15 @@ import {
   ValidationExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
 import React, { Key } from "react";
+import config from "../config.json";
+import { actionWebInvoke } from "../utils/actionWebInvoke";
 import {
   publishSelectedExperience,
   publishValidationPanelMode,
 } from "../utils/validationBridge";
+
+const UPLOAD_AND_GET_URL_ACTION = "genstudio-e2e-app/upload-and-get-url";
+const UPLOAD_AND_GET_URL_ACTION_URL = (config as any)[UPLOAD_AND_GET_URL_ACTION] as string;
 
 const getAppMetadata = (id: Key): AppMetadata => ({
   ...APP_METADATA,
@@ -152,7 +157,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
             },
           ],
           uploadAndGetUrl: async (
-            _auth: ExtensionAuth,
+            auth: ExtensionAuth,
             asset: Asset
           ): Promise<{
             originalPath: string;
@@ -160,13 +165,17 @@ const ExtensionRegistration = (): React.JSX.Element => {
             thumbnailPath: string;
             thumbnailUrl: string;
           }> => {
-            // Stub implementation for e2e testing — returns asset URLs as-is
-            return {
-              originalPath: asset.name,
-              originalUrl: asset.externalAssetInfo.signedUrl,
-              thumbnailPath: `thumb_${asset.name}`,
-              thumbnailUrl: asset.externalAssetInfo.signedThumbnailUrl,
-            };
+            return await actionWebInvoke(
+              UPLOAD_AND_GET_URL_ACTION_URL,
+              auth.imsToken,
+              auth.imsOrgId,
+              {
+                id: asset.id,
+                name: asset.name,
+                originalUrl: asset.externalAssetInfo.signedUrl,
+                thumbnailUrl: asset.externalAssetInfo.signedThumbnailUrl,
+              }
+            );
           },
         },
 
@@ -212,29 +221,6 @@ const ExtensionRegistration = (): React.JSX.Element => {
             {
               url: `#${FRAGMENT_SWAP_ROUTE}`,
               metadata: getSecondaryMetadata(id, "Swap B"),
-            },
-          ],
-        },
-
-        selectDAMExtension: {
-          getToggles: async (id: string): Promise<Toggle[]> => [
-            {
-              metadata: getAppMetadata(id),
-              onClick: async () => {},
-            },
-            {
-              metadata: getSecondaryMetadata(id, "DAM B"),
-              onClick: async () => {},
-            },
-          ],
-          getApps: async (id: string): Promise<App[]> => [
-            {
-              url: `#${ASSET_VIEWER_ROUTE}`,
-              metadata: getAppMetadata(id),
-            },
-            {
-              url: `#${ASSET_VIEWER_ROUTE}`,
-              metadata: getSecondaryMetadata(id, "DAM B"),
             },
           ],
         },
