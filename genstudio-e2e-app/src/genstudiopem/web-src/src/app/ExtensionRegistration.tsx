@@ -65,8 +65,36 @@ const getSecondaryMetadata = (id: Key, labelSuffix: string): AppMetadata => ({
   label: `${APP_METADATA.label} - ${labelSuffix}`,
 });
 
+const getRuntimeTemplateConfig = (): {
+  disableTemplateExtension: boolean;
+  templateViewerUrlSuffix: string;
+} => {
+  const url = new URL(window.location.href);
+  const hashQuery = url.hash.includes("?") ? url.hash.split("?")[1] : "";
+  const hashParams = new URLSearchParams(hashQuery);
+
+  const readParam = (name: string): string | null =>
+    hashParams.get(name) ?? url.searchParams.get(name);
+
+  const extValue = (readParam("ext") ?? "").toLowerCase();
+  const disableTemplateExtension = extValue === "off" || extValue === "none" || extValue === "disabled";
+
+  const fixture = readParam("fixture") ?? readParam("scenario");
+  const params = new URLSearchParams();
+  if (fixture) {
+    params.set("fixture", fixture);
+  }
+
+  const suffix = params.toString();
+  return {
+    disableTemplateExtension,
+    templateViewerUrlSuffix: suffix ? `?${suffix}` : "",
+  };
+};
+
 const ExtensionRegistration = (): React.JSX.Element => {
   const init = async (): Promise<void> => {
+    const templateConfig = getRuntimeTemplateConfig();
     const guestConnection = await register({
       id: EXTENSION_ID,
       methods: {
@@ -180,26 +208,30 @@ const ExtensionRegistration = (): React.JSX.Element => {
         },
 
         importTemplateExtension: {
-          getToggles: async (id: string): Promise<Toggle[]> => [
-            {
-              metadata: getAppMetadata(id),
-              onClick: async () => {},
-            },
-            {
-              metadata: getSecondaryMetadata(id, "Template B"),
-              onClick: async () => {},
-            },
-          ],
-          getApps: async (id: string): Promise<App[]> => [
-            {
-              url: `#${TEMPLATE_VIEWER_ROUTE}`,
-              metadata: getAppMetadata(id),
-            },
-            {
-              url: `#${TEMPLATE_VIEWER_ROUTE}`,
-              metadata: getSecondaryMetadata(id, "Template B"),
-            },
-          ],
+          getToggles: async (id: string): Promise<Toggle[]> => {
+            if (templateConfig.disableTemplateExtension) {
+              return [];
+            }
+
+            return [
+              {
+                metadata: getAppMetadata(id),
+                onClick: async () => {},
+              },
+            ];
+          },
+          getApps: async (id: string): Promise<App[]> => {
+            if (templateConfig.disableTemplateExtension) {
+              return [];
+            }
+
+            return [
+              {
+                url: `#${TEMPLATE_VIEWER_ROUTE}${templateConfig.templateViewerUrlSuffix}`,
+                metadata: getAppMetadata(id),
+              },
+            ];
+          },
         },
 
         fragmentSwapExtension: {

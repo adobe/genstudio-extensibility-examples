@@ -20,12 +20,63 @@ import {
 import { useGuestConnection, useAuth } from "../../hooks";
 import { EXTENSION_ID, EXTENSION_LABEL } from "../../Constants";
 
+type FixtureMode = "basic" | "ac4" | "ac5" | "errors" | "all";
+
+const parseRuntimeFixtureMode = (): FixtureMode => {
+  const url = new URL(window.location.href);
+  const hashQuery = url.hash.includes("?") ? url.hash.split("?")[1] : "";
+  const hashParams = new URLSearchParams(hashQuery);
+  const fixtureParam =
+    hashParams.get("fixture") ??
+    hashParams.get("scenario") ??
+    url.searchParams.get("fixture") ??
+    url.searchParams.get("scenario") ??
+    "all";
+
+  const normalized = fixtureParam.toLowerCase();
+  if (normalized === "ac4" || normalized === "ac5" || normalized === "errors" || normalized === "all") {
+    return normalized;
+  }
+  return "all";
+};
+
 const COMMON_MAPPING: Mapping = {
   head: "headline",
+  head1: "headline",
+  head2: "headline",
   subhead: "sub_headline",
+  subhead1: "sub_headline",
+  subhead2: "sub_headline",
   content: "body",
   content1: "body",
+  content2: "body",
   btn: "cta",
+  btn1: "cta",
+  btn2: "cta",
+  pod1_head: "headline",
+  pod1_head1: "headline",
+  pod1_head2: "headline",
+  pod1_subhead: "sub_headline",
+  pod1_subhead1: "sub_headline",
+  pod1_subhead2: "sub_headline",
+  pod1_content: "body",
+  pod1_content1: "body",
+  pod1_content2: "body",
+  pod1_btn: "cta",
+  pod1_btn1: "cta",
+  pod1_btn2: "cta",
+  pod2_head: "headline",
+  pod2_head1: "headline",
+  pod2_head2: "headline",
+  pod2_subhead: "sub_headline",
+  pod2_subhead1: "sub_headline",
+  pod2_subhead2: "sub_headline",
+  pod2_content: "body",
+  pod2_content1: "body",
+  pod2_content2: "body",
+  pod2_btn: "cta",
+  pod2_btn1: "cta",
+  pod2_btn2: "cta",
 };
 
 const buildStyles = (accent: string): string => `
@@ -64,26 +115,6 @@ const templateA = `<!DOCTYPE html>
   </body>
 </html>`;
 
-const templateB = `<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>E2E Template B</title>
-    <style>${buildStyles("#2D9D5F")}</style>
-  </head>
-  <body>
-    <div class="email-container" data-variant="B">
-      <div class="variant-label">E2E Template B — With Banner</div>
-      <div class="banner"><img src="{{image}}" alt="Banner" /></div>
-      <div class="head"><h1>{{head}}</h1></div>
-      <div class="subhead">{{subhead}}</div>
-      <div class="content"><p>{{content}}</p></div>
-      <div class="cta"><a href="{{link}}">{{btn}}</a></div>
-      <div class="footer">E2E Test App — Variant B</div>
-    </div>
-  </body>
-</html>`;
-
 const templateC = `<!DOCTYPE html>
 <html>
   <head>
@@ -108,19 +139,112 @@ const templateC = `<!DOCTYPE html>
   </body>
 </html>`;
 
-const MOCK_TEMPLATES: Template[] = [
+const templateNoPodDuplicateFields = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>E2E Template No Pod Duplicate</title>
+    <style>${buildStyles("#0F8B8D")}</style>
+  </head>
+  <body>
+    <div class="email-container" data-variant="NoPodDuplicate">
+      <div class="variant-label">E2E Template — No Pod Duplicate Fields</div>
+      <div class="banner"><img src="{{image}}" alt="Banner" /></div>
+      <div class="head">
+        <h1>{{head}}</h1>
+        <h1>{{head1}}</h1>
+      </div>
+      <div class="subhead">{{subhead}}</div>
+      <div class="content">
+        <p>{{content}}</p>
+        <p>{{content1}}</p>
+      </div>
+      <div class="cta"><a href="{{link}}">{{btn}}</a></div>
+      <div class="footer">E2E Test App — AC4 Duplicate Fields</div>
+    </div>
+  </body>
+</html>`;
+
+const templateTwoPods = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>E2E Template Two Pods</title>
+    <style>${buildStyles("#8C5AE6")}</style>
+  </head>
+  <body>
+    <div class="email-container" data-variant="TwoPods">
+      <div class="variant-label">E2E Template — Two Pods</div>
+      <div class="preheader">{{pre_header}}</div>
+      <div class="content">
+        <h2>Pod 1</h2>
+        <p><strong>{{pod1_head}}</strong></p>
+        <p>{{pod1_subhead}}</p>
+        <p>{{pod1_content}}</p>
+        <div class="cta"><a href="{{pod1_link}}">{{pod1_btn}}</a></div>
+      </div>
+      <div class="content">
+        <h2>Pod 2</h2>
+        <p><strong>{{pod2_head}}</strong></p>
+        <p>{{pod2_subhead}}</p>
+        <p>{{pod2_content}}</p>
+        <div class="cta"><a href="{{pod2_link}}">{{pod2_btn}}</a></div>
+      </div>
+      <div class="footer">E2E Test App — AC4 Multi Pod</div>
+    </div>
+  </body>
+</html>`;
+
+const templateTwoPodsDuplicateFields = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>E2E Template Two Pods Duplicate</title>
+    <style>${buildStyles("#A63D40")}</style>
+  </head>
+  <body>
+    <div class="email-container" data-variant="TwoPodsDuplicate">
+      <div class="variant-label">E2E Template — Two Pods Duplicate Fields</div>
+      <div class="content">
+        <h2>Pod 1</h2>
+        <p><strong>{{pod1_head}}</strong></p>
+        <p><strong>{{pod1_head1}}</strong></p>
+        <p>{{pod1_content}}</p>
+        <p>{{pod1_content1}}</p>
+      </div>
+      <div class="content">
+        <h2>Pod 2</h2>
+        <p><strong>{{pod2_head}}</strong></p>
+        <p><strong>{{pod2_head1}}</strong></p>
+        <p>{{pod2_subhead}}</p>
+        <p>{{pod2_subhead1}}</p>
+        <p>{{pod2_content}}</p>
+      </div>
+      <div class="footer">E2E Test App — AC4 Multi Pod Duplicate Fields</div>
+    </div>
+  </body>
+</html>`;
+
+const templateInvalidHtml = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>E2E Template Invalid HTML</title>
+  </head>
+  <body>
+    <div class="email-container">
+      <h1>{{head}}</h1>
+      <p>{{content}}</p>
+      <div>{{missing_close_tag}
+  </body>
+</html>`;
+
+const BASE_TEMPLATES: Template[] = [
   {
     id: "e2e-template-a",
     title: "E2E Template A",
     source: EXTENSION_LABEL,
     content: templateA,
-    mapping: COMMON_MAPPING,
-  },
-  {
-    id: "e2e-template-b",
-    title: "E2E Template B",
-    source: EXTENSION_LABEL,
-    content: templateB,
     mapping: COMMON_MAPPING,
   },
   {
@@ -132,9 +256,97 @@ const MOCK_TEMPLATES: Template[] = [
   },
 ];
 
+const AC4_TEMPLATES: Template[] = [
+  {
+    id: "e2e-template-no-pod-duplicate-fields",
+    title: "E2E Template No Pod Duplicate Fields",
+    source: EXTENSION_LABEL,
+    content: templateNoPodDuplicateFields,
+    mapping: COMMON_MAPPING,
+    additionalMetadata: {
+      scenario: "ac4",
+      duplicateFields: true,
+      multiPod: false,
+    },
+  },
+  {
+    id: "e2e-template-two-pods",
+    title: "E2E Template Two Pods",
+    source: EXTENSION_LABEL,
+    content: templateTwoPods,
+    mapping: COMMON_MAPPING,
+    additionalMetadata: {
+      scenario: "ac4",
+      duplicateFields: false,
+      multiPod: true,
+    },
+  },
+  {
+    id: "e2e-template-two-pods-duplicate-fields",
+    title: "E2E Template Two Pods Duplicate Fields",
+    source: EXTENSION_LABEL,
+    content: templateTwoPodsDuplicateFields,
+    mapping: COMMON_MAPPING,
+    additionalMetadata: {
+      scenario: "ac4",
+      duplicateFields: true,
+      multiPod: true,
+    },
+  },
+];
+
+const AC5_TEMPLATES: Template[] = [
+  {
+    id: "e2e-template-ac5-metadata",
+    title: "E2E Template AC5 Metadata",
+    source: EXTENSION_LABEL,
+    content: templateA,
+    mapping: COMMON_MAPPING,
+    additionalMetadata: {
+      scenario: "ac5",
+      validationTag: "ac5-metadata-propagation",
+      pods: 1,
+      channelHints: ["email", "meta", "meta-hz"],
+      sourceSystem: "extension-e2e-app",
+    },
+  },
+];
+
+const ERROR_TEMPLATES: Template[] = [
+  {
+    id: "e2e-template-invalid-html",
+    title: "E2E Template Invalid HTML",
+    source: EXTENSION_LABEL,
+    content: templateInvalidHtml,
+    mapping: COMMON_MAPPING,
+    additionalMetadata: {
+      scenario: "errors",
+      expectedError: "parse-failure",
+    },
+  },
+];
+
+const getTemplatesByFixtureMode = (mode: FixtureMode): Template[] => {
+  switch (mode) {
+    case "ac4":
+      return [...BASE_TEMPLATES, ...AC4_TEMPLATES];
+    case "ac5":
+      return [...BASE_TEMPLATES, ...AC5_TEMPLATES];
+    case "errors":
+      return [...BASE_TEMPLATES, ...ERROR_TEMPLATES];
+    case "all":
+      return [...BASE_TEMPLATES, ...AC4_TEMPLATES, ...AC5_TEMPLATES, ...ERROR_TEMPLATES];
+    case "basic":
+    default:
+      return BASE_TEMPLATES;
+  }
+};
+
 export default function TemplateViewer(): React.JSX.Element {
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const auth = useAuth(guestConnection);
+  const fixtureMode = parseRuntimeFixtureMode();
+  const templates = getTemplatesByFixtureMode(fixtureMode);
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | undefined>(undefined);
 
@@ -157,11 +369,15 @@ export default function TemplateViewer(): React.JSX.Element {
       {ready ? (
         <div
           data-testid="template-viewer-ready"
+          data-template-fixture-mode={fixtureMode}
           role="list"
           aria-label="E2E Templates"
           style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px" }}
         >
-          {MOCK_TEMPLATES.map((t) => (
+          <div data-testid={`template-fixture-mode-${fixtureMode}`} style={{ fontSize: "12px", color: "#666" }}>
+            Fixture mode: {fixtureMode}
+          </div>
+          {templates.map((t) => (
             <button
               key={t.id}
               type="button"
@@ -169,6 +385,7 @@ export default function TemplateViewer(): React.JSX.Element {
               data-testid={`template-card-${t.id}`}
               data-template-id={t.id}
               data-template-name={t.title}
+              data-template-scenario={(t.additionalMetadata as any)?.scenario ?? "basic"}
               aria-pressed={selectedId === t.id}
               onClick={() => handleTemplateClick(t)}
               style={{

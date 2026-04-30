@@ -30,6 +30,8 @@ export const FRAGMENT_SWAP_ROUTE: string = "/fragment-swap-dialog";
 export const SUPPORTED_CHANNELS = [
   { id: "email", name: "Email" },
   { id: "meta", name: "Meta" },
+  { id: "meta-hz", name: "Meta HZ" },
+  { id: "meta_hz", name: "Meta HZ" },
 ];
 
 export const APP_METADATA: AppMetadata = {
