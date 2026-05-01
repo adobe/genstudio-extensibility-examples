@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   SelectContentExtensionService,
   Asset,
@@ -20,6 +20,8 @@ import { EXTENSION_ID, EXTENSION_LABEL, ICON_DATA_URI } from "../../Constants";
 
 export default function AssetViewer(): React.JSX.Element {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectionLimit, setSelectionLimit] = useState<number>(4);
+  const [hostSelectedAssets, setHostSelectedAssets] = useState<Asset[]>([]);
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const auth = useAuth(guestConnection);
   const { assets, isLoading, error, fetchAssets } = useExternalDamAssets(auth);
@@ -28,18 +30,49 @@ export default function AssetViewer(): React.JSX.Element {
     fetchAssets();
   }, [fetchAssets]);
 
-  const toggleAsset = (asset: Asset) => {
+  const syncHostSelection = useCallback(async () => {
+    if (!guestConnection) return;
+
+    try {
+      const { selectedAssets, selectionLimit } =
+        await SelectContentExtensionService.sync(guestConnection, EXTENSION_ID);
+
+      if (typeof selectionLimit === "number" && selectionLimit > 0) {
+        setSelectionLimit(selectionLimit);
+      }
+
+      const extensionAssets = (selectedAssets || []).filter(
+        (selectedAsset) => selectedAsset.extensionInfo?.id === EXTENSION_ID
+      );
+      setHostSelectedAssets(extensionAssets);
+      setSelectedIds(new Set(extensionAssets.map((selectedAsset) => selectedAsset.id)));
+    } catch (syncError) {
+      console.warn("Failed to sync selected assets from host:", syncError);
+    }
+  }, [guestConnection]);
+
+  useEffect(() => {
+    syncHostSelection();
+  }, [syncHostSelection]);
+
+  const toggleAsset = async (asset: Asset) => {
     const next = new Set(selectedIds);
     if (next.has(asset.id)) {
       next.delete(asset.id);
     } else {
+      if (next.size >= selectionLimit) return;
       next.add(asset.id);
     }
     setSelectedIds(next);
 
     if (guestConnection) {
-      const selected = assets
-        .filter((a) => next.has(a.id))
+      const selectedById = new Map<string, Asset>();
+      hostSelectedAssets.forEach((hostAsset) => selectedById.set(hostAsset.id, hostAsset));
+      assets.forEach((listedAsset) => selectedById.set(listedAsset.id, listedAsset));
+
+      const selected = Array.from(next)
+        .map((id) => selectedById.get(id))
+        .filter((selectedAsset): selectedAsset is Asset => Boolean(selectedAsset))
         .map((a) => ({
           ...a,
           extensionInfo: {
@@ -48,11 +81,17 @@ export default function AssetViewer(): React.JSX.Element {
             iconUrl: ICON_DATA_URI,
           },
         }));
-      SelectContentExtensionService.setSelectedAssets(
-        guestConnection,
-        EXTENSION_ID,
-        selected
-      );
+      try {
+        await SelectContentExtensionService.setSelectedAssets(
+          guestConnection,
+          EXTENSION_ID,
+          selected
+        );
+        setHostSelectedAssets(selected);
+        await syncHostSelection();
+      } catch (setSelectionError) {
+        console.warn("Failed to update selected assets:", setSelectionError);
+      }
     }
   };
 
@@ -70,6 +109,10 @@ export default function AssetViewer(): React.JSX.Element {
     >
       {assets.map((asset) => {
         const selected = selectedIds.has(asset.id);
+        const isVideo = asset.mimeType?.startsWith("video/");
+        const previewUrl =
+          asset.externalAssetInfo?.signedThumbnailUrl ||
+          asset.externalAssetInfo?.signedUrl;
         return (
           <div
             key={asset.id}
@@ -82,11 +125,21 @@ export default function AssetViewer(): React.JSX.Element {
               background: selected ? "#e7f3ff" : "#fff",
             }}
           >
-            <img
-              src={asset.externalAssetInfo?.signedThumbnailUrl}
-              alt={asset.name}
-              style={{ width: "100%", height: 120, objectFit: "cover" }}
-            />
+            {isVideo ? (
+              <video
+                src={previewUrl}
+                style={{ width: "100%", height: 120, objectFit: "cover" }}
+                muted
+                playsInline
+                preload="metadata"
+              />
+            ) : (
+              <img
+                src={previewUrl}
+                alt={asset.name}
+                style={{ width: "100%", height: 120, objectFit: "cover" }}
+              />
+            )}
             <div style={{ padding: "6px 8px", fontSize: 12 }}>{asset.name}</div>
           </div>
         );
