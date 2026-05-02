@@ -62,6 +62,7 @@ export default function PromptDialog(): React.JSX.Element {
   const [generationContext, setGenerationContext] =
     useState<GenerationContext | null>(null);
   const [contextError, setContextError] = useState<string | null>(null);
+  const [isSavingClaims, setIsSavingClaims] = useState(false);
 
   useEffect(() => {
     const loadContext = async () => {
@@ -115,23 +116,25 @@ export default function PromptDialog(): React.JSX.Element {
 
   const handleOK = async () => {
     if (!guestConnection) return;
-    // additionalContextValues must be JSON-stringified before sending to host.
-    // The host uses these strings to deserialize, count selected claims,
-    // and update the "Select claims" dropdown label. If sent as raw objects,
-    // the host can't parse them → label never updates.
-    const claimsContext: AdditionalContext<string> = {
+    const claimsContext: AdditionalContext<Claim> = {
       extensionId: EXTENSION_ID,
       additionalContextType: AdditionalContextTypes.Claims,
-      additionalContextValues: selectedClaims.map((claim) => JSON.stringify(claim)),
+      additionalContextValues: selectedClaims,
     };
-    // First persist the selected claims into the host's generation context …
-    PromptExtensionService.updateAdditionalContext(guestConnection, claimsContext as any);
-    // … then close the dialog so the host refreshes its claims count/label in the
-    // prompt drawer. Without this close() the host never receives the "done" signal
-    // and the add-on button label stays at the default "Select Claims" state even
-    // though the context was saved (which is why reopening the dialog still shows
-    // the preselected values — they were persisted, just never surfaced to the UI).
-    PromptExtensionService.close(guestConnection);
+    try {
+      setIsSavingClaims(true);
+      // Persist claims before closing so the host does not race with generate.
+      await PromptExtensionService.updateAdditionalContext(
+        guestConnection,
+        claimsContext as any,
+      );
+      PromptExtensionService.close(guestConnection);
+    } catch (error) {
+      console.error("Failed to persist selected claims", error);
+      setContextError("Failed to save selected claims. Please try again.");
+    } finally {
+      setIsSavingClaims(false);
+    }
   };
 
   const sharedAuth = guestConnection?.sharedContext?.get("auth") || {};
@@ -201,10 +204,20 @@ export default function PromptDialog(): React.JSX.Element {
             ))}
           </div>
           <ButtonGroup>
-            <Button data-testid="claim-cancel-button" variant="secondary" onPress={handleCancel}>
+            <Button
+              data-testid="claim-cancel-button"
+              variant="secondary"
+              onPress={handleCancel}
+              isDisabled={isSavingClaims}
+            >
               Cancel
             </Button>
-            <Button data-testid="claim-ok-button" variant="primary" onPress={handleOK}>
+            <Button
+              data-testid="claim-ok-button"
+              variant="primary"
+              onPress={handleOK}
+              isDisabled={isSavingClaims}
+            >
               OK
             </Button>
           </ButtonGroup>

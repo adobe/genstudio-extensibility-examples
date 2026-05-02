@@ -49,6 +49,31 @@ type ClaimContextValue = {
   description: string;
 };
 
+function parseClaimContextValue(value: unknown): ClaimContextValue | null {
+  if (!value) return null;
+
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      if (parsed && typeof parsed.description === "string") {
+        return parsed as ClaimContextValue;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  if (typeof value === "object" && value !== null) {
+    const candidate = value as Partial<ClaimContextValue>;
+    if (typeof candidate.description === "string") {
+      return candidate as ClaimContextValue;
+    }
+  }
+
+  return null;
+}
+
 const MAX_CHARACTER_LIMITS: Record<string, number> = {
   header: 80,
   pre_header: 100,
@@ -64,15 +89,17 @@ function extractClaimDescriptions(context: GenerationContext | null): string[] {
   const topLevelClaims = (context.additionalContexts || [])
     .filter((item) => item.additionalContextType === AdditionalContextTypes.Claims)
     .flatMap((item) => item.additionalContextValues || [])
-    .map((item) => (item as ClaimContextValue).description)
-    .filter(Boolean);
+    .map(parseClaimContextValue)
+    .filter((item): item is ClaimContextValue => Boolean(item))
+    .map((item) => item.description);
 
   const sectionClaims = (context.sections || [])
     .flatMap((section) => section.additionalContexts || [])
     .filter((item) => item.additionalContextType === AdditionalContextTypes.Claims)
     .flatMap((item) => item.additionalContextValues || [])
-    .map((item) => (item as ClaimContextValue).description)
-    .filter(Boolean);
+    .map(parseClaimContextValue)
+    .filter((item): item is ClaimContextValue => Boolean(item))
+    .map((item) => item.description);
 
   return [...new Set([...topLevelClaims, ...sectionClaims])];
 }
@@ -218,6 +245,19 @@ export default function ValidationPanel(): React.JSX.Element {
 
   useEffect(() => {
     return subscribeToValidationPanelMode(setPanelMode);
+  }, []);
+
+  // Fallback for environments where storage/custom events do not reliably
+  // propagate between host/guest frames while toggling validation apps.
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      const nextMode = readValidationPanelMode();
+      setPanelMode((currentMode) =>
+        currentMode === nextMode ? currentMode : nextMode,
+      );
+    }, 250);
+
+    return () => window.clearInterval(intervalId);
   }, []);
 
   const guestConnection = useGuestConnection(EXTENSION_ID);

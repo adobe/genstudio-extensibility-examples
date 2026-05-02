@@ -20,6 +20,7 @@ import {
   EXTENSION_ID,
   APP_METADATA,
   VALIDATION_PANEL_ROUTE,
+  CREATE_VALIDATION_PANEL_ROUTE,
   PROMPT_DIALOG_ROUTE,
   ASSET_VIEWER_ROUTE,
   TEMPLATE_VIEWER_ROUTE,
@@ -44,18 +45,32 @@ import {
 
 const UPLOAD_AND_GET_URL_ACTION = "genstudio-e2e-app/upload-and-get-url";
 const UPLOAD_AND_GET_URL_ACTION_URL = (config as any)[UPLOAD_AND_GET_URL_ACTION] as string;
+const CREATE_VALIDATION_SUFFIX = "-create-validation";
+
+const getBaseValidationAppId = (id: Key): string => {
+  const value = id.toString();
+  return value.endsWith(CREATE_VALIDATION_SUFFIX)
+    ? value.slice(0, -CREATE_VALIDATION_SUFFIX.length)
+    : value;
+};
 
 const getAppMetadata = (id: Key): AppMetadata => ({
   ...APP_METADATA,
-  id: id.toString(),
+  id: getBaseValidationAppId(id),
 });
+
+const getCreateValidationAppId = (id: Key): string =>
+  `${getBaseValidationAppId(id)}${CREATE_VALIDATION_SUFFIX}`;
 
 const getCreateValidationMetadata = (id: Key): AppMetadata => ({
   ...APP_METADATA,
-  id: `${id.toString()}-create-validation`,
+  id: getCreateValidationAppId(id),
   label: "E2E - Create Validation",
   options: {
-    validation: {},
+    validation: {
+      singleExperienceViewMode: false,
+      autoRefreshApp: false,
+    },
   },
 });
 
@@ -99,35 +114,35 @@ const ExtensionRegistration = (): React.JSX.Element => {
       id: EXTENSION_ID,
       methods: {
         validationExtension: {
-          getToggles: async (id: string): Promise<Toggle[]> => [
-            {
-              metadata: getAppMetadata(id),
-              onClick: async () => {
-                // Must open with the registered extension ID (EXTENSION_ID).
-                // host.guests is keyed by the manifest-registered ID only.
-                // Using any other ID causes host.guests.get() to return
-                // undefined → crash in GuestUIFrame.
-                publishValidationPanelMode("mlr");
-                ValidationExtensionService.open(guestConnection, id);
+          getToggles: async (id: string): Promise<Toggle[]> => {
+            const mlrMetadata = getAppMetadata(id);
+            const createValidationMetadata = getCreateValidationMetadata(id);
+
+            return [
+              {
+                metadata: mlrMetadata,
+                onClick: async () => {
+                  publishValidationPanelMode("mlr");
+                  await ValidationExtensionService.open(guestConnection, id);
+                },
               },
-            },
-            {
-              metadata: getCreateValidationMetadata(id),
-              onClick: async () => {
-                // Also opens with EXTENSION_ID (same as toggle 1) so the
-                // guest connection resolves. The mode bridge switches the
-                // panel content to create-validation view.
-                publishValidationPanelMode("create-validation");
-                ValidationExtensionService.open(guestConnection, id);
+              {
+                metadata: createValidationMetadata,
+                onClick: async () => {
+                  publishValidationPanelMode("create-validation");
+                  await ValidationExtensionService.open(guestConnection, id);
+                },
               },
-            },
-          ],
+            ];
+          },
           getApps: async (id: string): Promise<App[]> => [
             {
-              // Single app — both toggles load this URL.
-              // Content is switched via the mode bridge.
               url: `#${VALIDATION_PANEL_ROUTE}`,
               metadata: getAppMetadata(id),
+            },
+            {
+              url: `#${CREATE_VALIDATION_PANEL_ROUTE}`,
+              metadata: getCreateValidationMetadata(id),
             },
           ],
           handleSelectedExperienceChange: async (experienceId: string) => {
