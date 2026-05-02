@@ -21,7 +21,6 @@ import {
   APP_METADATA,
   VALIDATION_PANEL_ROUTE,
   PROMPT_DIALOG_ROUTE,
-  FRAGMENT_SWAP_DIALOG_ROUTE,
 } from "../Constants";
 import {
   App,
@@ -85,24 +84,6 @@ const ExtensionRegistration = (): React.JSX.Element => {
               {
                 metadata: getAppMetadata(id),
                 url: `#${PROMPT_DIALOG_ROUTE}`,
-              },
-            ];
-          },
-        },
-        fragmentSwapExtension: {
-          getToggles: async (id: string): Promise<Toggle[]> => {
-            return [
-              {
-                metadata: getAppMetadata(id),
-                onClick: async () => {},
-              },
-            ];
-          },
-          getApps(id: string): App[] {
-            return [
-              {
-                metadata: getAppMetadata(id),
-                url: `#${FRAGMENT_SWAP_DIALOG_ROUTE}`,
               },
             ];
           },

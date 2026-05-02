@@ -19,15 +19,11 @@ import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
 
 interface ViolationEntryProps {
   item: Violation;
-  rawFieldName?: string;
-  onApplyApprovedClaim?: (rawFieldName: string, approvedClaimText: string) => void;
 }
 
-export default function ViolationEntry({ item, rawFieldName, onApplyApprovedClaim }: ViolationEntryProps) {
+export default function ViolationEntry({ item }: ViolationEntryProps) {
   const handleCopyPress = (violation: string) =>
     copyToClipboard(violation.split("Violated claim:")[1].trim());
-
-  const canApply = item.approvedClaimText && rawFieldName && onApplyApprovedClaim;
 
   return (
     <div key={item.violation}>
@@ -49,15 +45,14 @@ export default function ViolationEntry({ item, rawFieldName, onApplyApprovedClai
           ⚠️
         </span>
         <p className={style({ font: "body-sm" })}>{item.violation}</p>
-        <span
-          style={{
-            display: "flex",
-            alignItems: "center",
-            height: "100%",
-            gap: "0.25rem",
-          }}
-        >
-          {item.violation!.includes(CLAIM_VIOLATION_PREFIX) && (
+        {item.violation!.includes(CLAIM_VIOLATION_PREFIX) && (
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              height: "100%"
+            }}
+          >
             <Button
               variant="secondary"
               size="S"
@@ -65,17 +60,8 @@ export default function ViolationEntry({ item, rawFieldName, onApplyApprovedClai
             >
               Copy
             </Button>
-          )}
-          {canApply && (
-            <Button
-              variant="accent"
-              size="S"
-              onPress={() => onApplyApprovedClaim!(rawFieldName!, item.approvedClaimText!)}
-            >
-              Apply
-            </Button>
-          )}
-        </span>
+          </span>
+        )}
       </div>
     </div>
   );

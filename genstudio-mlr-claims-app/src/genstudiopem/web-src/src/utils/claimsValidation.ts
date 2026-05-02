@@ -59,7 +59,6 @@ function checkClaim(text: string, claim: string): Violation {
     ? {
         status: VIOLATION_STATUS.Violated,
         violation: CLAIM_VIOLATION_PREFIX + claim,
-        approvedClaimText: claim,
       }
     : { status: VIOLATION_STATUS.N_A };
 }
@@ -106,19 +105,3 @@ export const validateClaims = (
 
   return result;
 };
-
-/**
- * Replaces a violated claim in a field value with the approved claim text.
- * Builds a regex from the approved claim where number sequences become \d+ wildcards,
- * then replaces the first match in fieldValue. If the field text is a partial use of
- * the claim (reverse match), replaces the entire field value with the approved claim.
- */
-export function replaceViolatedClaim(
-  fieldValue: string,
-  approvedClaimText: string,
-): string {
-  const escaped = approvedClaimText.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const pattern = escaped.replace(/\d+/g, "\\d+");
-  const regex = new RegExp(pattern, "i");
-  return fieldValue.replace(regex, approvedClaimText);
-}

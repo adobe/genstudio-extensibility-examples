@@ -20,12 +20,11 @@ import Pod from "./Pod";
 import ExperienceSelector from "./ExperienceSelector";
 
 interface ResultProps {
-  claims: ClaimResults[];
+  claims: ClaimResults[]; // or define a more specific type
   experienceNumber: number;
-  onApplyApprovedClaim?: (rawFieldName: string, approvedClaimText: string) => void;
 }
 
-export default function Result({ claims, experienceNumber, onApplyApprovedClaim }: ResultProps) {
+export default function Result({ claims, experienceNumber }: ResultProps) {
   // Count total issues
   const totalIssues = Object.values(claims[experienceNumber])
     .flat()
@@ -33,16 +32,13 @@ export default function Result({ claims, experienceNumber, onApplyApprovedClaim 
       (violation: Violation) => violation.status === VIOLATION_STATUS.Violated
     ).length;
 
-  // Group violations by pod and field, and build a mapping from stripped field names to raw names
+  // Group violations by pod and field
   const violationsByPodAndField: Record<string, ClaimResults> = {};
-  const rawFieldNameMap: Record<string, Record<string, string>> = {};
   for (const rawField of Object.keys(claims[experienceNumber])) {
     const field = removePodPrefix(rawField);
     const pod = extractPodNumber(rawField);
     if (!violationsByPodAndField[pod]) violationsByPodAndField[pod] = {};
-    if (!rawFieldNameMap[pod]) rawFieldNameMap[pod] = {};
     violationsByPodAndField[pod][field] = claims[experienceNumber][rawField];
-    rawFieldNameMap[pod][field] = rawField;
   }
 
   const podNumbers = Object.keys(violationsByPodAndField);
@@ -58,8 +54,6 @@ export default function Result({ claims, experienceNumber, onApplyApprovedClaim 
           <Pod
             podNumber={podNumber}
             violations={violationsByPodAndField[podNumber]}
-            rawFieldNameMap={rawFieldNameMap[podNumber]}
-            onApplyApprovedClaim={onApplyApprovedClaim}
           />
           {index < podNumbers.length - 1 && (
             <div style={{ marginLeft: "2rem", marginRight: "2rem" }}>
