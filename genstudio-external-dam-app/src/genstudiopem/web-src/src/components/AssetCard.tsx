@@ -30,10 +30,7 @@ const formatMimeType = (mimeType: string) => {
 };
 
 export function AssetCard({ asset }: { asset: Asset }) {
-  const previewUrl =
-    asset.externalAssetInfo?.signedThumbnailUrl ||
-    asset.externalAssetInfo?.signedUrl;
-  const isVideo = asset.mimeType?.startsWith("video/");
+  const thumbnailUrl = asset.externalAssetInfo?.signedThumbnailUrl;
   const size = formatFileSize(asset.size);
   const mimeType = formatMimeType(asset.mimeType);
   return (
@@ -41,30 +38,15 @@ export function AssetCard({ asset }: { asset: Asset }) {
       {() => (
         <>
           <CardPreview>
-            {isVideo ? (
-              <video
-                src={previewUrl}
-                style={{
-                  width: "100%",
-                  pointerEvents: "none",
-                  aspectRatio: "4/3",
-                  objectFit: "cover",
-                }}
-                muted
-                playsInline
-                preload="metadata"
-              />
-            ) : (
-              <Image
-                src={previewUrl}
-                styles={style({
-                  width: "full",
-                  pointerEvents: "none",
-                  aspectRatio: "4/3",
-                  objectFit: "cover",
-                })}
-              />
-            )}
+            <Image
+              src={thumbnailUrl}
+              styles={style({
+                width: "full",
+                pointerEvents: "none",
+                aspectRatio: "4/3",
+                objectFit: "cover",
+              })}
+            />
           </CardPreview>
           <Content>
             <Text slot="title">{asset.name}</Text>
