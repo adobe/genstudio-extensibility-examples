@@ -19,12 +19,12 @@ import { register } from "@adobe/uix-guest";
 import {
   EXTENSION_ID,
   APP_METADATA,
-  VALIDATION_PANEL_ROUTE,
-  CREATE_VALIDATION_PANEL_ROUTE,
-  PROMPT_DIALOG_ROUTE,
-  ASSET_VIEWER_ROUTE,
-  TEMPLATE_VIEWER_ROUTE,
+  VALIDATION_ROUTE,
+  PROMPT_ROUTE,
+  SELECT_CONTENT_ROUTE,
+  IMPORT_TEMPLATE_ROUTE,
   FRAGMENT_SWAP_ROUTE,
+  UPLOAD_AND_GET_URL_ACTION,
 } from "../Constants";
 import {
   App,
@@ -36,144 +36,57 @@ import {
   ValidationExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
 import React, { Key } from "react";
-import config from "../config.json";
+import { setSelectedExperienceId } from "../utils/experienceBridge";
 import { actionWebInvoke } from "../utils/actionWebInvoke";
-import {
-  publishSelectedExperience,
-  publishValidationPanelMode,
-} from "../utils/validationBridge";
-
-const UPLOAD_AND_GET_URL_ACTION = "genstudio-e2e-app/upload-and-get-url";
-const UPLOAD_AND_GET_URL_ACTION_URL = (config as any)[UPLOAD_AND_GET_URL_ACTION] as string;
-const CREATE_VALIDATION_SUFFIX = "-create-validation";
-
-const getBaseValidationAppId = (id: Key): string => {
-  const value = id.toString();
-  return value.endsWith(CREATE_VALIDATION_SUFFIX)
-    ? value.slice(0, -CREATE_VALIDATION_SUFFIX.length)
-    : value;
-};
+import actions from "../config.json";
 
 const getAppMetadata = (id: Key): AppMetadata => ({
   ...APP_METADATA,
-  id: getBaseValidationAppId(id),
+  id: id.toString(),
 });
-
-const getCreateValidationAppId = (id: Key): string =>
-  `${getBaseValidationAppId(id)}${CREATE_VALIDATION_SUFFIX}`;
-
-const getCreateValidationMetadata = (id: Key): AppMetadata => ({
-  ...APP_METADATA,
-  id: getCreateValidationAppId(id),
-  label: "E2E - Create Validation",
-  options: {
-    validation: {
-      singleExperienceViewMode: false,
-      autoRefreshApp: false,
-    },
-  },
-});
-
-const getSecondaryMetadata = (id: Key, labelSuffix: string): AppMetadata => ({
-  ...APP_METADATA,
-  id: `${id.toString()}-${labelSuffix.toLowerCase().replace(/\s+/g, "-")}`,
-  label: `${APP_METADATA.label} - ${labelSuffix}`,
-});
-
-const getRuntimeTemplateConfig = (): {
-  disableTemplateExtension: boolean;
-  templateViewerUrlSuffix: string;
-} => {
-  const url = new URL(window.location.href);
-  const hashQuery = url.hash.includes("?") ? url.hash.split("?")[1] : "";
-  const hashParams = new URLSearchParams(hashQuery);
-
-  const readParam = (name: string): string | null =>
-    hashParams.get(name) ?? url.searchParams.get(name);
-
-  const extValue = (readParam("ext") ?? "").toLowerCase();
-  const disableTemplateExtension = extValue === "off" || extValue === "none" || extValue === "disabled";
-
-  const fixture = readParam("fixture") ?? readParam("scenario");
-  const params = new URLSearchParams();
-  if (fixture) {
-    params.set("fixture", fixture);
-  }
-
-  const suffix = params.toString();
-  return {
-    disableTemplateExtension,
-    templateViewerUrlSuffix: suffix ? `?${suffix}` : "",
-  };
-};
 
 const ExtensionRegistration = (): React.JSX.Element => {
   const init = async (): Promise<void> => {
-    const templateConfig = getRuntimeTemplateConfig();
     const guestConnection = await register({
       id: EXTENSION_ID,
       methods: {
         validationExtension: {
           getToggles: async (id: string): Promise<Toggle[]> => {
-            const mlrMetadata = getAppMetadata(id);
-            const createValidationMetadata = getCreateValidationMetadata(id);
-
             return [
               {
-                metadata: mlrMetadata,
+                metadata: getAppMetadata(id),
                 onClick: async () => {
-                  publishValidationPanelMode("mlr");
-                  await ValidationExtensionService.open(guestConnection, id);
+                  ValidationExtensionService.open(guestConnection, id);
                 },
-              },
+              }
+            ];
+          },
+          getApps: async (id: string): Promise<App[]> => [
+            {
+              metadata: getAppMetadata(id),
+              url: `#${VALIDATION_ROUTE}`,
+            },
+          ],
+          handleSelectedExperienceChange: async (experienceId: string) => {
+            setSelectedExperienceId(experienceId);
+          },
+        },
+
+        promptExtension: {
+          getToggles: async (id: string): Promise<Toggle[]> => {
+            return [
               {
-                metadata: createValidationMetadata,
+                metadata: getAppMetadata(id),
                 onClick: async () => {
-                  publishValidationPanelMode("create-validation");
-                  await ValidationExtensionService.open(guestConnection, id);
+                  PromptExtensionService.open(guestConnection as any, id);
                 },
               },
             ];
           },
           getApps: async (id: string): Promise<App[]> => [
             {
-              url: `#${VALIDATION_PANEL_ROUTE}`,
               metadata: getAppMetadata(id),
-            },
-            {
-              url: `#${CREATE_VALIDATION_PANEL_ROUTE}`,
-              metadata: getCreateValidationMetadata(id),
-            },
-          ],
-          handleSelectedExperienceChange: async (experienceId: string) => {
-            publishSelectedExperience(experienceId);
-            console.log("[e2e] handleSelectedExperienceChange:", experienceId);
-          },
-        },
-
-        promptExtension: {
-          getToggles: async (id: string): Promise<Toggle[]> => [
-            {
-              metadata: getAppMetadata(id),
-              onClick: async () => {
-                PromptExtensionService.open(guestConnection as any, id);
-              },
-            },
-            {
-              metadata: getSecondaryMetadata(id, "Prompt B"),
-              onClick: async () => {
-                PromptExtensionService.open(guestConnection as any, id);
-              },
-            },
-          ],
-          getApps: async (id: string): Promise<App[]> => [
-            {
-              url: `#${PROMPT_DIALOG_ROUTE}`,
-              metadata: getAppMetadata(id),
-            },
-            {
-              url: `#${PROMPT_DIALOG_ROUTE}`,
-              metadata: getSecondaryMetadata(id, "Prompt B"),
+              url: `#${PROMPT_ROUTE}`,
             },
           ],
         },
@@ -184,21 +97,14 @@ const ExtensionRegistration = (): React.JSX.Element => {
               metadata: getAppMetadata(id),
               onClick: async () => {},
             },
-            {
-              metadata: getSecondaryMetadata(id, "Assets B"),
-              onClick: async () => {},
-            },
           ],
           getApps: async (id: string): Promise<App[]> => [
             {
-              url: `#${ASSET_VIEWER_ROUTE}`,
+              url: `#${SELECT_CONTENT_ROUTE}`,
               metadata: getAppMetadata(id),
             },
-            {
-              url: `#${ASSET_VIEWER_ROUTE}`,
-              metadata: getSecondaryMetadata(id, "Assets B"),
-            },
           ],
+          // DO NOT REMOVE THIS METHOD, IT IS USED BY GENSTUDIO
           uploadAndGetUrl: async (
             auth: ExtensionAuth,
             asset: Asset
@@ -209,7 +115,7 @@ const ExtensionRegistration = (): React.JSX.Element => {
             thumbnailUrl: string;
           }> => {
             return await actionWebInvoke(
-              UPLOAD_AND_GET_URL_ACTION_URL,
+              actions[UPLOAD_AND_GET_URL_ACTION],
               auth.imsToken,
               auth.imsOrgId,
               {
@@ -223,30 +129,18 @@ const ExtensionRegistration = (): React.JSX.Element => {
         },
 
         importTemplateExtension: {
-          getToggles: async (id: string): Promise<Toggle[]> => {
-            if (templateConfig.disableTemplateExtension) {
-              return [];
-            }
-
-            return [
-              {
-                metadata: getAppMetadata(id),
-                onClick: async () => {},
-              },
-            ];
-          },
-          getApps: async (id: string): Promise<App[]> => {
-            if (templateConfig.disableTemplateExtension) {
-              return [];
-            }
-
-            return [
-              {
-                url: `#${TEMPLATE_VIEWER_ROUTE}${templateConfig.templateViewerUrlSuffix}`,
-                metadata: getAppMetadata(id),
-              },
-            ];
-          },
+          getToggles: async (id: string): Promise<Toggle[]> => [
+            {
+              metadata: getAppMetadata(id),
+              onClick: async () => {},
+            },
+          ],
+          getApps: async (id: string): Promise<App[]> => [
+            {
+              url: `#${IMPORT_TEMPLATE_ROUTE}`,
+              metadata: getAppMetadata(id),
+            },
+          ],
         },
 
         fragmentSwapExtension: {
@@ -255,19 +149,11 @@ const ExtensionRegistration = (): React.JSX.Element => {
               metadata: getAppMetadata(id),
               onClick: async () => {},
             },
-            {
-              metadata: getSecondaryMetadata(id, "Swap B"),
-              onClick: async () => {},
-            },
           ],
           getApps: async (id: string): Promise<App[]> => [
             {
               url: `#${FRAGMENT_SWAP_ROUTE}`,
               metadata: getAppMetadata(id),
-            },
-            {
-              url: `#${FRAGMENT_SWAP_ROUTE}`,
-              metadata: getSecondaryMetadata(id, "Swap B"),
             },
           ],
         },

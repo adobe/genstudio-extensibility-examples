@@ -3,10 +3,9 @@ import { Asset } from "@adobe/genstudio-extensibility-sdk";
 import { Auth } from "../types";
 import config from "../config.json";
 import { actionWebInvoke } from "../utils/actionWebInvoke";
+import { LIST_ASSETS_ACTION } from "../Constants";
 
-const LIST_ASSETS_ACTION = "genstudio-e2e-app/list";
-
-export const useExternalDamAssets = (auth: Auth | null) => {
+export const useSelectContent = (auth: Auth | null) => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -15,18 +15,16 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Heading } from "@react-spectrum/s2";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ExtensionRegistration from "./ExtensionRegistration";
-import ValidationPanel from "../components/ValidationPanel";
-import CreateValidationPanel from "../components/CreateValidationPanel";
-import PromptDialog from "../components/PromptDialog";
-import AssetViewer from "../components/AssetViewer";
-import TemplateViewer from "../components/TemplateViewer";
-import FragmentSwapDialog from "../components/FragmentSwapDialog";
+import ValidationPanel from "../components/Validation";
+import PromptDialog from "../components/Prompt";
+import AssetViewer from "../components/SelectContent";
+import TemplateViewer from "../components/ImportTemplate";
+import FragmentSwapDialog from "../components/FragmentSwap";
 import {
-  VALIDATION_PANEL_ROUTE,
-  CREATE_VALIDATION_PANEL_ROUTE,
-  PROMPT_DIALOG_ROUTE,
-  ASSET_VIEWER_ROUTE,
-  TEMPLATE_VIEWER_ROUTE,
+  VALIDATION_ROUTE,
+  PROMPT_ROUTE,
+  SELECT_CONTENT_ROUTE,
+  IMPORT_TEMPLATE_ROUTE,
   FRAGMENT_SWAP_ROUTE,
 } from "../Constants";
 
@@ -39,11 +37,10 @@ const App = (): React.JSX.Element => {
         <Router>
           <Routes>
             <Route path="/" element={<ExtensionRegistration />} />
-            <Route path={VALIDATION_PANEL_ROUTE} element={<ValidationPanel />} />
-            <Route path={CREATE_VALIDATION_PANEL_ROUTE} element={<CreateValidationPanel />} />
-            <Route path={PROMPT_DIALOG_ROUTE} element={<PromptDialog />} />
-            <Route path={ASSET_VIEWER_ROUTE} element={<AssetViewer />} />
-            <Route path={TEMPLATE_VIEWER_ROUTE} element={<TemplateViewer />} />
+            <Route path={VALIDATION_ROUTE} element={<ValidationPanel />} />
+            <Route path={PROMPT_ROUTE} element={<PromptDialog />} />
+            <Route path={SELECT_CONTENT_ROUTE} element={<AssetViewer />} />
+            <Route path={IMPORT_TEMPLATE_ROUTE} element={<TemplateViewer />} />
             <Route path={FRAGMENT_SWAP_ROUTE} element={<FragmentSwapDialog />} />
           </Routes>
         </Router>

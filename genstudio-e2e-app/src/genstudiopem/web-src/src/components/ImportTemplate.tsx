@@ -17,8 +17,8 @@ import {
   Template,
   Mapping,
 } from "@adobe/genstudio-extensibility-sdk";
-import { useGuestConnection, useAuth } from "../../hooks";
-import { EXTENSION_ID, EXTENSION_LABEL } from "../../Constants";
+import { useGuestConnection, useAuth } from "../hooks";
+import { EXTENSION_ID, EXTENSION_LABEL } from "../Constants";
 
 type FixtureMode = "basic" | "ac4" | "ac5" | "errors" | "all";
 
@@ -342,7 +342,7 @@ const getTemplatesByFixtureMode = (mode: FixtureMode): Template[] => {
   }
 };
 
-export default function TemplateViewer(): React.JSX.Element {
+export default function ImportTemplate(): React.JSX.Element {
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const auth = useAuth(guestConnection);
   const fixtureMode = parseRuntimeFixtureMode();

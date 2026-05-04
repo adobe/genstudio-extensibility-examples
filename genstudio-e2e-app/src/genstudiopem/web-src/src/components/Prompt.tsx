@@ -12,8 +12,8 @@ governing permissions and limitations under the License.
 
 import React, { useEffect, useState } from "react";
 import { Heading, Text, Button, ButtonGroup, Checkbox } from "@react-spectrum/s2";
-import { useGuestConnection, useAuth } from "../../hooks";
-import { EXTENSION_ID } from "../../Constants";
+import { useGuestConnection, useAuth } from "../hooks";
+import { EXTENSION_ID } from "../Constants";
 import {
   AdditionalContext,
   AdditionalContextTypes,
@@ -55,7 +55,7 @@ const SAMPLE_CLAIMS: Claim[] = [
   },
 ];
 
-export default function PromptDialog(): React.JSX.Element {
+export default function Prompt(): React.JSX.Element {
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const auth = useAuth(guestConnection);
   const [selectedClaims, setSelectedClaims] = useState<Claim[]>([]);

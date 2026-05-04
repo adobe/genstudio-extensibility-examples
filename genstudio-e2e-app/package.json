@@ -32,11 +32,11 @@
   },
   "scripts": {
     "test": "jest --passWithNoTests ./test",
-    "e2e": "playwright test",
-    "e2e:ui": "playwright test --ui",
-    "lint": "eslint --ignore-pattern web-src --no-error-on-unmatched-pattern test src",
+    "e2e": "jest --collectCoverage=false --testRegex ./e2e",
+    "lint": "eslint --ignore-pattern web-src --no-error-on-unmatched-pattern test src actions",
     "lint:fix": "npm run lint -- --fix",
     "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch",
     "build": "tsc"
   },
   "engines": {

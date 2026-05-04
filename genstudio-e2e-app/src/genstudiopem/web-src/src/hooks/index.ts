@@ -12,4 +12,4 @@ governing permissions and limitations under the License.
 
 export * from "./useAuth";
 export * from "./useGuestConnection";
-export * from "./useExternalDamAssets";
+export * from "./useSelectContent";

@@ -15,16 +15,16 @@ import {
   SelectContentExtensionService,
   Asset,
 } from "@adobe/genstudio-extensibility-sdk";
-import { useGuestConnection, useExternalDamAssets, useAuth } from "../../hooks";
-import { EXTENSION_ID, EXTENSION_LABEL, ICON_DATA_URI } from "../../Constants";
+import { useGuestConnection, useSelectContent, useAuth } from "../hooks";
+import { EXTENSION_ID, EXTENSION_LABEL, ICON_DATA_URI } from "../Constants";
 
-export default function AssetViewer(): React.JSX.Element {
+export default function SelectContent(): React.JSX.Element {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectionLimit, setSelectionLimit] = useState<number>(4);
   const [hostSelectedAssets, setHostSelectedAssets] = useState<Asset[]>([]);
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const auth = useAuth(guestConnection);
-  const { assets, isLoading, error, fetchAssets } = useExternalDamAssets(auth);
+  const { assets, isLoading, error, fetchAssets } = useSelectContent(auth);
 
   useEffect(() => {
     fetchAssets();

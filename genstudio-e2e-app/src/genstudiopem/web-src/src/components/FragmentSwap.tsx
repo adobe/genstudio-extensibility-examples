@@ -17,8 +17,8 @@ import {
   FragmentSwapExtensionService,
   GenerationContext,
 } from "@adobe/genstudio-extensibility-sdk";
-import { EXTENSION_ID } from "../../Constants";
-import { useGuestConnection, useAuth } from "../../hooks";
+import { EXTENSION_ID } from "../Constants";
+import { useGuestConnection, useAuth } from "../hooks";
 
 const SWAP_OPTIONS: Array<{ id: string; label: string; value: string }> = [
   {
@@ -33,7 +33,7 @@ const SWAP_OPTIONS: Array<{ id: string; label: string; value: string }> = [
   },
 ];
 
-export default function FragmentSwapDialog(): React.JSX.Element {
+export default function FragmentSwap(): React.JSX.Element {
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const auth = useAuth(guestConnection);
   const [selectedField, setSelectedField] = useState<FieldUpdate | null>(null);
