@@ -27,6 +27,7 @@ interface ResultsViewProps {
   selectedExperienceIndex: number | null;
   experiences: Experience[];
   onExperienceSelect: (index: number) => void;
+  onApplyApprovedClaim?: (rawFieldName: string, approvedClaimText: string) => void;
 }
 
 // Reusable scroll container for tab panels
@@ -49,6 +50,7 @@ export default function ResultsView({
   selectedExperienceIndex,
   experiences,
   onExperienceSelect,
+  onApplyApprovedClaim,
 }: ResultsViewProps) {
   return (
     <Tabs
@@ -75,6 +77,7 @@ export default function ResultsView({
           <SingleView
             claims={claimsResults}
             experienceNumber={selectedExperienceIndex ?? 0}
+            onApplyApprovedClaim={onApplyApprovedClaim}
           />
         </ScrollPanel>
       </TabPanel>
