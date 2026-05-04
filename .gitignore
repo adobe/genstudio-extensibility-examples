@@ -49,3 +49,5 @@ internal/
 
 # local CLI context config
 genstudio-extensibility-cli/config/context.yaml
+
+mcp-server.log
