@@ -11,217 +11,160 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect, useState } from "react";
-import { Heading, Text, Button, ButtonGroup, Checkbox } from "@react-spectrum/s2";
-import { useGuestConnection, useAuth } from "../hooks";
-import { EXTENSION_ID } from "../Constants";
+import { Heading } from "@react-spectrum/s2";
 import {
   AdditionalContext,
   AdditionalContextTypes,
   GenerationContext,
   PromptExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
+import { useGuestConnection, useAuth } from "../hooks";
+import { EXTENSION_ID } from "../Constants";
 
-type Claim = {
+interface Claim {
   id: string;
   description: string;
-  category: "efficacy" | "safety" | "usage";
-};
+  category: string;
+}
 
-const SAMPLE_CLAIMS: Claim[] = [
-  {
-    id: "efficacy-claim-1",
-    category: "efficacy",
-    description: "Clinically proven to reduce joint inflammation by up to 50%.",
-  },
-  {
-    id: "efficacy-claim-2",
-    category: "efficacy",
-    description: "Demonstrates a 60% improvement in joint mobility over 6 months.",
-  },
-  {
-    id: "efficacy-claim-3",
-    category: "efficacy",
-    description: "Supports measurable improvement in daily movement comfort within 14 days.",
-  },
-  {
-    id: "safety-claim-1",
-    category: "safety",
-    description: "Formulated without added parabens or artificial dyes.",
-  },
-  {
-    id: "usage-claim-1",
-    category: "usage",
-    description: "Intended for adults seeking daily joint support as part of a wellness routine.",
-  },
+const CLAIMS: Claim[] = [
+  { id: "efficacy-1", category: "efficacy", description: "Clinically proven to reduce joint inflammation by up to 50%." },
+  { id: "efficacy-2", category: "efficacy", description: "Demonstrates a 60% improvement in joint mobility over 6 months." },
+  { id: "safety-1", category: "safety", description: "Formulated without added parabens or artificial dyes." },
+  { id: "usage-1", category: "usage", description: "Intended for adults seeking daily joint support." },
 ];
+
+const jsonBoxStyle: React.CSSProperties = {
+  padding: "12px",
+  margin: "8px 0",
+  border: "1px solid #ccc",
+  borderRadius: "4px",
+  background: "#f5f5f5",
+  fontFamily: "monospace",
+  fontSize: "12px",
+  whiteSpace: "pre-wrap",
+  wordBreak: "break-all",
+};
 
 export default function Prompt(): React.JSX.Element {
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const auth = useAuth(guestConnection);
+  const [generationContext, setGenerationContext] = useState<GenerationContext | null>(null);
   const [selectedClaims, setSelectedClaims] = useState<Claim[]>([]);
-  const [generationContext, setGenerationContext] =
-    useState<GenerationContext | null>(null);
-  const [contextError, setContextError] = useState<string | null>(null);
-  const [isSavingClaims, setIsSavingClaims] = useState(false);
 
   useEffect(() => {
-    const loadContext = async () => {
-      if (!guestConnection) return;
-      try {
-        const ctx = await PromptExtensionService.getGenerationContext(guestConnection);
+    if (!guestConnection) return;
+    PromptExtensionService.getGenerationContext(guestConnection)
+      .then((ctx) => {
         setGenerationContext(ctx);
-        const claimsContext = (ctx.additionalContexts || []).find(
-          (item) =>
-            item.extensionId === EXTENSION_ID &&
-            item.additionalContextType === AdditionalContextTypes.Claims,
+        const existing = (ctx.additionalContexts || []).find(
+          (c) => c.extensionId === EXTENSION_ID && c.additionalContextType === AdditionalContextTypes.Claims,
         );
-        if (claimsContext?.additionalContextValues?.length) {
-          // additionalContextValues are JSON strings — parse each one back to a Claim object
-          const preselectedIds = new Set<string>();
-          claimsContext.additionalContextValues.forEach((value) => {
+        if (existing?.additionalContextValues?.length) {
+          const ids = new Set<string>();
+          existing.additionalContextValues.forEach((v) => {
             try {
-              const parsed = typeof value === 'string' ? JSON.parse(value) : value;
-              if (parsed?.id) preselectedIds.add(parsed.id);
-            } catch {
-              // Invalid JSON — skip this value
-            }
+              const parsed = typeof v === "string" ? JSON.parse(v) : v;
+              if (parsed?.id) ids.add(parsed.id);
+            } catch { /* skip */ }
           });
-          setSelectedClaims(
-            SAMPLE_CLAIMS.filter((claim) => preselectedIds.has(claim.id)),
-          );
+          setSelectedClaims(CLAIMS.filter((c) => ids.has(c.id)));
         }
-        setContextError(null);
-      } catch (error) {
-        console.error("Failed to fetch generation context", error);
-        setContextError("Failed to read generation context from host.");
-      }
-    };
-
-    loadContext().catch(console.error);
+      })
+      .catch(console.error);
   }, [guestConnection]);
 
-  const handleClaimChange = (claim: Claim) => {
+  const toggleClaim = (claim: Claim) => {
     setSelectedClaims((prev) =>
       prev.some((c) => c.id === claim.id)
         ? prev.filter((c) => c.id !== claim.id)
-        : [...prev, claim]
+        : [...prev, claim],
     );
   };
 
-  const handleCancel = () => {
-    if (guestConnection?.host?.api?.promptExtension?.close) {
-      guestConnection.host.api.promptExtension.close();
-    }
-  };
-
-  const handleOK = async () => {
+  const handleConfirm = async () => {
     if (!guestConnection) return;
-    const claimsContext: AdditionalContext<Claim> = {
+    const ctx: AdditionalContext<Claim> = {
       extensionId: EXTENSION_ID,
       additionalContextType: AdditionalContextTypes.Claims,
       additionalContextValues: selectedClaims,
     };
-    try {
-      setIsSavingClaims(true);
-      // Persist claims before closing so the host does not race with generate.
-      await PromptExtensionService.updateAdditionalContext(
-        guestConnection,
-        claimsContext as any,
-      );
-      PromptExtensionService.close(guestConnection);
-    } catch (error) {
-      console.error("Failed to persist selected claims", error);
-      setContextError("Failed to save selected claims. Please try again.");
-    } finally {
-      setIsSavingClaims(false);
-    }
+    PromptExtensionService.updateAdditionalContext(guestConnection, ctx as any);
+    PromptExtensionService.close(guestConnection);
   };
 
-  const sharedAuth = guestConnection?.sharedContext?.get("auth") || {};
-  const apiKey =
-    sharedAuth?.apiKey ||
-    guestConnection?.sharedContext?.get("apiKey") ||
-    "";
-
-  const hasImsToken = Boolean(auth?.imsToken);
-  const hasImsOrg = Boolean(auth?.imsOrg);
-  const hasApiKey = Boolean(apiKey);
+  const ready = Boolean(auth && guestConnection);
 
   return (
     <div data-testid="prompt-dialog" style={{ padding: "24px" }}>
       <Heading>Prompt Dialog (E2E)</Heading>
-      <Text UNSAFE_style={{ marginBottom: "16px" }}>
-        {auth
-          ? "Connected to host. Ready to inject prompt data."
-          : "Connecting to host..."}
-      </Text>
-      {auth && (
-        <div>
-          <div
-            data-testid="prompt-auth-panel"
-            style={{ marginBottom: "16px", padding: "8px", border: "1px solid #ddd", borderRadius: "4px" }}
-          >
-            <Heading level={4}>Auth + Context Health</Heading>
-            <Text data-testid="prompt-auth-token-present">imsToken: {hasImsToken ? "present" : "missing"}</Text>
-            <Text data-testid="prompt-auth-org-present">imsOrgId: {hasImsOrg ? "present" : "missing"}</Text>
-            <Text data-testid="prompt-auth-apikey-present">apiKey: {hasApiKey ? "present" : "missing"}</Text>
-            {contextError ? (
-              <Text data-testid="prompt-context-error" UNSAFE_style={{ color: "#C9252D" }}>
-                {contextError}
-              </Text>
-            ) : (
-              <div data-testid="prompt-generation-context" style={{ marginTop: "8px" }}>
-                <Text data-testid="prompt-context-channel">
-                  channel: {generationContext?.channel?.id || ""}
-                </Text>
-                <Text data-testid="prompt-context-brand">
-                  brand: {generationContext?.brand?.id || ""}
-                </Text>
-                <Text data-testid="prompt-context-product">
-                  product: {generationContext?.product?.id || ""}
-                </Text>
-                <Text data-testid="prompt-context-persona">
-                  persona: {generationContext?.persona?.id || ""}
-                </Text>
-                <Text data-testid="prompt-context-prompt">
-                  prompt: {generationContext?.userPrompt || ""}
-                </Text>
-              </div>
-            )}
+
+      {!ready ? (
+        <div data-testid="prompt-loading">Connecting to host...</div>
+      ) : (
+        <>
+          <div data-testid="auth-context-box" style={jsonBoxStyle}>
+            {JSON.stringify({ imsToken: auth?.imsToken ? "present" : "missing", imsOrg: auth?.imsOrg ? "present" : "missing" }, null, 2)}
           </div>
 
-          <div data-testid="claim-list" style={{ marginBottom: "16px" }}>
-            {SAMPLE_CLAIMS.map((claim) => (
-              <div key={claim.id} style={{ marginBottom: "8px" }}>
-                <Checkbox
-                  data-testid={`claim-checkbox-${claim.id}`}
-                  isSelected={selectedClaims.some((c) => c.id === claim.id)}
-                  onChange={() => handleClaimChange(claim)}
-                >
-                  {claim.description}
-                </Checkbox>
-              </div>
-            ))}
+          <div data-testid="generation-context-box" style={jsonBoxStyle}>
+            {JSON.stringify(generationContext, null, 2)}
           </div>
-          <ButtonGroup>
-            <Button
-              data-testid="claim-cancel-button"
-              variant="secondary"
-              onPress={handleCancel}
-              isDisabled={isSavingClaims}
-            >
-              Cancel
-            </Button>
-            <Button
-              data-testid="claim-ok-button"
-              variant="primary"
-              onPress={handleOK}
-              isDisabled={isSavingClaims}
-            >
-              OK
-            </Button>
-          </ButtonGroup>
-        </div>
+
+          <Heading level={3}>Claims</Heading>
+          <ul data-testid="claim-list" style={{ listStyle: "none", padding: 0 }}>
+            {CLAIMS.map((claim) => {
+              const isSelected = selectedClaims.some((c) => c.id === claim.id);
+              return (
+                <li key={claim.id} style={{ marginBottom: "6px" }}>
+                  <button
+                    type="button"
+                    data-testid={`claim-${claim.id}`}
+                    data-claim-id={claim.id}
+                    aria-pressed={isSelected}
+                    onClick={() => toggleClaim(claim)}
+                    style={{
+                      width: "100%",
+                      textAlign: "left",
+                      padding: "8px 12px",
+                      border: isSelected ? "2px solid #1473E6" : "1px solid #ccc",
+                      background: isSelected ? "#E6F2FF" : "#fff",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "13px",
+                    }}
+                  >
+                    [{claim.category}] {claim.description}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          {selectedClaims.length > 0 && (
+            <div data-testid="selected-claims-box" style={jsonBoxStyle}>
+              {JSON.stringify(selectedClaims, null, 2)}
+            </div>
+          )}
+
+          <button
+            type="button"
+            data-testid="claim-confirm-button"
+            onClick={handleConfirm}
+            style={{
+              marginTop: "12px",
+              padding: "8px 24px",
+              background: "#1473E6",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "14px",
+            }}
+          >
+            Confirm
+          </button>
+        </>
       )}
     </div>
   );

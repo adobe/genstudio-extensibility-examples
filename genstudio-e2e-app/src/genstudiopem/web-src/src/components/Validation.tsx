@@ -11,15 +11,10 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  ButtonGroup,
-  Divider,
-  Heading,
-  Text,
-} from "@react-spectrum/s2";
+import { Heading } from "@react-spectrum/s2";
 import {
   Experience,
+  FieldUpdate,
   GenerationContext,
   ValidationExtensionService,
 } from "@adobe/genstudio-extensibility-sdk";
@@ -29,173 +24,106 @@ import { EXTENSION_ID } from "../Constants";
 const POLL_INTERVAL_MS = 2000;
 const MAX_POLL_ATTEMPTS = 10;
 
+const jsonBoxStyle: React.CSSProperties = {
+  padding: "12px",
+  margin: "8px 0",
+  border: "1px solid #ccc",
+  borderRadius: "4px",
+  background: "#f5f5f5",
+  fontFamily: "monospace",
+  fontSize: "12px",
+  whiteSpace: "pre-wrap",
+  wordBreak: "break-all",
+};
+
 export default function Validation(): React.JSX.Element {
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [generationContext, setGenerationContext] =
-    useState<GenerationContext | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchExperiences = async (): Promise<Experience[]> => {
-    if (!guestConnection) return [];
-    const remote =
-      await ValidationExtensionService.getExperiences(guestConnection);
-    if (remote && remote.length > 0) {
-      setExperiences(remote);
-      return remote;
-    }
-    return [];
-  };
-
-  const fetchGenerationContext = async (): Promise<void> => {
-    if (!guestConnection) return;
-    try {
-      const ctx =
-        await ValidationExtensionService.getGenerationContext(guestConnection);
-      setGenerationContext(ctx);
-    } catch (e) {
-      console.error("Failed to fetch generation context", e);
-    }
-  };
+  const [generationContext, setGenerationContext] = useState<GenerationContext | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState<FieldUpdate | null>(null);
 
   useEffect(() => {
     if (!guestConnection) return;
     let cancelled = false;
     let attempts = 0;
 
-    const poll = async (): Promise<void> => {
-      try {
-        const result = await fetchExperiences();
-        if (cancelled) return;
-        if (result.length === 0 && attempts < MAX_POLL_ATTEMPTS) {
-          attempts += 1;
-          setTimeout(poll, POLL_INTERVAL_MS);
-          return;
-        }
-        if (result.length === 0) {
-          setError("No experiences available from host.");
-        }
+    const poll = async () => {
+      const result = await ValidationExtensionService.getExperiences(guestConnection);
+      if (cancelled) return;
+      if (result && result.length > 0) {
+        setExperiences(result);
         setIsLoading(false);
-      } catch (e) {
-        console.error("Failed to fetch experiences", e);
-        if (!cancelled) {
-          setError("Failed to fetch experiences from host.");
-          setIsLoading(false);
-        }
+      } else if (attempts < MAX_POLL_ATTEMPTS) {
+        attempts += 1;
+        setTimeout(poll, POLL_INTERVAL_MS);
+      } else {
+        setIsLoading(false);
       }
     };
 
-    setIsLoading(true);
-    poll();
-    fetchGenerationContext();
+    poll().catch(console.error);
+    ValidationExtensionService.getGenerationContext(guestConnection)
+      .then((ctx) => setGenerationContext(ctx))
+      .catch(console.error);
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [guestConnection]);
-
-  const selectedExperience =
-    selectedIndex === null ? null : experiences[selectedIndex] ?? null;
 
   if (isLoading) {
     return (
       <div data-testid="validation-loading" style={{ padding: 24 }}>
-        <Text>Loading experiences...</Text>
+        Loading experiences...
       </div>
     );
   }
 
   return (
-    <div
-      data-testid="validation-panel"
-      style={{
-        backgroundColor: "white",
-        minHeight: "100vh",
-        padding: 24,
-        display: "flex",
-        flexDirection: "column",
-        gap: 16,
-      }}
-    >
-      <div
+    <div data-testid="validation-panel" style={{ padding: 24 }}>
+      <Heading>Validation Panel (E2E)</Heading>
+
+      <Heading level={4}>Generation Context</Heading>
+      <div data-testid="generation-context-box" style={jsonBoxStyle}>
+        {JSON.stringify(generationContext, null, 2)}
+      </div>
+
+      <Heading level={4}>Experiences ({experiences.length})</Heading>
+      <div data-testid="experiences-box" style={jsonBoxStyle}>
+        {JSON.stringify(experiences, null, 2)}
+      </div>
+
+      <Heading level={4}>Update Field</Heading>
+      <button
+        type="button"
+        data-testid="update-field-submit"
+        disabled={experiences.length === 0}
+        onClick={() => {
+          if (!guestConnection || experiences.length === 0) return;
+          const update: FieldUpdate = {
+            experienceId: experiences[0].id,
+            name: "subject",
+            value: "E2E Updated Subject",
+          };
+          ValidationExtensionService.updateField(guestConnection, update);
+          setLastUpdate(update);
+        }}
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          marginTop: "8px",
+          padding: "8px 24px",
+          background: "#1473E6",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          fontSize: "14px",
         }}
       >
-        <Heading level={3}>Validation Panel (E2E)</Heading>
-        <Button
-          data-testid="validation-sync-button"
-          variant="secondary"
-          onPress={() => {
-            fetchExperiences().catch(console.error);
-          }}
-        >
-          Sync
-        </Button>
-      </div>
+        Update Subject
+      </button>
 
-      {error && (
-        <Text data-testid="validation-error" UNSAFE_style={{ color: "#C9252D" }}>
-          {error}
-        </Text>
-      )}
-
-      <div data-testid="validation-context">
-        <Heading level={4}>Generation Context</Heading>
-        <Text data-testid="validation-context-channel">
-          channel: {generationContext?.channel?.id || ""}
-        </Text>
-        <Text data-testid="validation-context-brand">
-          brand: {generationContext?.brand?.id || ""}
-        </Text>
-        <Text data-testid="validation-context-product">
-          product: {generationContext?.product?.id || ""}
-        </Text>
-        <Text data-testid="validation-context-prompt">
-          prompt: {generationContext?.userPrompt || ""}
-        </Text>
-      </div>
-
-      <Divider size="S" />
-
-      <div data-testid="experience-list">
-        <Heading level={4}>Experiences ({experiences.length})</Heading>
-        <ButtonGroup>
-          {experiences.map((exp, index) => (
-            <Button
-              key={exp.id}
-              data-testid={`experience-button-${exp.id}`}
-              variant={selectedIndex === index ? "accent" : "secondary"}
-              onPress={() => setSelectedIndex(index)}
-            >
-              {exp.id}
-            </Button>
-          ))}
-        </ButtonGroup>
-      </div>
-
-      {selectedExperience && (
-        <div data-testid="experience-content">
-          <Divider size="S" />
-          <Heading level={4}>Selected: {selectedExperience.id}</Heading>
-          {Object.entries(selectedExperience.experienceFields || {}).map(
-            ([key, field]) => (
-              <div
-                key={key}
-                data-testid={`experience-field-${key}`}
-                style={{ marginBottom: 8 }}
-              >
-                <Text UNSAFE_style={{ fontWeight: 600 }}>
-                  {field.fieldName}
-                </Text>
-                <Text>{field.fieldValue}</Text>
-              </div>
-            ),
-          )}
+      {lastUpdate && (
+        <div data-testid="last-update-box" style={jsonBoxStyle}>
+          {JSON.stringify(lastUpdate, null, 2)}
         </div>
       )}
     </div>

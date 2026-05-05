@@ -85,37 +85,39 @@ export default function ImportTemplate(): React.JSX.Element {
     <div data-testid="template-viewer" style={{ padding: "24px" }}>
       <Heading>Template Viewer</Heading>
       {ready ? (
-        <div data-testid="template-viewer-ready" role="list" aria-label="E2E Templates"
-          style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px" }}
+        <ul data-testid="template-viewer-ready" aria-label="E2E Templates"
+          style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px", listStyle: "none", padding: 0, margin: 0 }}
         >
-          <button
-            type="button"
-            role="listitem"
-            data-testid={`template-card-${TEMPLATE.id}`}
-            data-template-id={TEMPLATE.id}
-            data-template-name={TEMPLATE.title}
-            aria-pressed={selected}
-            onClick={() => setSelected((s) => !s)}
-            style={{
-              padding: "12px 16px",
-              textAlign: "left",
-              border: selected ? "2px solid #1473E6" : "1px solid #ccc",
-              background: selected ? "#E6F2FF" : "#fff",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "14px",
-            }}
-          >
-            {TEMPLATE.title}
-          </button>
-          {selected && (
-            <div data-testid={`template-selected-${TEMPLATE.id}`}
-              style={{ marginTop: "12px", fontSize: "12px", color: "#666" }}
+          <li>
+            <button
+              type="button"
+              data-testid={`template-card-${TEMPLATE.id}`}
+              data-template-id={TEMPLATE.id}
+              data-template-name={TEMPLATE.title}
+              aria-pressed={selected}
+              onClick={() => setSelected((s) => !s)}
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                textAlign: "left",
+                border: selected ? "2px solid #1473E6" : "1px solid #ccc",
+                background: selected ? "#E6F2FF" : "#fff",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+              }}
             >
-              Selected: {TEMPLATE.id}
-            </div>
-          )}
-        </div>
+              {TEMPLATE.title}
+            </button>
+            {selected && (
+              <div data-testid={`template-selected-${TEMPLATE.id}`}
+                style={{ marginTop: "12px", fontSize: "12px", color: "#666" }}
+              >
+                Selected: {TEMPLATE.id}
+              </div>
+            )}
+          </li>
+        </ul>
       ) : (
         <div data-testid="template-viewer-loading">Connecting to host...</div>
       )}
