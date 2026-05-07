@@ -19,6 +19,18 @@ import {
 import { useGuestConnection, useAuth } from "../hooks";
 import { EXTENSION_ID, EXTENSION_LABEL } from "../Constants";
 
+const jsonBoxStyle: React.CSSProperties = {
+  padding: "12px",
+  margin: "8px 0",
+  border: "1px solid #ccc",
+  borderRadius: "4px",
+  background: "#f5f5f5",
+  fontFamily: "monospace",
+  fontSize: "12px",
+  whiteSpace: "pre-wrap",
+  wordBreak: "break-all",
+};
+
 const templateA = `<!DOCTYPE html>
 <html>
   <head>
@@ -63,6 +75,7 @@ const TEMPLATE: Template = {
     content: "body",
     btn: "cta",
   },
+  additionalMetadata: { testMetadata: "import-template" },
 };
 
 export default function ImportTemplate(): React.JSX.Element {
@@ -110,10 +123,8 @@ export default function ImportTemplate(): React.JSX.Element {
               {TEMPLATE.title}
             </button>
             {selected && (
-              <div data-testid={`template-selected-${TEMPLATE.id}`}
-                style={{ marginTop: "12px", fontSize: "12px", color: "#666" }}
-              >
-                Selected: {TEMPLATE.id}
+              <div data-testid="selected-template-box" style={jsonBoxStyle}>
+                {JSON.stringify(TEMPLATE, null, 2)}
               </div>
             )}
           </li>

@@ -10,140 +10,133 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
+import { Heading } from "@react-spectrum/s2";
 import {
   SelectContentExtensionService,
   Asset,
 } from "@adobe/genstudio-extensibility-sdk";
-import { useGuestConnection, useSelectContent, useAuth } from "../hooks";
+import { useGuestConnection, useAuth, useSelectContent } from "../hooks";
 import { EXTENSION_ID, EXTENSION_LABEL, ICON_DATA_URI } from "../Constants";
 
+const jsonBoxStyle: React.CSSProperties = {
+  padding: "12px",
+  margin: "8px 0",
+  border: "1px solid #ccc",
+  borderRadius: "4px",
+  background: "#f5f5f5",
+  fontFamily: "monospace",
+  fontSize: "12px",
+  whiteSpace: "pre-wrap",
+  wordBreak: "break-all",
+};
+
 export default function SelectContent(): React.JSX.Element {
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [selectionLimit, setSelectionLimit] = useState<number>(4);
-  const [hostSelectedAssets, setHostSelectedAssets] = useState<Asset[]>([]);
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const auth = useAuth(guestConnection);
   const { assets, isLoading, error, fetchAssets } = useSelectContent(auth);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [syncData, setSyncData] = useState<{ selectedAssets: Asset[]; selectionLimit: number } | null>(null);
 
   useEffect(() => {
     fetchAssets();
   }, [fetchAssets]);
 
-  const syncHostSelection = useCallback(async () => {
+  useEffect(() => {
     if (!guestConnection) return;
-
-    try {
-      const { selectedAssets, selectionLimit } =
-        await SelectContentExtensionService.sync(guestConnection, EXTENSION_ID);
-
-      if (typeof selectionLimit === "number" && selectionLimit > 0) {
-        setSelectionLimit(selectionLimit);
+    const doSync = async () => {
+      try {
+        const result = await SelectContentExtensionService.sync(guestConnection, EXTENSION_ID);
+        setSyncData(result);
+        const ids = (result.selectedAssets || [])
+          .filter((a) => a.extensionInfo?.id === EXTENSION_ID)
+          .map((a) => a.id);
+        setSelectedIds(new Set(ids));
+      } catch (e) {
+        console.error("sync failed", e);
       }
-
-      const extensionAssets = (selectedAssets || []).filter(
-        (selectedAsset) => selectedAsset.extensionInfo?.id === EXTENSION_ID
-      );
-      setHostSelectedAssets(extensionAssets);
-      setSelectedIds(new Set(extensionAssets.map((selectedAsset) => selectedAsset.id)));
-    } catch (syncError) {
-      console.warn("Failed to sync selected assets from host:", syncError);
-    }
+    };
+    doSync();
   }, [guestConnection]);
 
-  useEffect(() => {
-    syncHostSelection();
-  }, [syncHostSelection]);
+  const buildSelectedAssets = (ids: Set<string>) =>
+    assets
+      .filter((a) => ids.has(a.id))
+      .map((a) => ({
+        ...a,
+        extensionInfo: { id: EXTENSION_ID, name: EXTENSION_LABEL, iconUrl: ICON_DATA_URI },
+        additionalMetadata: { testMetadata: "select-content" },
+        keywords: ["testKeyword"],
+      }));
 
-  const toggleAsset = async (asset: Asset) => {
+  const toggleAsset = (asset: Asset) => {
+    if (!guestConnection) return;
     const next = new Set(selectedIds);
     if (next.has(asset.id)) {
       next.delete(asset.id);
     } else {
-      if (next.size >= selectionLimit) return;
       next.add(asset.id);
     }
     setSelectedIds(next);
-
-    if (guestConnection) {
-      const selectedById = new Map<string, Asset>();
-      hostSelectedAssets.forEach((hostAsset) => selectedById.set(hostAsset.id, hostAsset));
-      assets.forEach((listedAsset) => selectedById.set(listedAsset.id, listedAsset));
-
-      const selected = Array.from(next)
-        .map((id) => selectedById.get(id))
-        .filter((selectedAsset): selectedAsset is Asset => Boolean(selectedAsset))
-        .map((a) => ({
-          ...a,
-          extensionInfo: {
-            id: EXTENSION_ID,
-            name: EXTENSION_LABEL,
-            iconUrl: ICON_DATA_URI,
-          },
-        }));
-      try {
-        await SelectContentExtensionService.setSelectedAssets(
-          guestConnection,
-          EXTENSION_ID,
-          selected
-        );
-        setHostSelectedAssets(selected);
-        await syncHostSelection();
-      } catch (setSelectionError) {
-        console.warn("Failed to update selected assets:", setSelectionError);
-      }
-    }
+    SelectContentExtensionService.setSelectedAssets(guestConnection, EXTENSION_ID, buildSelectedAssets(next));
   };
 
-  if (isLoading) return <div style={{ padding: 20 }}>Loading...</div>;
-  if (error) return <div style={{ padding: 20, color: "red" }}>{error}</div>;
+  const ready = Boolean(auth && guestConnection);
+
+  if (isLoading) return <div data-testid="select-content-loading">Loading assets...</div>;
+  if (error) return <div data-testid="select-content-error">{error}</div>;
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-        gap: 12,
-        padding: 20,
-      }}
-    >
-      {assets.map((asset) => {
-        const selected = selectedIds.has(asset.id);
-        const isVideo = asset.mimeType?.startsWith("video/");
-        const previewUrl =
-          asset.externalAssetInfo?.signedThumbnailUrl ||
-          asset.externalAssetInfo?.signedUrl;
-        return (
-          <div
-            key={asset.id}
-            onClick={() => toggleAsset(asset)}
-            style={{
-              border: selected ? "2px solid #0078d4" : "1px solid #ddd",
-              borderRadius: 6,
-              cursor: "pointer",
-              overflow: "hidden",
-              background: selected ? "#e7f3ff" : "#fff",
-            }}
-          >
-            {isVideo ? (
-              <video
-                src={previewUrl}
-                style={{ width: "100%", height: 120, objectFit: "cover" }}
-                muted
-                playsInline
-                preload="metadata"
-              />
-            ) : (
-              <img
-                src={previewUrl}
-                alt={asset.name}
-                style={{ width: "100%", height: 120, objectFit: "cover" }}
-              />
-            )}
-            <div style={{ padding: "6px 8px", fontSize: 12 }}>{asset.name}</div>
+    <div data-testid="select-content-panel" style={{ padding: 24 }}>
+      <Heading>Select Content (E2E)</Heading>
+
+      {!ready ? (
+        <div data-testid="select-content-loading">Connecting to host...</div>
+      ) : (
+        <>
+          <div data-testid="auth-context-box" style={jsonBoxStyle}>
+            {JSON.stringify({ imsToken: auth?.imsToken ? "present" : "missing", imsOrg: auth?.imsOrg ? "present" : "missing" }, null, 2)}
           </div>
-        );
-      })}
+
+          <div data-testid="sync-data-box" style={jsonBoxStyle}>
+            {JSON.stringify(syncData, null, 2)}
+          </div>
+
+          <Heading level={4}>Assets ({assets.length})</Heading>
+          <ul data-testid="asset-list" style={{ listStyle: "none", padding: 0 }}>
+            {assets.map((asset) => {
+              const isSelected = selectedIds.has(asset.id);
+              return (
+                <li key={asset.id} style={{ marginBottom: "6px" }}>
+                  <button
+                    type="button"
+                    data-testid={`asset-${asset.id}`}
+                    data-asset-id={asset.id}
+                    aria-pressed={isSelected}
+                    onClick={() => toggleAsset(asset)}
+                    style={{
+                      width: "100%",
+                      textAlign: "left",
+                      padding: "8px 12px",
+                      border: isSelected ? "2px solid #1473E6" : "1px solid #ccc",
+                      background: isSelected ? "#E6F2FF" : "#fff",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "13px",
+                    }}
+                  >
+                    {asset.name}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div data-testid="selected-assets-box" style={jsonBoxStyle}>
+            {JSON.stringify(buildSelectedAssets(selectedIds), null, 2)}
+          </div>
+        </>
+      )}
     </div>
   );
 }

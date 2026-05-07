@@ -92,6 +92,28 @@ export default function Validation(): React.JSX.Element {
         {JSON.stringify(experiences, null, 2)}
       </div>
 
+      <button
+        type="button"
+        data-testid="sync-experiences-button"
+        onClick={async () => {
+          if (!guestConnection) return;
+          const result = await ValidationExtensionService.getExperiences(guestConnection);
+          setExperiences(result || []);
+        }}
+        style={{
+          marginTop: "8px",
+          padding: "8px 24px",
+          background: "#333",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          fontSize: "14px",
+        }}
+      >
+        Sync
+      </button>
+
       <Heading level={4}>Update Field</Heading>
       <button
         type="button"
