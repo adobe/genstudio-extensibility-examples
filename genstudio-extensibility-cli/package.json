@@ -2,7 +2,7 @@
   "name": "genstudio-extensibility-cli",
   "version": "0.1.0",
   "private": true,
-  "description": "CLI utilities and E2E test app for GenStudio extensibility workflows",
+  "description": "CLI utilities for GenStudio extensibility workflows",
   "main": "src/index.js",
   "bin": {
     "gs-ext": "src/index.js"
