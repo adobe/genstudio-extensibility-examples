@@ -1,0 +1,30 @@
+name: Nightly Deploy All Apps
+
+on:
+  schedule:
+    - cron: "0 8 * * *" # 12:00 AM PST / 1:00 AM PDT
+  workflow_dispatch:
+
+jobs:
+  trigger-deployments:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        workflow:
+          - main-genstudio-create-validation.yaml
+          - main-genstudio-external-dam-app.yaml
+          - main-genstudio-external-template-app.yaml
+          - main-genstudio-mlr-claims-app.yaml
+          - main-genstudio-translation-extension.yaml
+    steps:
+      - name: Trigger ${{ matrix.workflow }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: '${{ matrix.workflow }}',
+              ref: 'main'
+            });
