@@ -13,7 +13,6 @@ jobs:
       app: genstudio-e2e-app
       environment: |
         [
-          "GenStudio Internal - E2E Tests - genstudio-e2e-app - workspace Stage",
-          "GenStudio Internal - E2E Tests - genstudio-e2e-app - workspace Production"
+          "GenStudio Internal - E2E Tests - genstudio-e2e-app - workspace Stage"
         ]
     secrets: inherit
