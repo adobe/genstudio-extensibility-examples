@@ -48,6 +48,10 @@ logs
 internal/
 
 # local CLI context config
+<<<<<<< HEAD
 genstudio-extensibility-cli/config/context.yaml
 
 mcp-server.log
+=======
+genstudio-extensibility-cli/config/context.yaml
+>>>>>>> main
