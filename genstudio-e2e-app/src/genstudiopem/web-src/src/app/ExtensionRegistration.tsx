@@ -14,7 +14,6 @@ governing permissions and limitations under the License.
 // DO NOT MODIFY THIS FILE UNLESS YOU KNOW WHAT YOU ARE DOING
 // ==========================================================
 
-import { Text } from "@react-spectrum/s2";
 import { register } from "@adobe/uix-guest";
 import {
   EXTENSION_ID,
@@ -164,10 +163,10 @@ const ExtensionRegistration = (): React.JSX.Element => {
   init().catch(console.error);
 
   return (
-    <Text>
+    <p>
       IFrame for integration with Host (GenStudio for Performance Marketing
       App)...
-    </Text>
+    </p>
   );
 };
 

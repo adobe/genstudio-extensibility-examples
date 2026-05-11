@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect, useState } from "react";
-import { Heading } from "@react-spectrum/s2";
 import {
   AdditionalContext,
   AdditionalContextTypes,
@@ -97,7 +96,7 @@ export default function Prompt(): React.JSX.Element {
 
   return (
     <div data-testid="prompt-dialog" style={{ padding: "24px" }}>
-      <Heading>Prompt Dialog (E2E)</Heading>
+      <h1>Prompt Dialog (E2E)</h1>
 
       {!ready ? (
         <div data-testid="prompt-loading">Connecting to host...</div>
@@ -111,7 +110,7 @@ export default function Prompt(): React.JSX.Element {
             {JSON.stringify(generationContext, null, 2)}
           </div>
 
-          <Heading level={3}>Claims</Heading>
+          <h3>Claims</h3>
           <ul data-testid="claim-list" style={{ listStyle: "none", padding: 0 }}>
             {CLAIMS.map((claim) => {
               const isSelected = selectedClaims.some((c) => c.id === claim.id);

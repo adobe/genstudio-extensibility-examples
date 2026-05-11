@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState, useEffect } from "react";
-import { Heading } from "@react-spectrum/s2";
 import {
   SelectContentExtensionService,
   Asset,
@@ -88,7 +87,7 @@ export default function SelectContent(): React.JSX.Element {
 
   return (
     <div data-testid="select-content-panel" style={{ padding: 24 }}>
-      <Heading>Select Content (E2E)</Heading>
+      <h1>Select Content (E2E)</h1>
 
       {!ready ? (
         <div data-testid="select-content-loading">Connecting to host...</div>
@@ -102,7 +101,7 @@ export default function SelectContent(): React.JSX.Element {
             {JSON.stringify(syncData, null, 2)}
           </div>
 
-          <Heading level={4}>Assets ({assets.length})</Heading>
+          <h4>Assets ({assets.length})</h4>
           <ul data-testid="asset-list" style={{ listStyle: "none", padding: 0 }}>
             {assets.map((asset) => {
               const isSelected = selectedIds.has(asset.id);

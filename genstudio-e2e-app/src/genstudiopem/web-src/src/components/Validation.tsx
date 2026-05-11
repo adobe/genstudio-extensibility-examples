@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect, useState } from "react";
-import { Heading } from "@react-spectrum/s2";
 import {
   Experience,
   FieldUpdate,
@@ -80,14 +79,14 @@ export default function Validation(): React.JSX.Element {
 
   return (
     <div data-testid="validation-panel" style={{ padding: 24 }}>
-      <Heading>Validation Panel (E2E)</Heading>
+      <h1>Validation Panel (E2E)</h1>
 
-      <Heading level={4}>Generation Context</Heading>
+      <h4>Generation Context</h4>
       <div data-testid="generation-context-box" style={jsonBoxStyle}>
         {JSON.stringify(generationContext, null, 2)}
       </div>
 
-      <Heading level={4}>Experiences ({experiences.length})</Heading>
+      <h4>Experiences ({experiences.length})</h4>
       <div data-testid="experiences-box" style={jsonBoxStyle}>
         {JSON.stringify(experiences, null, 2)}
       </div>
@@ -114,7 +113,7 @@ export default function Validation(): React.JSX.Element {
         Sync
       </button>
 
-      <Heading level={4}>Update Field</Heading>
+      <h4>Update Field</h4>
       <button
         type="button"
         data-testid="update-field-submit"

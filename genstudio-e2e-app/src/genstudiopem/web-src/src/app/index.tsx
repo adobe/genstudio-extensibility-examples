@@ -12,7 +12,6 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Heading } from "@react-spectrum/s2";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ExtensionRegistration from "./ExtensionRegistration";
 import ValidationPanel from "../components/Validation";
@@ -28,7 +27,7 @@ import {
   FRAGMENT_SWAP_ROUTE,
 } from "../Constants";
 
-const ErrorFallback = () => <Heading>Something went wrong!</Heading>;
+const ErrorFallback = () => <h1>Something went wrong!</h1>;
 
 const App = (): React.JSX.Element => {
   return (

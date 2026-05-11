@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState, useEffect } from "react";
-import { Heading } from "@react-spectrum/s2";
 import {
   ImportTemplateExtensionService,
   Template,
@@ -96,7 +95,7 @@ export default function ImportTemplate(): React.JSX.Element {
 
   return (
     <div data-testid="template-viewer" style={{ padding: "24px" }}>
-      <Heading>Template Viewer</Heading>
+      <h1>Template Viewer</h1>
       {ready ? (
         <ul data-testid="template-viewer-ready" aria-label="E2E Templates"
           style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px", listStyle: "none", padding: 0, margin: 0 }}

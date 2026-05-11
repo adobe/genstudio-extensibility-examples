@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect, useState } from "react";
-import { Heading } from "@react-spectrum/s2";
 import {
   Experience,
   FieldUpdate,
@@ -62,7 +61,7 @@ export default function FragmentSwap(): React.JSX.Element {
 
   return (
     <div data-testid="fragment-swap-dialog" style={{ padding: "24px" }}>
-      <Heading>Fragment Swap (E2E)</Heading>
+      <h1>Fragment Swap (E2E)</h1>
 
       {!ready ? (
         <div data-testid="fragment-swap-loading">Connecting to host...</div>
@@ -72,17 +71,17 @@ export default function FragmentSwap(): React.JSX.Element {
             {JSON.stringify({ imsToken: auth?.imsToken ? "present" : "missing", imsOrg: auth?.imsOrg ? "present" : "missing" }, null, 2)}
           </div>
 
-          <Heading level={4}>Generation Context</Heading>
+          <h4>Generation Context</h4>
           <div data-testid="generation-context-box" style={jsonBoxStyle}>
             {JSON.stringify(generationContext, null, 2)}
           </div>
 
-          <Heading level={4}>Experience</Heading>
+          <h4>Experience</h4>
           <div data-testid="experience-box" style={jsonBoxStyle}>
             {JSON.stringify(experience, null, 2)}
           </div>
 
-          <Heading level={4}>Selected Field</Heading>
+          <h4>Selected Field</h4>
           <div data-testid="selected-field-box" style={jsonBoxStyle}>
             {JSON.stringify(selectedField, null, 2)}
           </div>
