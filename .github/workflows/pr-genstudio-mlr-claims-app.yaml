@@ -15,7 +15,6 @@ jobs:
         [
           "Genstudio Engineering 01 - genstudio-mlr-claims-app - workspace Stage",
           "GenStudio GA PAT04 - genstudio-mlr-claims-app - workspace Stage",
-          "GenStudio Internal - E2E Tests - genstudio-mlr-claims-app - workspace Stage",
           "Genstudio - Engineering - genstudio-mlr-claims-app - workspace Stage"
         ]
     secrets: inherit
