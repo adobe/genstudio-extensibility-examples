@@ -1,4 +1,4 @@
-name: MLR Claims Main
+name: genstudio mlr claims app Main
 
 on:
   push:
@@ -17,7 +17,6 @@ jobs:
         [
           "Genstudio Engineering 01 - genstudio-mlr-claims-app - workspace Production",
           "GenStudio GA PAT04 - genstudio-mlr-claims-app - workspace Production",
-          "GenStudio Internal - E2E Tests - genstudio-mlr-claims-app - workspace Production",
           "Genstudio - Engineering - genstudio-mlr-claims-app - workspace Production"
         ]
     secrets: inherit

@@ -1,4 +1,4 @@
-name: External DAM Main
+name: genstudio external dam app Main
 
 on:
   push:
@@ -17,7 +17,6 @@ jobs:
         [
           "Genstudio Engineering 01 - genstudio-external-dam-app - workspace Production",
           "GenStudio GA PAT04 - genstudio-external-dam-app - workspace Production",
-          "GenStudio Internal - E2E Tests - genstudio-external-dam-app - workspace Production",
           "Genstudio - Engineering - genstudio-external-dam-app - workspace Production"
         ]
     secrets: inherit

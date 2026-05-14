@@ -1,4 +1,4 @@
-name: Create Validation Main
+name: genstudio create validation Main
 
 on:
   push:

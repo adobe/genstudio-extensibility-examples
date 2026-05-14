@@ -1,0 +1,42 @@
+{
+  "name": "genstudio-e2e-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GenStudio E2E Test App - registers all extension points for end-to-end testing",
+  "dependencies": {
+    "@adobe/aio-sdk": "^6.0.0",
+    "@adobe/genstudio-extensibility-sdk": "^4.6.0",
+    "@adobe/uix-guest": "^1.0.0",
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/s3-request-presigner": "^3.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-error-boundary": "^4.0.13",
+    "react-router-dom": "^6.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.7",
+    "@babel/plugin-transform-react-jsx": "^7.8.3",
+    "@playwright/test": "^1.44.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "chalk": "^4",
+    "eslint": "^8",
+    "eslint-plugin-jest": "^27.2.3",
+    "jest": "^27.2.4",
+    "typescript": "^4.9.0"
+  },
+  "scripts": {
+    "test": "jest --passWithNoTests ./test",
+    "e2e": "jest --collectCoverage=false --testRegex ./e2e",
+    "lint": "eslint --ignore-pattern web-src --no-error-on-unmatched-pattern test src actions",
+    "lint:fix": "npm run lint -- --fix",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch",
+    "build": "tsc"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

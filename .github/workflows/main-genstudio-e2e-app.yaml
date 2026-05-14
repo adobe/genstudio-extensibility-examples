@@ -1,0 +1,20 @@
+name: genstudio e2e app Main
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "genstudio-e2e-app/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/aio-app-template.yml
+    with:
+      app: genstudio-e2e-app
+      environment: |
+        [
+          "GenStudio Internal - E2E Tests - genstudio-e2e-app - workspace Production"
+        ]
+    secrets: inherit

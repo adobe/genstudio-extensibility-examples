@@ -1,4 +1,4 @@
-name: Translation Extension Main
+name: genstudio translation extension Main
 
 on:
   push:

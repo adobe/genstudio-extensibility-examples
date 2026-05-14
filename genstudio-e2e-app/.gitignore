@@ -15,10 +15,11 @@ config.json
 
 # Adobe I/O console config
 console.json
-console*.json
 
 # Test output
 junit.xml
+test-results
+playwright-report
 
 # IDE & Temp
 .cache
@@ -40,14 +41,5 @@ coverage
 
 # logs folder for aio-run-detached
 logs
-
-# Cursor configuration
-.cursor/
-
-# internal
-internal/
-
-# local CLI context config
-genstudio-extensibility-cli/config/context.yaml
-
-mcp-server.log
+# AppBuilder config
+appbuilderconfig
