@@ -35,6 +35,23 @@ const jsonBoxStyle: React.CSSProperties = {
   wordBreak: "break-all",
 };
 
+function resolveBodyFieldName(experience: Experience | null): string {
+  if (!experience?.experienceFields) {
+    return "body";
+  }
+
+  const fieldNames = Object.values(experience.experienceFields)
+    .map((field) => field.fieldName)
+    .filter(Boolean);
+
+  const preferredBodyField =
+    fieldNames.find((name) => /^body$/i.test(name)) ||
+    fieldNames.find((name) => /(^|_)body$/i.test(name)) ||
+    fieldNames.find((name) => /content/i.test(name));
+
+  return preferredBodyField || "body";
+}
+
 export default function Validation(): React.JSX.Element {
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const [experiences, setExperiences] = useState<Experience[]>([]);
@@ -118,14 +135,15 @@ export default function Validation(): React.JSX.Element {
         type="button"
         data-testid="update-field-submit"
         disabled={experiences.length === 0}
-        onClick={() => {
+        onClick={async () => {
           if (!guestConnection || experiences.length === 0) return;
+
           const update: FieldUpdate = {
             experienceId: experiences[0].id,
             name: "subject",
             value: "E2E Updated Subject",
           };
-          ValidationExtensionService.updateField(guestConnection, update);
+          await ValidationExtensionService.updateField(guestConnection, update);
           setLastUpdate(update);
         }}
         style={{
@@ -140,6 +158,68 @@ export default function Validation(): React.JSX.Element {
         }}
       >
         Update Subject
+      </button>
+
+      <button
+        type="button"
+        data-testid="update-body-submit"
+        disabled={experiences.length === 0}
+        onClick={async () => {
+          if (!guestConnection || experiences.length === 0) return;
+
+          const targetExperience = experiences[0];
+
+          const update: FieldUpdate = {
+            experienceId: targetExperience.id,
+            name: resolveBodyFieldName(targetExperience),
+            value: "E2E Updated Body",
+          };
+          await ValidationExtensionService.updateField(guestConnection, update);
+          setLastUpdate(update);
+        }}
+        style={{
+          marginTop: "8px",
+          marginLeft: "8px",
+          padding: "8px 24px",
+          background: "#1473E6",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          fontSize: "14px",
+        }}
+      >
+        Update Body
+      </button>
+
+      <button
+        type="button"
+        data-testid="update-headline-submit"
+        disabled={experiences.length === 0}
+        onClick={async () => {
+          if (!guestConnection || experiences.length === 0) return;
+
+          const update: FieldUpdate = {
+            experienceId: experiences[0].id,
+            name: "headline",
+            value: "E2E Updated Headline",
+          };
+          await ValidationExtensionService.updateField(guestConnection, update);
+          setLastUpdate(update);
+        }}
+        style={{
+          marginTop: "8px",
+          marginLeft: "8px",
+          padding: "8px 24px",
+          background: "#1473E6",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          fontSize: "14px",
+        }}
+      >
+        Update Headline
       </button>
 
       {lastUpdate && (
