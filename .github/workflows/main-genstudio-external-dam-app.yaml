@@ -8,6 +8,9 @@ on:
       - "genstudio-external-dam-app/**"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     uses: ./.github/workflows/aio-app-template.yml

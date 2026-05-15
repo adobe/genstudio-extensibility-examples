@@ -6,6 +6,9 @@ on:
       - "genstudio-create-validation/**"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   pr:
     uses: ./.github/workflows/aio-app-template.yml
