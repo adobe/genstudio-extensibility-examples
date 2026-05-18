@@ -35,12 +35,53 @@ const jsonBoxStyle: React.CSSProperties = {
   wordBreak: "break-all",
 };
 
+const updateButtonStyle: React.CSSProperties = {
+  marginTop: "8px",
+  padding: "8px 24px",
+  background: "#1473E6",
+  color: "#fff",
+  border: "none",
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontSize: "14px",
+};
+
+const FIELD_UPDATE_CONFIG = [
+  {
+    testId: "update-field-submit",
+    label: "Update Subject",
+    fieldName: "subject",
+    fieldValue: "E2E Updated Subject",
+  },
+  {
+    testId: "update-headline-submit",
+    label: "Update Headline",
+    fieldName: "headline",
+    fieldValue: "E2E Updated Headline",
+  },
+] as const;
+
 export default function Validation(): React.JSX.Element {
   const guestConnection = useGuestConnection(EXTENSION_ID);
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [generationContext, setGenerationContext] = useState<GenerationContext | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<FieldUpdate | null>(null);
+
+  const handleFieldUpdate = async (
+    fieldName: string,
+    fieldValue: string,
+  ): Promise<void> => {
+    if (!guestConnection || experiences.length === 0) return;
+
+    const update: FieldUpdate = {
+      experienceId: experiences[0].id,
+      name: fieldName,
+      value: fieldValue,
+    };
+    await ValidationExtensionService.updateField(guestConnection, update);
+    setLastUpdate(update);
+  };
 
   useEffect(() => {
     if (!guestConnection) return;
@@ -114,33 +155,21 @@ export default function Validation(): React.JSX.Element {
       </button>
 
       <h4>Update Field</h4>
-      <button
-        type="button"
-        data-testid="update-field-submit"
-        disabled={experiences.length === 0}
-        onClick={() => {
-          if (!guestConnection || experiences.length === 0) return;
-          const update: FieldUpdate = {
-            experienceId: experiences[0].id,
-            name: "subject",
-            value: "E2E Updated Subject",
-          };
-          ValidationExtensionService.updateField(guestConnection, update);
-          setLastUpdate(update);
-        }}
-        style={{
-          marginTop: "8px",
-          padding: "8px 24px",
-          background: "#1473E6",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontSize: "14px",
-        }}
-      >
-        Update Subject
-      </button>
+      {FIELD_UPDATE_CONFIG.map((config, index) => (
+        <button
+          key={config.testId}
+          type="button"
+          data-testid={config.testId}
+          disabled={experiences.length === 0}
+          onClick={() => handleFieldUpdate(config.fieldName, config.fieldValue)}
+          style={{
+            ...updateButtonStyle,
+            ...(index > 0 ? { marginLeft: "8px" } : {}),
+          }}
+        >
+          {config.label}
+        </button>
+      ))}
 
       {lastUpdate && (
         <div data-testid="last-update-box" style={jsonBoxStyle}>
