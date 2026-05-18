@@ -6,6 +6,9 @@ on:
       - "genstudio-external-template-app/**"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   pr:
     uses: ./.github/workflows/aio-app-template.yml
