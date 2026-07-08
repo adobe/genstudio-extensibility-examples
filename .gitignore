@@ -51,3 +51,7 @@ internal/
 genstudio-extensibility-cli/config/context.yaml
 
 mcp-server.log
+
+# Nested repos and Claude local config
+genstudio-extensibility-examples/
+.claude/
