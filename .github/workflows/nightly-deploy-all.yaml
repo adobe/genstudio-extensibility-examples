@@ -15,7 +15,7 @@ jobs:
           - main-genstudio-create-validation.yaml
           - main-genstudio-external-dam-app.yaml
           - main-genstudio-external-template-app.yaml
-          - main-genstudio-mlr-claims-app.yaml
+          - main-genstudio-approved-claims-app.yaml
           - main-genstudio-translation-extension.yaml
     steps:
       - name: Trigger ${{ matrix.workflow }}

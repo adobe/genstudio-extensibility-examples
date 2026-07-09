@@ -15,11 +15,11 @@ In addition to git clone and/or forking this repo, you can generate an app from 
 ## Examples
 
 - We recommend starting with an example app and attaching your Adobe App Builder Project to it.
-- If you plan to develop both dialogs (Prompt Drawer and Right Panel) in the same App Builder Project, you can use the [GenStudio MLR Claims App](./genstudio-mlr-claims-app/) as a starting point.
+- If you plan to develop both dialogs (Prompt Drawer and Right Panel) in the same App Builder Project, you can use the [GenStudio MLR Claims App](./genstudio-approved-claims-app/) as a starting point.
 
 Here is the list of examples:
 
-- [GenStudio MLR Claims App](./genstudio-mlr-claims-app/)
+- [GenStudio MLR Claims App](./genstudio-approved-claims-app/)
   - This is an example of a MLR Claims App that loads claims from a claims library and provides both dialogs:
     - A dialog that opens in Prompt Drawer to add claims to the Generation Context.
     - A dialog that opens in the right panel of a GS Experience draft to validate claims in the experience.
