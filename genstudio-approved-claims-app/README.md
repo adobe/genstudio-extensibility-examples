@@ -1,6 +1,6 @@
-# GenStudio MLR Claims App - Reference App
+# GenStudio Approved Claims App - Reference App
 
-A **reference application** for building Adobe GenStudio for Performance Marketing validation extensions with Medical, Legal, and Regulatory (MLR) claims checking capabilities.
+A **reference application** for building Adobe GenStudio for Performance Marketing validation extensions with approved claims checking capabilities for Medical, Legal, and Regulatory (MLR) compliance.
 
 > 📖 **[See QUICKSTART.md for setup instructions](./QUICKSTART.md)**
 

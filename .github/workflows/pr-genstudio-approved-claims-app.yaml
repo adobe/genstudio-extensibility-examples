@@ -1,0 +1,20 @@
+name: genstudio mlr claims app PR
+
+on:
+  pull_request:
+    paths:
+      - "genstudio-approved-claims-app/**"
+  workflow_dispatch:
+
+jobs:
+  pr:
+    uses: ./.github/workflows/aio-app-template.yml
+    with:
+      app: genstudio-approved-claims-app
+      environment: |
+        [
+          "Genstudio Engineering 01 - genstudio-approved-claims-app - workspace Stage",
+          "GenStudio GA PAT04 - genstudio-approved-claims-app - workspace Stage",
+          "Genstudio - Engineering - genstudio-approved-claims-app - workspace Stage"
+        ]
+    secrets: inherit

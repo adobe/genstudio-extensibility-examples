@@ -1,5 +1,5 @@
 {
-  "name": "genstudio-mlr-claims-app",
+  "name": "genstudio-approved-claims-app",
   "version": "0.2.0",
   "private": true,
   "dependencies": {
