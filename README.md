@@ -76,6 +76,10 @@ We provide a utility script in the `scripts` directory that helps manage GitHub 
 
 If you're implementing individual workflows for your own extension, this script can help you securely manage deployment secrets without manually entering them in the GitHub UI.
 
+## Resources
+
+- [GenStudio API Developer Portal](https://developer.adobe.com/genstudio-api/) - REST API for integrating with GenStudio for Performance Marketing. Provides the Experience API to retrieve and manage approved Experiences by ID or via paginated/filterable lists, obtain pre-signed asset URLs, and access HTML templates. Uses OAuth Server-to-Server authentication via Adobe Developer Console. Base URL: `https://genstudio.adobe.io`
+
 ## Contributing
 
 Contributions are welcomed! Read the [Contributing Guide](./.github/CONTRIBUTING.md) for more information.
