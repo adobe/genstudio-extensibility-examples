@@ -18,6 +18,10 @@ interface ContentProps {
   experience: Experience;
 }
 
+function formatChannel(channel: { id: string; name?: string }): string {
+  return channel.name ? `${channel.name} (${channel.id})` : channel.id;
+}
+
 /**
  * Content component that displays the details of an experience.
  * @param experience - The experience to display
@@ -30,6 +34,16 @@ export default function Content({ experience }: ContentProps) {
       <Heading>Experience Details</Heading>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
         <Text>ID: {experience.id}</Text>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+          <Text>Channels:</Text>
+          {experience.channels && experience.channels.length > 0 ? (
+            experience.channels.map((channel) => (
+              <Text key={channel.id}>{formatChannel(channel)}</Text>
+            ))
+          ) : (
+            <Text>None</Text>
+          )}
+        </div>
         <Divider size="S" />
         <Heading>Fields</Heading>
         {Object.entries(experience.experienceFields).map(([key, field]) => (
