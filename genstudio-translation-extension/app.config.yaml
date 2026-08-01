@@ -21,10 +21,6 @@ extensions:
               runtime: nodejs:22
               inputs:
                 LOG_LEVEL: debug
-                AZURE_OPENAI_API_KEY: $AZURE_OPENAI_API_KEY
-                AZURE_OPENAI_ENDPOINT: $AZURE_OPENAI_ENDPOINT
-                AZURE_OPENAI_API_VERSION: $AZURE_OPENAI_API_VERSION
-                AZURE_OPENAI_DEPLOYMENT_NAME: $AZURE_OPENAI_DEPLOYMENT_NAME
               annotations:
                 require-adobe-auth: true
                 final: false
